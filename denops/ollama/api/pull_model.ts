@@ -21,11 +21,11 @@ const PullModelParamFields = {
   stream: is.OptionalOf(is.Boolean),
 };
 
-export type PullModelParamSchema = O<
+export type PullModelParam = O<
   typeof PullModelParamFields
 >;
 export const isPullModelParam: P<
-  PullModelParamSchema
+  PullModelParam
 > = is.ObjectOf(
   PullModelParamFields,
 );

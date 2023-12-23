@@ -42,10 +42,26 @@ const GenerateCompletionParamFields = {
   raw: is.OptionalOf(is.Boolean),
 };
 
-export type GenerateCompletionParamSchema = O<
+export type GenerateCompletionParam = O<
   typeof GenerateCompletionParamFields
 >;
-export const isGenerateCompletionParam: P<GenerateCompletionParamSchema> = is
+export const isGenerateCompletionParam: P<GenerateCompletionParam> = is
   .ObjectOf(
     GenerateCompletionParamFields,
   );
+
+/** Generate a response for a given prompt with a provided model.
+ * This is a streaming endpoint, so there will be a series of responses.
+ * The final response object will include statistics and additional data from the request.
+ */
+export function GenerateCompletion(
+  param: GenerateCompletionParam,
+): Promise<Response> {
+  return fetch("https://api.ollama.dev/api/generate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(param),
+  });
+}

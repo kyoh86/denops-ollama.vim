@@ -16,11 +16,21 @@ const CopyModelParamFields = {
   destination: is.String,
 };
 
-export type CopyModelParamSchema = O<
+export type CopyModelParam = O<
   typeof CopyModelParamFields
 >;
 export const isCopyModelParam: P<
-  CopyModelParamSchema
+  CopyModelParam
 > = is.ObjectOf(
   CopyModelParamFields,
 );
+
+/** Copy a model. Creates a model with another name from an existing model. */
+export function CopyModel(
+  params: CopyModelParam,
+): Promise<Response> {
+  return fetch("/api/copy", {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+}

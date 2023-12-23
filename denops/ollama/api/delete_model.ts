@@ -14,11 +14,11 @@ const DeleteModelParamFields = {
   name: is.String,
 };
 
-export type DeleteModelParamSchema = O<
+export type DeleteModelParam = O<
   typeof DeleteModelParamFields
 >;
 export const isDeleteModelParam: P<
-  DeleteModelParamSchema
+  DeleteModelParam
 > = is.ObjectOf(
   DeleteModelParamFields,
 );

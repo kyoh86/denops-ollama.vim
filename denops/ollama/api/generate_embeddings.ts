@@ -16,10 +16,10 @@ const GenerateEmbeddingsParamFields = {
   prompt: is.String,
 };
 
-export type GenerateEmbeddingsParamSchema = O<
+export type GenerateEmbeddingsParam = O<
   typeof GenerateEmbeddingsParamFields
 >;
-export const isGenerateEmbeddingsParam: P<GenerateEmbeddingsParamSchema> = is
+export const isGenerateEmbeddingsParam: P<GenerateEmbeddingsParam> = is
   .ObjectOf(
     GenerateEmbeddingsParamFields,
   );

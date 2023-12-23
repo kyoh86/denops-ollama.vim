@@ -21,11 +21,11 @@ const PushModelParamFields = {
   stream: is.OptionalOf(is.Boolean),
 };
 
-export type PushModelParamSchema = O<
+export type PushModelParam = O<
   typeof PushModelParamFields
 >;
 export const isPushModelParam: P<
-  PushModelParamSchema
+  PushModelParam
 > = is.ObjectOf(
   PushModelParamFields,
 );

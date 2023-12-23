@@ -20,11 +20,11 @@ const CreateModelParamFields = {
   path: is.OptionalOf(is.String),
 };
 
-export type CreateModelParamSchema = O<
+export type CreateModelParam = O<
   typeof CreateModelParamFields
 >;
 export const isCreateModelParam: P<
-  CreateModelParamSchema
+  CreateModelParam
 > = is.ObjectOf(
   CreateModelParamFields,
 );

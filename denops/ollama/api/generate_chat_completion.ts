@@ -19,11 +19,11 @@ const GenerateChatCompletionMessageFields = {
   images: is.OptionalOf(is.ArrayOf(is.String)),
 };
 
-export type GenerateChatCompletionMessageSchema = O<
+export type GenerateChatCompletionMessage = O<
   typeof GenerateChatCompletionMessageFields
 >;
 export const isGenerateChatCompletionMessage: P<
-  GenerateChatCompletionMessageSchema
+  GenerateChatCompletionMessage
 > = is.ObjectOf(
   GenerateChatCompletionMessageFields,
 );
@@ -51,11 +51,11 @@ const GenerateChatCompletionParamFields = {
   stream: is.OptionalOf(is.Boolean),
 };
 
-export type GenerateChatCompletionParamSchema = O<
+export type GenerateChatCompletionParam = O<
   typeof GenerateChatCompletionParamFields
 >;
 export const isGenerateChatCompletionParam: P<
-  GenerateChatCompletionParamSchema
+  GenerateChatCompletionParam
 > = is.ObjectOf(
   GenerateChatCompletionParamFields,
 );

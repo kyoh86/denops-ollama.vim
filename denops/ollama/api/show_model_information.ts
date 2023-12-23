@@ -14,11 +14,11 @@ const ShowModelInformationParamFields = {
   name: is.String,
 };
 
-export type ShowModelInformationParamSchema = O<
+export type ShowModelInformationParam = O<
   typeof ShowModelInformationParamFields
 >;
 export const isShowModelInformationParam: P<
-  ShowModelInformationParamSchema
+  ShowModelInformationParam
 > = is.ObjectOf(
   ShowModelInformationParamFields,
 );
