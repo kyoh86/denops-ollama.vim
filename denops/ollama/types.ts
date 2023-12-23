@@ -1,2 +1,3 @@
 // Type definitions for denops-ollama.vim
-// export type Foo = "foo" | "bar" | "baz";
+export * from "./api/generate.ts";
+export * from "./api/chat.ts";
