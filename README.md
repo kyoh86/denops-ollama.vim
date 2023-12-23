@@ -1,14 +1,8 @@
-# denops-boilerplate.vim
-
-## Usage
-
-1. Fork this repository to `denops-xxx.vim`
-1. Call `init.zsh hogehoge` to replace names in the repository
-1. Delete this section from README.md
+# denops-ollama.vim
 
 ## doc
 
-[./doc/boilerplate.txt])(./doc/boilerplate.txt)
+[./doc/ollama.txt])(./doc/ollama.txt)
 
 # License
 

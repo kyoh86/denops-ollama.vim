@@ -11,7 +11,7 @@ import {
 } from "https://deno.land/std@0.210.0/log/mod.ts";
 
 export async function main(denops: Denops) {
-  const cacheFile = join(xdg.cache(), "denops-boilerplate-vim", "log.txt");
+  const cacheFile = join(xdg.cache(), "denops-ollama-vim", "log.txt");
   await ensureFile(cacheFile);
 
   setup({
@@ -24,11 +24,11 @@ export async function main(denops: Denops) {
       }),
     },
     loggers: {
-      "denops-boilerplate": {
+      "denops-ollama": {
         level: "INFO",
         handlers: ["console", "cache"],
       },
-      "denops-boilerplate-verbose": {
+      "denops-ollama-verbose": {
         level: "DEBUG",
         handlers: ["cache"],
       },
@@ -43,7 +43,7 @@ export async function main(denops: Denops) {
         const baz = ensure(uBaz, is.OptionalOf(is.String));
         console.log(foo, bar, baz);
       } catch (err) {
-        getLogger("denops-boilerplate").error(err);
+        getLogger("denops-ollama").error(err);
       }
     },
   };
