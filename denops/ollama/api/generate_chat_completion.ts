@@ -6,7 +6,8 @@ import {
 import { isFormat } from "./types.ts";
 
 // Definitions for the endpoint to "Generate a chat completion"
-// Endpoint: /chat
+// Method: POST
+// Endpoint: /api/chat
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#generate-a-chat-completion
 
 const GenerateChatCompletionMessageFields = {
@@ -29,7 +30,7 @@ export const isGenerateChatCompletionMessage: P<
 
 const GenerateChatCompletionParamFields = {
   // Basic parameters:
-  //  (required) the model name
+  // The model name
   model: is.String,
 
   // The messages of the chat, this can be used to keep a chat memory

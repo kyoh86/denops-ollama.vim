@@ -5,7 +5,8 @@ import {
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 
 // Definitions for the endpoint to "Pull a model"
-// Endpoint: /pull
+// Method: POST
+// Endpoint: /api/pull
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#pull-a-model
 
 const PullModelParamFields = {

@@ -6,16 +6,16 @@ import {
 import { isFormat } from "./types.ts";
 
 // Definitions for the endpoint to "Generate a completion"
-// Endpoint: /generate
+// Method: POST
+// Endpoint: /api/generate
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#generate-a-completion
 
 const GenerateCompletionParamFields = {
-  // Basic parameters:
-  //  (required) the model name
+  // The model name
   model: is.String,
-  // the prompt to generate a response for
+  // The prompt to generate a response for
   prompt: is.String,
-  //(optional) a list of base64-encoded images (for multimodal models such as llava)
+  // (optional) A list of base64-encoded images (for multimodal models such as llava)
   images: is.OptionalOf(is.ArrayOf(is.String)),
 
   // Advanced parameters (optional):

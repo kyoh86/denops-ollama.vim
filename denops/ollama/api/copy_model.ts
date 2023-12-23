@@ -5,7 +5,8 @@ import {
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 
 // Definitions for the endpoint to "Copy a model"
-// Endpoint: /copy
+// Method: POST
+// Endpoint: /api/copy
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#copy-a-model
 
 const CopyModelParamFields = {

@@ -5,7 +5,8 @@ import {
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 
 // Definitions for the endpoint to "Show model information"
-// Endpoint: /show
+// Method: POST
+// Endpoint: /api/show
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#show-model-information
 
 const ShowModelInformationParamFields = {

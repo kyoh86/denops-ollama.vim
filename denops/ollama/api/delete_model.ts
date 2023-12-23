@@ -5,11 +5,12 @@ import {
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 
 // Definitions for the endpoint to "Delete a model"
-// Endpoint: /delete
+// Method: DELETE
+// Endpoint: /api/delete
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#delete-a-model
 
 const DeleteModelParamFields = {
-  // Name of the model to delete
+  // Model name to delete
   name: is.String,
 };
 

@@ -5,11 +5,12 @@ import {
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 
 // Definitions for the endpoint to "Push a model"
-// Endpoint: /push
+// Method: POST
+// Endpoint: /api/push
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#push-a-model
 
 const PushModelParamFields = {
-  // Name of the model to push
+  // Name of the model to push in the form of `<namespace>/<model>:<tag>`
   name: is.String,
 
   // (optional) Allow insecure connections to the library.

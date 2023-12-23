@@ -5,8 +5,9 @@ import {
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 
 // Definitions for the endpoint to "Generate embeddings"
-// Endpoint: /embeddings
-// Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#generate-embeddings
+// Method: POST
+// Endpoint: /api/embeddings
+// Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#generate-embedding
 
 const GenerateEmbeddingsParamFields = {
   //  Name of model to generate embeddings from

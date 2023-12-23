@@ -3,10 +3,10 @@ import {
   ObjectOf as O,
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { isFormat } from "./types.ts";
 
 // Definitions for the endpoint to "Create a model"
-// Endpoint: /create
+// Method: POST
+// Endpoint: /api/create
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#create-a-model
 
 const CreateModelParamFields = {
