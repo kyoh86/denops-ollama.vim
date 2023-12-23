@@ -5,11 +5,11 @@ import {
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { isFormat } from "./types.ts";
 
-// A type definition for the endpoint to "Generate a chat completion"
+// Definitions for the endpoint to "Generate a chat completion"
 // Endpoint: /chat
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#generate-a-chat-completion
 
-const ChatMessageFields = {
+const GenerateChatCompletionMessageFields = {
   // The role of the message, either system, user or assistant
   role: is.LiteralOneOf(["system", "user", "assistant"]),
   // The content of the message
@@ -18,18 +18,22 @@ const ChatMessageFields = {
   images: is.OptionalOf(is.ArrayOf(is.String)),
 };
 
-export type ChatMessageSchema = O<typeof ChatMessageFields>;
-export const isChatMessage: P<ChatMessageSchema> = is.ObjectOf(
-  ChatMessageFields,
+export type GenerateChatCompletionMessageSchema = O<
+  typeof GenerateChatCompletionMessageFields
+>;
+export const isGenerateChatCompletionMessage: P<
+  GenerateChatCompletionMessageSchema
+> = is.ObjectOf(
+  GenerateChatCompletionMessageFields,
 );
 
-const ChatParamFields = {
+const GenerateChatCompletionParamFields = {
   // Basic parameters:
   //  (required) the model name
   model: is.String,
 
   // The messages of the chat, this can be used to keep a chat memory
-  messages: is.ArrayOf(isChatMessage),
+  messages: is.ArrayOf(isGenerateChatCompletionMessage),
 
   // Advanced parameters (optional):
 
@@ -46,7 +50,11 @@ const ChatParamFields = {
   stream: is.OptionalOf(is.Boolean),
 };
 
-export type ChatParamSchema = O<typeof ChatParamFields>;
-export const isChatParam: P<ChatParamSchema> = is.ObjectOf(
-  ChatParamFields,
+export type GenerateChatCompletionParamSchema = O<
+  typeof GenerateChatCompletionParamFields
+>;
+export const isGenerateChatCompletionParam: P<
+  GenerateChatCompletionParamSchema
+> = is.ObjectOf(
+  GenerateChatCompletionParamFields,
 );

@@ -5,11 +5,11 @@ import {
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { isFormat } from "./types.ts";
 
-// A type definition for the endpoint to "Generate a completion"
+// Definitions for the endpoint to "Generate a completion"
 // Endpoint: /generate
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#generate-a-completion
 
-const GenerateParamFields = {
+const GenerateCompletionParamFields = {
   // Basic parameters:
   //  (required) the model name
   model: is.String,
@@ -42,7 +42,10 @@ const GenerateParamFields = {
   raw: is.OptionalOf(is.Boolean),
 };
 
-export type GenerateParamSchema = O<typeof GenerateParamFields>;
-export const isGenerateParam: P<GenerateParamSchema> = is.ObjectOf(
-  GenerateParamFields,
-);
+export type GenerateCompletionParamSchema = O<
+  typeof GenerateCompletionParamFields
+>;
+export const isGenerateCompletionParam: P<GenerateCompletionParamSchema> = is
+  .ObjectOf(
+    GenerateCompletionParamFields,
+  );
