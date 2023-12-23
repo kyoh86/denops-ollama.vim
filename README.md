@@ -1,5 +1,7 @@
 # denops-ollama.vim
 
+STILL UNDER IMPLEMENTATION.
+
 ## doc
 
 [./doc/ollama.txt])(./doc/ollama.txt)
