@@ -15,3 +15,16 @@ export function post(
     },
   );
 }
+
+export function get(
+  path: string,
+  options?: RequestOptions,
+) {
+  return fetch(
+    new URL(path, options?.baseUrl),
+    {
+      ...options?.init,
+      method: "GET",
+    },
+  );
+}
