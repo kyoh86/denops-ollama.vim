@@ -4,11 +4,9 @@ import {
   ObjectOf as O,
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import {
-  JSONLinesParseStream,
-  type JSONValue,
-} from "https://deno.land/x/jsonlines@v1.2.2/mod.ts";
 import { isFormat, RequestOptions, Result } from "./types.ts";
+import { parseJSONStream } from "./stream.ts";
+import { post } from "./request.ts";
 
 // Definitions for the endpoint to "Generate a completion"
 // Method: POST
@@ -87,32 +85,9 @@ export async function generateCompletion(
   param: GenerateCompletionParam,
   options?: RequestOptions,
 ): Promise<Result<GenerateCompletionResponse[] | GenerateCompletionResponse>> {
-  const response = await fetch(
-    new URL("/api/generate", options?.baseUrl),
-    {
-      ...options?.init,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(param),
-    },
-  );
-  //TODO: check response.status
+  const response = await post("/api/generate", param, options);
   if (param.stream) {
-    const body: GenerateCompletionResponse[] = [];
-    await response.body
-      ?.pipeThrough(new TextDecoderStream())
-      .pipeThrough(new JSONLinesParseStream())
-      .pipeTo(
-        new WritableStream<JSONValue>({
-          write: (chunk) => {
-            const item = ensure(chunk, isGenerateCompletionResponse);
-            body.push(item);
-          },
-        }),
-      );
-    return { response, body };
+    return await parseJSONStream(response, isGenerateCompletionResponse);
   }
   return {
     response,

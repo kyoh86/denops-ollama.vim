@@ -1,8 +1,12 @@
 import {
+  ensure,
   is,
   ObjectOf as O,
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
+import { RequestOptions, Result } from "./types.ts";
+import { parseJSONStream } from "./stream.ts";
+import { post } from "./request.ts";
 
 // Definitions for the endpoint to "Create a model"
 // Method: POST
@@ -29,4 +33,29 @@ export const isCreateModelParam: P<
   CreateModelParamFields,
 );
 
-// TODO: implement
+const CreateModelResponseFields = {
+  status: is.String,
+};
+
+export type CreateModelResponse = O<typeof CreateModelResponseFields>;
+export const isCreateModelResponse: P<CreateModelResponse> = is
+  .ObjectOf(
+    CreateModelResponseFields,
+  );
+
+/**
+ * Create a model from a Modelfile. It is recommended to set modelfile to the content of the Modelfile rather than just set path. This is a requirement for remote create. Remote model creation must also create any file blobs, fields such as FROM and ADAPTER, explicitly with the server using Create a Blob and the value to the path indicated in the response.
+ */
+export async function createModel(
+  param: CreateModelParam,
+  options?: RequestOptions,
+): Promise<Result<CreateModelResponse[] | CreateModelResponse>> {
+  const response = await post("/api/create", param, options);
+  if (param.stream) {
+    return await parseJSONStream(response, isCreateModelResponse);
+  }
+  return {
+    response,
+    body: ensure(response.json(), isCreateModelResponse),
+  };
+}

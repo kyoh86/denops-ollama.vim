@@ -4,6 +4,7 @@ import {
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import type { RequestOptions, Result } from "./types.ts";
+import { post } from "./request.ts";
 
 // Definitions for the endpoint to "Copy a model"
 // Method: POST
@@ -28,15 +29,10 @@ export const isCopyModelParam: P<
 
 /** Copy a model. Creates a model with another name from an existing model. */
 export async function copyModel(
-  params: CopyModelParam,
+  param: CopyModelParam,
   options?: RequestOptions,
 ): Promise<Result<undefined>> {
-  const response = await fetch(new URL("/api/copy", options?.baseUrl), {
-    ...options?.init,
-    method: "POST",
-    body: JSON.stringify(params),
-  });
-  // TODO: check response status code
+  const response = await post("/api/copy", param, options);
   return {
     response,
     body: undefined,
