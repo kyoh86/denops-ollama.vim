@@ -8,13 +8,16 @@ import {
 } from "https://deno.land/x/jsonlines@v1.2.2/mod.ts";
 import { RequestOptions } from "./types.ts";
 
+const defaultBaseUrl = "http://localhost:11434";
+
 export function doPost<T>(
   path: string,
   param: T,
   options?: RequestOptions,
 ) {
+  const baseUrl = options?.baseUrl ?? defaultBaseUrl;
   return fetch(
-    new URL(path, options?.baseUrl),
+    new URL(path, baseUrl),
     {
       ...options?.init,
       method: "POST",
@@ -28,8 +31,9 @@ export function doGet(
   path: string,
   options?: RequestOptions,
 ) {
+  const baseUrl = options?.baseUrl ?? defaultBaseUrl;
   return fetch(
-    new URL(path, options?.baseUrl),
+    new URL(path, baseUrl),
     {
       ...options?.init,
       method: "GET",
@@ -42,8 +46,9 @@ export function doDelete<T>(
   param: T,
   options?: RequestOptions,
 ) {
+  const baseUrl = options?.baseUrl ?? defaultBaseUrl;
   return fetch(
-    new URL(path, options?.baseUrl),
+    new URL(path, baseUrl),
     {
       ...options?.init,
       method: "DELETE",
