@@ -28,3 +28,16 @@ export function get(
     },
   );
 }
+
+export function delete(
+  path: string,
+  options?: RequestOptions,
+) {
+  return fetch(
+    new URL(path, options?.baseUrl),
+    {
+      ...options?.init,
+      method: "DELETE",
+    },
+  );
+}

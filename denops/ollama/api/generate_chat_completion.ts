@@ -1,9 +1,12 @@
 import {
+  ensure,
   is,
   ObjectOf as O,
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { isFormat } from "./types.ts";
+import { isFormat, RequestOptions, Result } from "./types.ts";
+import { parseJSONStream } from "./stream.ts";
+import { post } from "./request.ts";
 
 // Definitions for the endpoint to "Generate a chat completion"
 // Method: POST
@@ -60,4 +63,74 @@ export const isGenerateChatCompletionParam: P<
   GenerateChatCompletionParamFields,
 );
 
-// TODO: implement
+/** The response from the generate chat completion endpoint */
+const GenerateChatCompletionResponseFields = {
+  // The model that was used
+  model: is.String,
+
+  // The time the request was created
+  created_at: is.String,
+
+  // The message that was generated
+  message: is.OptionalOf(is.ObjectOf({
+    // The role of the message, either system, user or assistant
+    role: is.LiteralOneOf(["system", "user", "assistant"]),
+
+    // The content of the message
+    content: is.String,
+
+    // (optional) A list of images to include in the message (for multimodal models such as llava)
+    images: is.OptionalOf(is.ArrayOf(is.String)),
+  })),
+
+  // Whether the request is done
+  done: is.Boolean,
+
+  // The total duration of the request
+  total_duration: is.OptionalOf(is.Number),
+
+  // The duration of loading the model
+  load_duration: is.OptionalOf(is.Number),
+
+  // The number of times the prompt was evaluated
+  prompt_eval_count: is.OptionalOf(is.Number),
+
+  // The duration of evaluating the prompt
+  prompt_eval_duration: is.OptionalOf(is.Number),
+
+  // The number of times the model was evaluated
+  eval_count: is.OptionalOf(is.Number),
+
+  // The duration of evaluating the model
+  eval_duration: is.OptionalOf(is.Number),
+};
+
+export type GenerateChatCompletionResponse = O<
+  typeof GenerateChatCompletionResponseFields
+>;
+
+export const isGenerateChatCompletionResponse: P<
+  GenerateChatCompletionResponse
+> = is.ObjectOf(GenerateChatCompletionResponseFields);
+
+/**
+ * Generate the next message in a chat with a provided model.
+ * This is a streaming endpoint, so there will be a series of responses.
+ * Streaming can be disabled using "stream": false.
+ * The final response object will include statistics and additional data from the request.
+ */
+export async function generateChatCompletion(
+  param: GenerateChatCompletionParam,
+  options?: RequestOptions,
+): Promise<
+  Result<GenerateChatCompletionResponse[] | GenerateChatCompletionResponse>
+> {
+  const response = await post("/api/chat", param, options);
+  if (param.stream) {
+    return await parseJSONStream(response, isGenerateChatCompletionResponse);
+  }
+  return {
+    response,
+    body: ensure(response.json(), isGenerateChatCompletionResponse),
+  };
+}
