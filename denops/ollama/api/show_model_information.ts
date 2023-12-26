@@ -4,7 +4,7 @@ import {
   ObjectOf as O,
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { post } from "./request.ts";
+import { doPost } from "./base.ts";
 import { RequestOptions, Result } from "./types.ts";
 
 // Definitions for the endpoint to "Show model information"
@@ -12,21 +12,21 @@ import { RequestOptions, Result } from "./types.ts";
 // Endpoint: /api/show
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#show-model-information
 
-const ShowModelInformationParamFields = {
+const showModelInformationParamFields = {
   // Name of the model to show information about
   name: is.String,
 };
 
 export type ShowModelInformationParam = O<
-  typeof ShowModelInformationParamFields
+  typeof showModelInformationParamFields
 >;
 export const isShowModelInformationParam: P<
   ShowModelInformationParam
 > = is.ObjectOf(
-  ShowModelInformationParamFields,
+  showModelInformationParamFields,
 );
 
-const ShowModelInformationResponseFields = {
+const showModelInformationResponseFields = {
   // The model file
   modelfile: is.String,
 
@@ -56,11 +56,11 @@ const ShowModelInformationResponseFields = {
 };
 
 export type ShowModelInformationResponse = O<
-  typeof ShowModelInformationResponseFields
+  typeof showModelInformationResponseFields
 >;
 export const isShowModelInformationResponse: P<
   ShowModelInformationResponse
-> = is.ObjectOf(ShowModelInformationResponseFields);
+> = is.ObjectOf(showModelInformationResponseFields);
 
 /**
  * Show information about a model including details, modelfile, template, parameters, license, and system prompt.
@@ -71,7 +71,7 @@ export async function showModelInformation(
   param: ShowModelInformationParam,
   options?: RequestOptions,
 ): Promise<Result<ShowModelInformationResponse>> {
-  const response = await post("/api/show", param, options);
+  const response = await doPost("/api/show", param, options);
   return {
     response,
     body: ensure(response.json(), isShowModelInformationResponse),

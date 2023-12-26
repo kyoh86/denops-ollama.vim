@@ -5,15 +5,15 @@ import {
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { RequestOptions, Result } from "./types.ts";
-import { post } from "./request.ts";
-import { parseJSONStream } from "./stream.ts";
+import { doPost } from "./base.ts";
+import { parseJSONStream } from "./base.ts";
 
 // Definitions for the endpoint to "Pull a model"
 // Method: POST
 // Endpoint: /api/pull
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#pull-a-model
 
-const PullModelParamFields = {
+const pullModelParamFields = {
   // Name of the model to pull
   name: is.String,
 
@@ -26,15 +26,15 @@ const PullModelParamFields = {
 };
 
 export type PullModelParam = O<
-  typeof PullModelParamFields
+  typeof pullModelParamFields
 >;
 export const isPullModelParam: P<
   PullModelParam
 > = is.ObjectOf(
-  PullModelParamFields,
+  pullModelParamFields,
 );
 
-const PullModelResponseFields = {
+const pullModelResponseFields = {
   // Status of the pull
   status: is.String,
 
@@ -49,12 +49,12 @@ const PullModelResponseFields = {
 };
 
 export type PullModelResponse = O<
-  typeof PullModelResponseFields
+  typeof pullModelResponseFields
 >;
 export const isPullModelResponse: P<
   PullModelResponse
 > = is.ObjectOf(
-  PullModelResponseFields,
+  pullModelResponseFields,
 );
 
 /**
@@ -66,7 +66,7 @@ export async function pullModel(
   param: PullModelParam,
   options?: RequestOptions,
 ): Promise<Result<PullModelResponse[] | PullModelResponse>> {
-  const response = await post("/api/pull", param, options);
+  const response = await doPost("/api/pull", param, options);
   if (param.stream) {
     return await parseJSONStream(response, isPullModelResponse);
   }

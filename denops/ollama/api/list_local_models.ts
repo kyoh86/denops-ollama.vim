@@ -5,14 +5,14 @@ import {
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { RequestOptions, Result } from "./types.ts";
-import { get } from "./request.ts";
+import { doGet } from "./base.ts";
 
 // Definitions for the endpoint to "List local models"
 // Method: GET
 // Endpoint: /api/tags
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#list-local-models
 
-const ListLocalModelsResponseFields = {
+const listLocalModelsResponseFields = {
   models: is.ArrayOf(is.ObjectOf({
     name: is.String,
     modified_at: is.String,
@@ -28,11 +28,11 @@ const ListLocalModelsResponseFields = {
   })),
 };
 export type ListLocalModelsResponse = O<
-  typeof ListLocalModelsResponseFields
+  typeof listLocalModelsResponseFields
 >;
 export const isListLocalModelsResponse: P<ListLocalModelsResponse> = is
   .ObjectOf(
-    ListLocalModelsResponseFields,
+    listLocalModelsResponseFields,
   );
 
 /**
@@ -41,7 +41,7 @@ export const isListLocalModelsResponse: P<ListLocalModelsResponse> = is
 export async function listLocalModels(
   options?: RequestOptions,
 ): Promise<Result<ListLocalModelsResponse>> {
-  const response = await get("/api/tags", options);
+  const response = await doGet("/api/tags", options);
   return {
     response,
     body: ensure(response.json(), isListLocalModelsResponse),

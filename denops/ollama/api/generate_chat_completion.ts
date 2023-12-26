@@ -5,15 +5,15 @@ import {
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { isFormat, RequestOptions, Result } from "./types.ts";
-import { parseJSONStream } from "./stream.ts";
-import { post } from "./request.ts";
+import { parseJSONStream } from "./base.ts";
+import { doPost } from "./base.ts";
 
 // Definitions for the endpoint to "Generate a chat completion"
 // Method: POST
 // Endpoint: /api/chat
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#generate-a-chat-completion
 
-const GenerateChatCompletionMessageFields = {
+const generateChatCompletionMessageFields = {
   // The role of the message, either system, user or assistant
   role: is.LiteralOneOf(["system", "user", "assistant"]),
   // The content of the message
@@ -23,15 +23,15 @@ const GenerateChatCompletionMessageFields = {
 };
 
 export type GenerateChatCompletionMessage = O<
-  typeof GenerateChatCompletionMessageFields
+  typeof generateChatCompletionMessageFields
 >;
 export const isGenerateChatCompletionMessage: P<
   GenerateChatCompletionMessage
 > = is.ObjectOf(
-  GenerateChatCompletionMessageFields,
+  generateChatCompletionMessageFields,
 );
 
-const GenerateChatCompletionParamFields = {
+const generateChatCompletionParamFields = {
   // Basic parameters:
   // The model name
   model: is.String,
@@ -55,12 +55,12 @@ const GenerateChatCompletionParamFields = {
 };
 
 export type GenerateChatCompletionParam = O<
-  typeof GenerateChatCompletionParamFields
+  typeof generateChatCompletionParamFields
 >;
 export const isGenerateChatCompletionParam: P<
   GenerateChatCompletionParam
 > = is.ObjectOf(
-  GenerateChatCompletionParamFields,
+  generateChatCompletionParamFields,
 );
 
 /** The response from the generate chat completion endpoint */
@@ -125,7 +125,7 @@ export async function generateChatCompletion(
 ): Promise<
   Result<GenerateChatCompletionResponse[] | GenerateChatCompletionResponse>
 > {
-  const response = await post("/api/chat", param, options);
+  const response = await doPost("/api/chat", param, options);
   if (param.stream) {
     return await parseJSONStream(response, isGenerateChatCompletionResponse);
   }

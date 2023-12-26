@@ -5,15 +5,15 @@ import {
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { RequestOptions, Result } from "./types.ts";
-import { parseJSONStream } from "./stream.ts";
-import { post } from "./request.ts";
+import { parseJSONStream } from "./base.ts";
+import { doPost } from "./base.ts";
 
 // Definitions for the endpoint to "Create a model"
 // Method: POST
 // Endpoint: /api/create
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#create-a-model
 
-const CreateModelParamFields = {
+const createModelParamFields = {
   // Name of the model to create
   name: is.String,
   // (optional) Contents of the Modelfile
@@ -25,22 +25,22 @@ const CreateModelParamFields = {
 };
 
 export type CreateModelParam = O<
-  typeof CreateModelParamFields
+  typeof createModelParamFields
 >;
 export const isCreateModelParam: P<
   CreateModelParam
 > = is.ObjectOf(
-  CreateModelParamFields,
+  createModelParamFields,
 );
 
-const CreateModelResponseFields = {
+const createModelResponseFields = {
   status: is.String,
 };
 
-export type CreateModelResponse = O<typeof CreateModelResponseFields>;
+export type CreateModelResponse = O<typeof createModelResponseFields>;
 export const isCreateModelResponse: P<CreateModelResponse> = is
   .ObjectOf(
-    CreateModelResponseFields,
+    createModelResponseFields,
   );
 
 /**
@@ -53,7 +53,7 @@ export async function createModel(
   param: CreateModelParam,
   options?: RequestOptions,
 ): Promise<Result<CreateModelResponse[] | CreateModelResponse>> {
-  const response = await post("/api/create", param, options);
+  const response = await doPost("/api/create", param, options);
   if (param.stream) {
     return await parseJSONStream(response, isCreateModelResponse);
   }

@@ -5,15 +5,15 @@ import {
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { isFormat, RequestOptions, Result } from "./types.ts";
-import { parseJSONStream } from "./stream.ts";
-import { post } from "./request.ts";
+import { parseJSONStream } from "./base.ts";
+import { doPost } from "./base.ts";
 
 // Definitions for the endpoint to "Generate a completion"
 // Method: POST
 // Endpoint: /api/generate
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#generate-a-completion
 
-const GenerateCompletionParamFields = {
+const generateCompletionParamFields = {
   // The model name
   model: is.String,
   // The prompt to generate a response for
@@ -37,14 +37,14 @@ const GenerateCompletionParamFields = {
 };
 
 export type GenerateCompletionParam = O<
-  typeof GenerateCompletionParamFields
+  typeof generateCompletionParamFields
 >;
 export const isGenerateCompletionParam: P<GenerateCompletionParam> = is
   .ObjectOf(
-    GenerateCompletionParamFields,
+    generateCompletionParamFields,
   );
 
-const GenerateCompletionResponseFields = {
+const generateCompletionResponseFields = {
   // The model name
   model: is.String,
   // The time the request was received
@@ -70,11 +70,11 @@ const GenerateCompletionResponseFields = {
 };
 
 export type GenerateCompletionResponse = O<
-  typeof GenerateCompletionResponseFields
+  typeof generateCompletionResponseFields
 >;
 export const isGenerateCompletionResponse: P<GenerateCompletionResponse> = is
   .ObjectOf(
-    GenerateCompletionResponseFields,
+    generateCompletionResponseFields,
   );
 
 /** Generate a response for a given prompt with a provided model.
@@ -85,7 +85,7 @@ export async function generateCompletion(
   param: GenerateCompletionParam,
   options?: RequestOptions,
 ): Promise<Result<GenerateCompletionResponse[] | GenerateCompletionResponse>> {
-  const response = await post("/api/generate", param, options);
+  const response = await doPost("/api/generate", param, options);
   if (param.stream) {
     return await parseJSONStream(response, isGenerateCompletionResponse);
   }

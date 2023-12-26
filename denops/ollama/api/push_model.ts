@@ -5,15 +5,15 @@ import {
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { RequestOptions, Result } from "./types.ts";
-import { parseJSONStream } from "./stream.ts";
-import { post } from "./request.ts";
+import { parseJSONStream } from "./base.ts";
+import { doPost } from "./base.ts";
 
 // Definitions for the endpoint to "Push a model"
 // Method: POST
 // Endpoint: /api/push
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#push-a-model
 
-const PushModelParamFields = {
+const pushModelParamFields = {
   // Name of the model to push in the form of `<namespace>/<model>:<tag>`
   name: is.String,
 
@@ -26,15 +26,15 @@ const PushModelParamFields = {
 };
 
 export type PushModelParam = O<
-  typeof PushModelParamFields
+  typeof pushModelParamFields
 >;
 export const isPushModelParam: P<
   PushModelParam
 > = is.ObjectOf(
-  PushModelParamFields,
+  pushModelParamFields,
 );
 
-const PushModelResponseFields = {
+const pushModelResponseFields = {
   // The model name
   model: is.String,
   // The time the request was received
@@ -60,11 +60,11 @@ const PushModelResponseFields = {
 };
 
 export type PushModelResponse = O<
-  typeof PushModelResponseFields
+  typeof pushModelResponseFields
 >;
 export const isPushModelResponse: P<PushModelResponse> = is
   .ObjectOf(
-    PushModelResponseFields,
+    pushModelResponseFields,
   );
 
 /** Generate a response for a given prompt with a provided model.
@@ -75,7 +75,7 @@ export async function pushModel(
   param: PushModelParam,
   options?: RequestOptions,
 ): Promise<Result<PushModelResponse[] | PushModelResponse>> {
-  const response = await post("/api/push", param, options);
+  const response = await doPost("/api/push", param, options);
   if (param.stream) {
     return await parseJSONStream(response, isPushModelResponse);
   }
