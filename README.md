@@ -1,10 +1,10 @@
 # denops-ollama.vim
 
-STILL UNDER IMPLEMENTATION.
+Superpractilisticexpermientocious.
 
 ## doc
 
-[./doc/ollama.txt])(./doc/ollama.txt)
+[./doc/ollama.txt](./doc/ollama.txt)
 
 # License
 
