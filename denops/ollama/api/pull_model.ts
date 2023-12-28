@@ -57,6 +57,16 @@ export const isPullModelResponse: P<
   pullModelResponseFields,
 );
 
+export async function pullModel(
+  param: PullModelParam & { stream?: true },
+  options?: RequestOptions,
+): Promise<Result<PullModelResponse[]>>;
+
+export async function pullModel(
+  param: PullModelParam & { stream: false },
+  options?: RequestOptions,
+): Promise<Result<PullModelResponse>>;
+
 /**
  * Pull a model
  * Download a model from the ollama library.
@@ -67,7 +77,7 @@ export async function pullModel(
   options?: RequestOptions,
 ): Promise<Result<PullModelResponse[] | PullModelResponse>> {
   const response = await doPost("/api/pull", param, options);
-  if (param.stream) {
+  if (param.stream === undefined || param.stream) {
     return await parseJSONStream(response, isPullModelResponse);
   }
   return {

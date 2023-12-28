@@ -77,6 +77,16 @@ export const isGenerateCompletionResponse: P<GenerateCompletionResponse> = is
     generateCompletionResponseFields,
   );
 
+export async function generateCompletion(
+  param: GenerateCompletionParam & { stream?: true },
+  options?: RequestOptions,
+): Promise<Result<GenerateCompletionResponse[]>>;
+
+export async function generateCompletion(
+  param: GenerateCompletionParam & { stream: false },
+  options?: RequestOptions,
+): Promise<Result<GenerateCompletionResponse>>;
+
 /** Generate a response for a given prompt with a provided model.
  * This is a streaming endpoint, so there will be a series of responses.
  * The final response object will include statistics and additional data from the request.
@@ -86,7 +96,7 @@ export async function generateCompletion(
   options?: RequestOptions,
 ): Promise<Result<GenerateCompletionResponse[] | GenerateCompletionResponse>> {
   const response = await doPost("/api/generate", param, options);
-  if (param.stream) {
+  if (param.stream === undefined || param.stream) {
     return await parseJSONStream(response, isGenerateCompletionResponse);
   }
   return {

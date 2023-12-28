@@ -57,6 +57,7 @@ export function doDelete<T>(
   );
 }
 
+// TODO: use ReadableStream instead
 export async function parseJSONStream<T>(
   response: Response,
   predicate: Predicate<T>,

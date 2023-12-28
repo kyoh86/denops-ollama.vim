@@ -67,6 +67,16 @@ export const isPushModelResponse: P<PushModelResponse> = is
     pushModelResponseFields,
   );
 
+export async function pushModel(
+  param: PushModelParam & { stream?: true },
+  options?: RequestOptions,
+): Promise<Result<PushModelResponse[]>>;
+
+export async function pushModel(
+  param: PushModelParam & { stream: false },
+  options?: RequestOptions,
+): Promise<Result<PushModelResponse>>;
+
 /** Generate a response for a given prompt with a provided model.
  * This is a streaming endpoint, so there will be a series of responses.
  * The final response object will include statistics and additional data from the request.
@@ -76,7 +86,7 @@ export async function pushModel(
   options?: RequestOptions,
 ): Promise<Result<PushModelResponse[] | PushModelResponse>> {
   const response = await doPost("/api/push", param, options);
-  if (param.stream) {
+  if (param.stream === undefined || param.stream) {
     return await parseJSONStream(response, isPushModelResponse);
   }
   return {

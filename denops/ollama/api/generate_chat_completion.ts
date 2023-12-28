@@ -113,6 +113,16 @@ export const isGenerateChatCompletionResponse: P<
   GenerateChatCompletionResponse
 > = is.ObjectOf(GenerateChatCompletionResponseFields);
 
+export async function generateChatCompletion(
+  param: GenerateChatCompletionParam & { stream?: true },
+  options?: RequestOptions,
+): Promise<Result<GenerateChatCompletionResponse[]>>;
+
+export async function generateChatCompletion(
+  param: GenerateChatCompletionParam & { stream: false },
+  options?: RequestOptions,
+): Promise<Result<GenerateChatCompletionResponse>>;
+
 /**
  * Generate the next message in a chat with a provided model.
  * This is a streaming endpoint, so there will be a series of responses.
@@ -126,7 +136,7 @@ export async function generateChatCompletion(
   Result<GenerateChatCompletionResponse[] | GenerateChatCompletionResponse>
 > {
   const response = await doPost("/api/chat", param, options);
-  if (param.stream) {
+  if (param.stream === undefined || param.stream) {
     return await parseJSONStream(response, isGenerateChatCompletionResponse);
   }
   return {

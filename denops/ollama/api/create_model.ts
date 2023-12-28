@@ -43,6 +43,16 @@ export const isCreateModelResponse: P<CreateModelResponse> = is
     createModelResponseFields,
   );
 
+export async function createModel(
+  param: CreateModelParam & { stream?: true },
+  options?: RequestOptions,
+): Promise<Result<CreateModelResponse[]>>;
+
+export async function createModel(
+  param: CreateModelParam & { stream: false },
+  options?: RequestOptions,
+): Promise<Result<CreateModelResponse>>;
+
 /**
  * Create a model from a Modelfile.
  * It is recommended to set modelfile to the content of the Modelfile rather than just set path.
@@ -54,7 +64,7 @@ export async function createModel(
   options?: RequestOptions,
 ): Promise<Result<CreateModelResponse[] | CreateModelResponse>> {
   const response = await doPost("/api/create", param, options);
-  if (param.stream) {
+  if (param.stream === undefined || param.stream) {
     return await parseJSONStream(response, isCreateModelResponse);
   }
   return {
