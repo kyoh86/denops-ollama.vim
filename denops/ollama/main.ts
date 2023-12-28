@@ -1,11 +1,9 @@
 import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
-import { batch } from "https://deno.land/x/denops_std@v5.2.0/batch/mod.ts";
 import xdg from "https://deno.land/x/xdg@v10.6.0/src/mod.deno.ts";
 import { join } from "https://deno.land/std@0.210.0/path/mod.ts";
 import { ensureFile } from "https://deno.land/std@0.210.0/fs/mod.ts";
 import { ensure, is } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import * as fn from "https://deno.land/x/denops_std@v5.2.0/function/mod.ts";
-import * as v from "https://deno.land/x/denops_std@v5.2.0/variable/mod.ts";
 import {
   getLogger,
   handlers,
@@ -49,17 +47,20 @@ export async function main(denops: Denops) {
         const prompt = ensure(uPrompt, is.String);
         const context = ensure(uContext, is.Record);
         console.debug(`reserved context: ${context}`);
-        const result = await generateCompletion({
-          model,
-          prompt,
-        });
+        const result = await generateCompletion({ model, prompt });
         const bufnr = await fn.bufadd(denops, "ollama://outputs");
         await fn.bufload(denops, bufnr);
-        await fn.appendbufline(
-          denops,
-          bufnr,
-          "$",
-          result.body.map((entry) => entry.response).join(""),
+        await result.body?.pipeTo(
+          new WritableStream({
+            write: async (chunk) => {
+              const lastLine = await fn.getbufline(denops, bufnr, "$");
+              const newLines = chunk.response.split(/\r?\n/);
+              await fn.setbufline(denops, bufnr, "$", lastLine + newLines[0]);
+              if (newLines.length > 0) {
+                await fn.appendbufline(denops, bufnr, "$", newLines.slice(1));
+              }
+            },
+          }),
         );
       } catch (err) {
         getLogger("denops-ollama").error(err);

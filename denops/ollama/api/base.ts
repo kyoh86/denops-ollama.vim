@@ -76,3 +76,23 @@ export async function parseJSONList<T>(
     );
   return { response, body };
 }
+
+export function parseJSONStream<T>(
+  response: Response,
+  predicate: Predicate<T>,
+) {
+  return {
+    response,
+    body: response.body
+      ?.pipeThrough(new TextDecoderStream())
+      .pipeThrough(new JSONLinesParseStream())
+      .pipeThrough(
+        new TransformStream<JSONValue, T>({
+          transform: (value, controller) => {
+            const item = ensure(value, predicate);
+            controller.enqueue(item);
+          },
+        }),
+      ),
+  };
+}

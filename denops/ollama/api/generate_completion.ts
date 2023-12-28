@@ -1,11 +1,10 @@
 import {
-  ensure,
   is,
   ObjectOf as O,
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { isFormat, RequestOptions, Result } from "./types.ts";
-import { parseJSONList } from "./base.ts";
+import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
 
 // Definitions for the endpoint to "Generate a completion"
@@ -77,16 +76,6 @@ export const isGenerateCompletionResponse: P<GenerateCompletionResponse> = is
     generateCompletionResponseFields,
   );
 
-export async function generateCompletion(
-  param: GenerateCompletionParam & { stream?: true },
-  options?: RequestOptions,
-): Promise<Result<GenerateCompletionResponse[]>>;
-
-export async function generateCompletion(
-  param: GenerateCompletionParam & { stream: false },
-  options?: RequestOptions,
-): Promise<Result<GenerateCompletionResponse>>;
-
 /** Generate a response for a given prompt with a provided model.
  * This is a streaming endpoint, so there will be a series of responses.
  * The final response object will include statistics and additional data from the request.
@@ -94,13 +83,9 @@ export async function generateCompletion(
 export async function generateCompletion(
   param: GenerateCompletionParam,
   options?: RequestOptions,
-): Promise<Result<GenerateCompletionResponse[] | GenerateCompletionResponse>> {
-  const response = await doPost("/api/generate", param, options);
-  if (param.stream === undefined || param.stream) {
-    return await parseJSONList(response, isGenerateCompletionResponse);
-  }
-  return {
-    response,
-    body: ensure(await response.json(), isGenerateCompletionResponse),
-  };
+) {
+  return parseJSONStream(
+    await doPost("/api/generate", param, options),
+    isGenerateCompletionResponse,
+  );
 }
