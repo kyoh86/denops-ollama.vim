@@ -5,7 +5,7 @@ import {
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { RequestOptions, Result } from "./types.ts";
-import { parseJSONStream } from "./base.ts";
+import { parseJSONList } from "./base.ts";
 import { doPost } from "./base.ts";
 
 // Definitions for the endpoint to "Push a model"
@@ -87,7 +87,7 @@ export async function pushModel(
 ): Promise<Result<PushModelResponse[] | PushModelResponse>> {
   const response = await doPost("/api/push", param, options);
   if (param.stream === undefined || param.stream) {
-    return await parseJSONStream(response, isPushModelResponse);
+    return await parseJSONList(response, isPushModelResponse);
   }
   return {
     response,

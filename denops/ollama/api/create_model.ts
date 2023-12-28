@@ -5,7 +5,7 @@ import {
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { RequestOptions, Result } from "./types.ts";
-import { parseJSONStream } from "./base.ts";
+import { parseJSONList } from "./base.ts";
 import { doPost } from "./base.ts";
 
 // Definitions for the endpoint to "Create a model"
@@ -65,7 +65,7 @@ export async function createModel(
 ): Promise<Result<CreateModelResponse[] | CreateModelResponse>> {
   const response = await doPost("/api/create", param, options);
   if (param.stream === undefined || param.stream) {
-    return await parseJSONStream(response, isCreateModelResponse);
+    return await parseJSONList(response, isCreateModelResponse);
   }
   return {
     response,

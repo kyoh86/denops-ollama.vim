@@ -5,7 +5,7 @@ import {
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { isFormat, RequestOptions, Result } from "./types.ts";
-import { parseJSONStream } from "./base.ts";
+import { parseJSONList } from "./base.ts";
 import { doPost } from "./base.ts";
 
 // Definitions for the endpoint to "Generate a completion"
@@ -97,7 +97,7 @@ export async function generateCompletion(
 ): Promise<Result<GenerateCompletionResponse[] | GenerateCompletionResponse>> {
   const response = await doPost("/api/generate", param, options);
   if (param.stream === undefined || param.stream) {
-    return await parseJSONStream(response, isGenerateCompletionResponse);
+    return await parseJSONList(response, isGenerateCompletionResponse);
   }
   return {
     response,

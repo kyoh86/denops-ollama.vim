@@ -6,7 +6,7 @@ import {
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { RequestOptions, Result } from "./types.ts";
 import { doPost } from "./base.ts";
-import { parseJSONStream } from "./base.ts";
+import { parseJSONList } from "./base.ts";
 
 // Definitions for the endpoint to "Pull a model"
 // Method: POST
@@ -78,7 +78,7 @@ export async function pullModel(
 ): Promise<Result<PullModelResponse[] | PullModelResponse>> {
   const response = await doPost("/api/pull", param, options);
   if (param.stream === undefined || param.stream) {
-    return await parseJSONStream(response, isPullModelResponse);
+    return await parseJSONList(response, isPullModelResponse);
   }
   return {
     response,
