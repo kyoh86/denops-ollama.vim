@@ -1,12 +1,11 @@
 import {
-  ensure,
   is,
   ObjectOf as O,
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { RequestOptions, Result } from "./types.ts";
+import { RequestOptions } from "./types.ts";
 import { doPost } from "./base.ts";
-import { parseJSONList } from "./base.ts";
+import { parseJSONStream } from "./base.ts";
 
 // Definitions for the endpoint to "Pull a model"
 // Method: POST
@@ -57,16 +56,6 @@ export const isPullModelResponse: P<
   pullModelResponseFields,
 );
 
-export async function pullModel(
-  param: PullModelParam & { stream?: true },
-  options?: RequestOptions,
-): Promise<Result<PullModelResponse[]>>;
-
-export async function pullModel(
-  param: PullModelParam & { stream: false },
-  options?: RequestOptions,
-): Promise<Result<PullModelResponse>>;
-
 /**
  * Pull a model
  * Download a model from the ollama library.
@@ -75,13 +64,9 @@ export async function pullModel(
 export async function pullModel(
   param: PullModelParam,
   options?: RequestOptions,
-): Promise<Result<PullModelResponse[] | PullModelResponse>> {
-  const response = await doPost("/api/pull", param, options);
-  if (param.stream === undefined || param.stream) {
-    return await parseJSONList(response, isPullModelResponse);
-  }
-  return {
-    response,
-    body: ensure(await response.json(), isPullModelResponse),
-  };
+) {
+  return parseJSONStream(
+    await doPost("/api/pull", param, options),
+    isPullModelResponse,
+  );
 }

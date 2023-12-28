@@ -1,11 +1,10 @@
 import {
-  ensure,
   is,
   ObjectOf as O,
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { isFormat, RequestOptions, Result } from "./types.ts";
-import { parseJSONList } from "./base.ts";
+import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
 
 // Definitions for the endpoint to "Generate a chat completion"
@@ -113,16 +112,6 @@ export const isGenerateChatCompletionResponse: P<
   GenerateChatCompletionResponse
 > = is.ObjectOf(GenerateChatCompletionResponseFields);
 
-export async function generateChatCompletion(
-  param: GenerateChatCompletionParam & { stream?: true },
-  options?: RequestOptions,
-): Promise<Result<GenerateChatCompletionResponse[]>>;
-
-export async function generateChatCompletion(
-  param: GenerateChatCompletionParam & { stream: false },
-  options?: RequestOptions,
-): Promise<Result<GenerateChatCompletionResponse>>;
-
 /**
  * Generate the next message in a chat with a provided model.
  * This is a streaming endpoint, so there will be a series of responses.
@@ -132,15 +121,9 @@ export async function generateChatCompletion(
 export async function generateChatCompletion(
   param: GenerateChatCompletionParam,
   options?: RequestOptions,
-): Promise<
-  Result<GenerateChatCompletionResponse[] | GenerateChatCompletionResponse>
-> {
-  const response = await doPost("/api/chat", param, options);
-  if (param.stream === undefined || param.stream) {
-    return await parseJSONList(response, isGenerateChatCompletionResponse);
-  }
-  return {
-    response,
-    body: ensure(await response.json(), isGenerateChatCompletionResponse),
-  };
+) {
+  return parseJSONStream(
+    await doPost("/api/chat", param, options),
+    isGenerateChatCompletionResponse,
+  );
 }

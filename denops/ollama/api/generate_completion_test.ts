@@ -4,7 +4,10 @@ import {
   assertSpyCalls,
   stub,
 } from "https://deno.land/std@0.210.0/testing/mock.ts";
-import { generateCompletion } from "./generate_completion.ts";
+import {
+  generateCompletion,
+  GenerateCompletionResponse,
+} from "./generate_completion.ts";
 
 Deno.test("generateCompletion", async (t) => {
   await t.step("with default calling", async (t) => {
@@ -34,6 +37,29 @@ Deno.test("generateCompletion", async (t) => {
             method: "POST",
           },
         ]);
+        const actual: GenerateCompletionResponse[] = [];
+        await result.body?.pipeTo(
+          new WritableStream({
+            write: (chunk) => {
+              actual.push(chunk);
+            },
+          }),
+        );
+        const expected = {
+          "model": "llama2",
+          "created_at": "2023-08-04T19:22:45.499127Z",
+          "response": "The sky is blue because it is the color of the sky.",
+          "done": true,
+          "context": [1, 2, 3],
+          "total_duration": 5043500667,
+          "load_duration": 5025959,
+          "prompt_eval_count": 26,
+          "prompt_eval_duration": 325953000,
+          "eval_count": 290,
+          "eval_duration": 4709213000,
+        };
+        assertEquals(actual.length, 1);
+        assertEquals(actual[0], expected);
       });
     } finally {
       fetchStub.restore();
@@ -73,11 +99,39 @@ Deno.test("generateCompletion", async (t) => {
           {
             referrer: "https://example.com:33562/foo",
             body:
-              '{"model":"model1","prompt":"run","context":"foo-context","format":"json"}',
+              '{"model":"model1","prompt":"run","context":"foo-context","format":"json","images":["foo-image-1","foo-image-2"],"system":"foo-system","stream":true,"raw":true,"template":"How to %s?"}',
             headers: { "Content-Type": "application/json" },
             method: "POST",
           },
         ]);
+        const expected: GenerateCompletionResponse[] = [{
+          "model": "llama2",
+          "created_at": "2023-08-04T08:52:19.385406455-07:00",
+          "response": "The",
+          "done": false,
+        }, {
+          "model": "llama2",
+          "created_at": "2023-08-04T19:22:45.499127Z",
+          "response": "",
+          "done": true,
+          "context": [1, 2, 3],
+          "total_duration": 10706818083,
+          "load_duration": 6338219291,
+          "prompt_eval_count": 26,
+          "prompt_eval_duration": 130079000,
+          "eval_count": 259,
+          "eval_duration": 4232710000,
+        }];
+        const actual: GenerateCompletionResponse[] = [];
+        await result.body?.pipeTo(
+          new WritableStream({
+            write: (chunk) => {
+              actual.push(chunk);
+            },
+          }),
+        );
+        assertEquals(actual.length, 2);
+        assertEquals(actual, expected);
       });
     } finally {
       fetchStub.restore();

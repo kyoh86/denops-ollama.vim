@@ -1,11 +1,10 @@
 import {
-  ensure,
   is,
   ObjectOf as O,
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { RequestOptions, Result } from "./types.ts";
-import { parseJSONList } from "./base.ts";
+import { RequestOptions } from "./types.ts";
+import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
 
 // Definitions for the endpoint to "Push a model"
@@ -67,16 +66,6 @@ export const isPushModelResponse: P<PushModelResponse> = is
     pushModelResponseFields,
   );
 
-export async function pushModel(
-  param: PushModelParam & { stream?: true },
-  options?: RequestOptions,
-): Promise<Result<PushModelResponse[]>>;
-
-export async function pushModel(
-  param: PushModelParam & { stream: false },
-  options?: RequestOptions,
-): Promise<Result<PushModelResponse>>;
-
 /** Generate a response for a given prompt with a provided model.
  * This is a streaming endpoint, so there will be a series of responses.
  * The final response object will include statistics and additional data from the request.
@@ -84,13 +73,9 @@ export async function pushModel(
 export async function pushModel(
   param: PushModelParam,
   options?: RequestOptions,
-): Promise<Result<PushModelResponse[] | PushModelResponse>> {
-  const response = await doPost("/api/push", param, options);
-  if (param.stream === undefined || param.stream) {
-    return await parseJSONList(response, isPushModelResponse);
-  }
-  return {
-    response,
-    body: ensure(await response.json(), isPushModelResponse),
-  };
+) {
+  return parseJSONStream(
+    await doPost("/api/push", param, options),
+    isPushModelResponse,
+  );
 }

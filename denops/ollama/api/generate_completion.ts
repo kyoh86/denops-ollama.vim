@@ -3,7 +3,7 @@ import {
   ObjectOf as O,
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { isFormat, RequestOptions, Result } from "./types.ts";
+import { isFormat, RequestOptions } from "./types.ts";
 import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
 
@@ -65,7 +65,7 @@ const generateCompletionResponseFields = {
   // Time in nanoseconds spent generating the response
   eval_duration: is.OptionalOf(is.Number),
   // An encoding of the conversation used in this response, this can be sent in the next request to keep a conversational memory
-  context: is.Unknown,
+  context: is.OptionalOf(is.Unknown),
 };
 
 export type GenerateCompletionResponse = O<

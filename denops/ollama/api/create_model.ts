@@ -1,11 +1,10 @@
 import {
-  ensure,
   is,
   ObjectOf as O,
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { RequestOptions, Result } from "./types.ts";
-import { parseJSONList } from "./base.ts";
+import { RequestOptions } from "./types.ts";
+import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
 
 // Definitions for the endpoint to "Create a model"
@@ -43,16 +42,6 @@ export const isCreateModelResponse: P<CreateModelResponse> = is
     createModelResponseFields,
   );
 
-export async function createModel(
-  param: CreateModelParam & { stream?: true },
-  options?: RequestOptions,
-): Promise<Result<CreateModelResponse[]>>;
-
-export async function createModel(
-  param: CreateModelParam & { stream: false },
-  options?: RequestOptions,
-): Promise<Result<CreateModelResponse>>;
-
 /**
  * Create a model from a Modelfile.
  * It is recommended to set modelfile to the content of the Modelfile rather than just set path.
@@ -62,13 +51,9 @@ export async function createModel(
 export async function createModel(
   param: CreateModelParam,
   options?: RequestOptions,
-): Promise<Result<CreateModelResponse[] | CreateModelResponse>> {
-  const response = await doPost("/api/create", param, options);
-  if (param.stream === undefined || param.stream) {
-    return await parseJSONList(response, isCreateModelResponse);
-  }
-  return {
-    response,
-    body: ensure(await response.json(), isCreateModelResponse),
-  };
+) {
+  return parseJSONStream(
+    await doPost("/api/create", param, options),
+    isCreateModelResponse,
+  );
 }
