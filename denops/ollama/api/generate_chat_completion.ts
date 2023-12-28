@@ -3,7 +3,7 @@ import {
   ObjectOf as O,
   Predicate as P,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { isFormat, RequestOptions, Result } from "./types.ts";
+import { isFormat, RequestOptions } from "./types.ts";
 import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
 
