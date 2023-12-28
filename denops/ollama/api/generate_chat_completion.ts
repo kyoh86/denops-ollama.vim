@@ -131,6 +131,6 @@ export async function generateChatCompletion(
   }
   return {
     response,
-    body: ensure(response.json(), isGenerateChatCompletionResponse),
+    body: ensure(await response.json(), isGenerateChatCompletionResponse),
   };
 }

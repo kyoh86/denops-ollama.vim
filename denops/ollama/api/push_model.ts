@@ -81,6 +81,6 @@ export async function pushModel(
   }
   return {
     response,
-    body: ensure(response.json(), isPushModelResponse),
+    body: ensure(await response.json(), isPushModelResponse),
   };
 }

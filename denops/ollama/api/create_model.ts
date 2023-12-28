@@ -59,6 +59,6 @@ export async function createModel(
   }
   return {
     response,
-    body: ensure(response.json(), isCreateModelResponse),
+    body: ensure(await response.json(), isCreateModelResponse),
   };
 }

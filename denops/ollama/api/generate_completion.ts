@@ -91,6 +91,6 @@ export async function generateCompletion(
   }
   return {
     response,
-    body: ensure(response.json(), isGenerateCompletionResponse),
+    body: ensure(await response.json(), isGenerateCompletionResponse),
   };
 }

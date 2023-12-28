@@ -46,6 +46,6 @@ export async function generateEmbeddings(
   const response = await doPost("/api/embeddings", params, options);
   return {
     response,
-    body: ensure(response.json(), isGenerateEmbeddingsResponse),
+    body: ensure(await response.json(), isGenerateEmbeddingsResponse),
   };
 }

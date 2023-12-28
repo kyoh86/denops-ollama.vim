@@ -44,6 +44,6 @@ export async function listLocalModels(
   const response = await doGet("/api/tags", options);
   return {
     response,
-    body: ensure(response.json(), isListLocalModelsResponse),
+    body: ensure(await response.json(), isListLocalModelsResponse),
   };
 }

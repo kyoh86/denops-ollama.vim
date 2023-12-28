@@ -74,6 +74,6 @@ export async function showModelInformation(
   const response = await doPost("/api/show", param, options);
   return {
     response,
-    body: ensure(response.json(), isShowModelInformationResponse),
+    body: ensure(await response.json(), isShowModelInformationResponse),
   };
 }

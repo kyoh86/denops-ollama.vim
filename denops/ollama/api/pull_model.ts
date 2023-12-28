@@ -72,6 +72,6 @@ export async function pullModel(
   }
   return {
     response,
-    body: ensure(response.json(), isPullModelResponse),
+    body: ensure(await response.json(), isPullModelResponse),
   };
 }
