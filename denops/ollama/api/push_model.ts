@@ -55,7 +55,7 @@ const pushModelResponseFields = {
   // Time in nanoseconds spent generating the response
   eval_duration: is.OptionalOf(is.Number),
   // An encoding of the conversation used in this response, this can be sent in the next request to keep a conversational memory
-  context: is.Unknown,
+  context: is.OptionalOf(is.ArrayOf(is.Number)),
 };
 
 export type PushModelResponse = O<

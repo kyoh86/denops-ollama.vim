@@ -28,7 +28,7 @@ const generateCompletionParamFields = {
   // (optional) The full prompt or prompt template (overrides what is defined in the Modelfile)
   template: is.OptionalOf(is.String),
   // (optional) The context parameter returned from a previous request to /generate, this can be used to keep a short conversational memory
-  context: is.OptionalOf(is.String),
+  context: is.OptionalOf(is.ArrayOf(is.Number)),
   // (optional) If false the response will be returned as a single response object, rather than a stream of objects
   stream: is.OptionalOf(is.Boolean),
   // (optional) If true no formatting will be applied to the prompt. You may choose to use the raw parameter if you are specifying a full templated prompt in your request to the API.
@@ -65,7 +65,7 @@ const generateCompletionResponseFields = {
   // Time in nanoseconds spent generating the response
   eval_duration: is.OptionalOf(is.Number),
   // An encoding of the conversation used in this response, this can be sent in the next request to keep a conversational memory
-  context: is.OptionalOf(is.Unknown),
+  context: is.OptionalOf(is.ArrayOf(is.Number)),
 };
 
 export type GenerateCompletionResponse = O<
