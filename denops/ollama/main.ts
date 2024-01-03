@@ -2,8 +2,12 @@ import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
 import xdg from "https://deno.land/x/xdg@v10.6.0/src/mod.deno.ts";
 import { join } from "https://deno.land/std@0.210.0/path/mod.ts";
 import { ensureFile } from "https://deno.land/std@0.210.0/fs/mod.ts";
-import { is, maybe } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { start } from "./dispatch/generate_completion.ts";
+import {
+  ensure,
+  is,
+  maybe,
+} from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
+import { start as start_generate_completion } from "./dispatch/generate_completion.ts";
 import { handlers, setup } from "https://deno.land/std@0.210.0/log/mod.ts";
 
 export async function main(denops: Denops) {
@@ -33,11 +37,15 @@ export async function main(denops: Denops) {
 
   denops.dispatcher = {
     async generate_completion(
-      uOpener: unknown,
       uModel: unknown,
+      uOpener: unknown,
     ) {
-      await start(
+      await start_generate_completion(
         denops,
+        ensure(
+          uModel,
+          is.String,
+        ),
         maybe(
           uOpener,
           is.OneOf([
@@ -49,10 +57,6 @@ export async function main(denops: Denops) {
             is.LiteralOf("vnew"),
           ]),
         ),
-        maybe(
-          uModel,
-          is.String,
-        ) || "codellama",
       );
     },
   };
