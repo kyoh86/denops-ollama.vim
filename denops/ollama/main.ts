@@ -7,7 +7,7 @@ import {
   is,
   maybe,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { start as start_generate_completion } from "./dispatch/generate_completion.ts";
+import start_chat from "./dispatch/start_chat.ts";
 import { handlers, setup } from "https://deno.land/std@0.210.0/log/mod.ts";
 
 export async function main(denops: Denops) {
@@ -36,11 +36,11 @@ export async function main(denops: Denops) {
   });
 
   denops.dispatcher = {
-    async generate_completion(
+    async start_chat(
       uModel: unknown,
       uOpener: unknown,
     ) {
-      await start_generate_completion(
+      await start_chat(
         denops,
         ensure(
           uModel,

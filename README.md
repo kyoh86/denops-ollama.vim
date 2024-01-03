@@ -8,14 +8,14 @@ Superpractilisticexpermientocious.
 
 ## usage
 
-If you want to use it, run ollama with "codellama" model in local.
+If you want to use it, run ollama with a model you like in local.
 
-```
-ollama pull codellama
-ollama serve
+```console
+$ ollama pull codellama
+$ ollama serve
 ```
 
-And call `ollama#generate_completion#start`.
+And call `ollama#start_chat` with the model name
 
 # License
 

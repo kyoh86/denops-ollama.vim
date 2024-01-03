@@ -15,7 +15,7 @@ import { generateCompletion } from "../api.ts";
 
 const abort = new AbortController();
 
-export async function start(
+export default async function start_chat(
   denops: Denops,
   model: string,
   opener?: "split" | "vsplit" | "tabnew" | "edit" | "new" | "vnew",

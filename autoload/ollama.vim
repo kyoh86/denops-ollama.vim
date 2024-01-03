@@ -1,4 +1,4 @@
-" Start to chat with Ollama
+" Start chat with Ollama
 " Parameters:
 "   - model: string (e.g. "codellama", "llama2") See https://github.com/jmorganca/ollama/blob/main/docs/api.md#model-names .
 "   - opener: (OPTIONAL) string  (e.g. "tabnew", "split", "vsplit")
@@ -8,7 +8,8 @@
 "     - "edit": open a new buffer in the current window
 "     default: "tabnew"
 " Usage:
-"  :call ollama#generate_completion#start('tabnew', 'codellama')
-function ollama#generate_completion#start(...)
-  call denops#notify("ollama", "generate_completion", a:000)
+"  :call ollama#start_chat('tabnew', 'codellama')
+function ollama#start_chat(...)
+  call denops#notify("ollama", "start_chat", a:000)
 endfunction
+
