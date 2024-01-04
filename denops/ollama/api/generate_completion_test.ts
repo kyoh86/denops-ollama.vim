@@ -79,7 +79,7 @@ Deno.test("generateCompletion", async (t) => {
           {
             model: "model1",
             prompt: "run",
-            context: "foo-context",
+            context: [1, 2, 3],
             format: "json",
             images: ["foo-image-1", "foo-image-2"],
             system: "foo-system",
@@ -99,7 +99,7 @@ Deno.test("generateCompletion", async (t) => {
           {
             referrer: "https://example.com:33562/foo",
             body:
-              '{"model":"model1","prompt":"run","context":"foo-context","format":"json","images":["foo-image-1","foo-image-2"],"system":"foo-system","stream":true,"raw":true,"template":"How to %s?"}',
+              '{"model":"model1","prompt":"run","context":[1,2,3],"format":"json","images":["foo-image-1","foo-image-2"],"system":"foo-system","stream":true,"raw":true,"template":"How to %s?"}',
             headers: { "Content-Type": "application/json" },
             method: "POST",
           },
