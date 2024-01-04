@@ -8,8 +8,11 @@ import {
   is,
   maybe,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import start_chat from "./dispatch/start_chat.ts";
 import { handlers, setup } from "https://deno.land/std@0.210.0/log/mod.ts";
+
+import start_chat from "./dispatch/start_chat.ts";
+import list_models from "./dispatch/list_models.ts";
+import pull_model from "./dispatch/pull_model.ts";
 
 const abort = new AbortController();
 
@@ -75,6 +78,27 @@ export async function main(denops: Denops) {
             is.LiteralOf("new"),
             is.LiteralOf("vnew"),
           ]),
+        ),
+      );
+    },
+
+    async list_models() {
+      return await list_models(
+        denops,
+        abort,
+      );
+    },
+    async pull_model(uName: unknown, uInsecure: unknown) {
+      await pull_model(
+        denops,
+        abort,
+        ensure(
+          uName,
+          is.String,
+        ),
+        maybe(
+          uInsecure,
+          is.Boolean,
         ),
       );
     },

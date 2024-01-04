@@ -11,8 +11,7 @@ import {
   maybe,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 
-import { generateCompletion } from "../api.ts";
-
+import { generateCompletion, GenerateCompletionResponse } from "../api.ts";
 
 export default async function start_chat(
   denops: Denops,
@@ -95,7 +94,7 @@ async function promptCallback(
 
   // prepare writer to set response to buffer
   let continuation = false;
-  const writer = new WritableStream({
+  const writer = new WritableStream<GenerateCompletionResponse>({
     write: async (item) => {
       const newLines = item.response.split(/\r?\n/);
       const info = await fn.getbufinfo(denops, bufnr);
