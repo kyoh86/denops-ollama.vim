@@ -14,6 +14,11 @@ import start_chat from "./dispatch/start_chat.ts";
 import list_models from "./dispatch/list_models.ts";
 import pull_model from "./dispatch/pull_model.ts";
 import delete_model from "./dispatch/delete_model.ts";
+import {
+  isChatContext,
+  start_chat_with_context,
+} from "./dispatch/start_chat_with_context.ts";
+import { isOpener } from "./dispatch/types.ts";
 
 const abort = new AbortController();
 
@@ -64,21 +69,22 @@ export async function main(denops: Denops) {
       await start_chat(
         denops,
         abort.signal,
-        ensure(
-          uModel,
-          is.String,
-        ),
-        maybe(
-          uOpener,
-          is.OneOf([
-            is.LiteralOf("split"),
-            is.LiteralOf("vsplit"),
-            is.LiteralOf("tabnew"),
-            is.LiteralOf("edit"),
-            is.LiteralOf("new"),
-            is.LiteralOf("vnew"),
-          ]),
-        ),
+        ensure(uModel, is.String),
+        maybe(uOpener, isOpener),
+      );
+    },
+
+    async start_chat_with_context(
+      uModel: unknown,
+      uOpener: unknown,
+      uContext: unknown,
+    ) {
+      await start_chat_with_context(
+        denops,
+        abort.signal,
+        ensure(uModel, is.String),
+        maybe(uOpener, isOpener),
+        maybe(uContext, isChatContext),
       );
     },
 

@@ -1,25 +1,44 @@
-import { getLogger } from "https://deno.land/std@0.210.0/log/mod.ts";
 import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
-import * as fn from "https://deno.land/x/denops_std@v5.2.0/function/mod.ts";
-import * as batch from "https://deno.land/x/denops_std@v5.2.0/batch/mod.ts";
-import * as option from "https://deno.land/x/denops_std@v5.2.0/option/mod.ts";
-import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
-import * as lambda from "https://deno.land/x/denops_std@v5.2.0/lambda/mod.ts";
-import * as datetime from "https://deno.land/std@0.210.0/datetime/mod.ts";
 import {
   ensure,
   is,
   maybe,
+  ObjectOf as O,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-
-import { generateCompletion, GenerateCompletionResponse } from "../api.ts";
+import {
+  generateChatCompletion,
+  GenerateChatCompletionResponse,
+} from "../api.ts";
 import { Opener } from "./types.ts";
+import { getLogger } from "https://deno.land/std@0.210.0/log/mod.ts";
+import * as fn from "https://deno.land/x/denops_std@v5.2.0/function/mod.ts";
+import * as batch from "https://deno.land/x/denops_std@v5.2.0/batch/batch.ts";
+import * as option from "https://deno.land/x/denops_std@v5.2.0/option/mod.ts";
+import * as datetime from "https://deno.land/std@0.210.0/datetime/mod.ts";
+import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
+import * as lambda from "https://deno.land/x/denops_std@v5.2.0/lambda/mod.ts";
 
-export default async function start_chat(
+const chatContextFields = {
+  selection: is.OptionalOf(is.Boolean),
+  currentBuffer: is.OptionalOf(is.Boolean),
+  buffers: is.OptionalOf(is.ArrayOf(is.OneOf([
+    is.Number,
+    is.ObjectOf({
+      bufnr: is.Number,
+    }),
+  ]))),
+  files: is.OptionalOf(is.ArrayOf(is.String)),
+};
+
+export type ChatContext = O<typeof chatContextFields>;
+export const isChatContext = is.ObjectOf(chatContextFields);
+
+export async function start_chat_with_context(
   denops: Denops,
   signal: AbortSignal,
   model: string,
   opener?: Opener,
+  context?: ChatContext,
 ) {
   const now = datetime.format(new Date(), "yyyy-MM-ddTHH-mm-ss.SSS");
   const bufname = `ollama://chat/${now}`;
@@ -84,7 +103,7 @@ async function promptCallback(
 
   // prepare writer to set response to buffer
   let continuation = false;
-  const writer = new WritableStream<GenerateCompletionResponse>({
+  const writer = new WritableStream<GenerateChatCompletionResponse>({
     write: async (item) => {
       const newLines = item.response.split(/\r?\n/);
       const info = await fn.getbufinfo(denops, bufnr);
@@ -114,7 +133,7 @@ async function promptCallback(
 
   try {
     // call generateCompletion
-    const result = await generateCompletion({ model, prompt, context }, {
+    const result = await generateChatCompletion({ model, prompt, context }, {
       init: { signal },
     });
     if (!result.body) {
