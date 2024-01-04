@@ -13,6 +13,7 @@ import { handlers, setup } from "https://deno.land/std@0.210.0/log/mod.ts";
 import start_chat from "./dispatch/start_chat.ts";
 import list_models from "./dispatch/list_models.ts";
 import pull_model from "./dispatch/pull_model.ts";
+import delete_model from "./dispatch/delete_model.ts";
 
 const abort = new AbortController();
 
@@ -47,8 +48,7 @@ export async function main(denops: Denops) {
     `ollama#internal#cancel_helper("${denops.name}")`,
     {
       expr: true,
-      mode: ["n", "v", "i", "c"],
-      nowait: true,
+      mode: ["n"],
     },
   );
 
@@ -63,7 +63,7 @@ export async function main(denops: Denops) {
     ) {
       await start_chat(
         denops,
-        abort,
+        abort.signal,
         ensure(
           uModel,
           is.String,
@@ -85,13 +85,14 @@ export async function main(denops: Denops) {
     async list_models() {
       return await list_models(
         denops,
-        abort,
+        abort.signal,
       );
     },
+
     async pull_model(uName: unknown, uInsecure: unknown) {
       await pull_model(
         denops,
-        abort,
+        abort.signal,
         ensure(
           uName,
           is.String,
@@ -99,6 +100,17 @@ export async function main(denops: Denops) {
         maybe(
           uInsecure,
           is.Boolean,
+        ),
+      );
+    },
+
+    async delete_model(uName: unknown) {
+      await delete_model(
+        denops,
+        abort.signal,
+        ensure(
+          uName,
+          is.String,
         ),
       );
     },
