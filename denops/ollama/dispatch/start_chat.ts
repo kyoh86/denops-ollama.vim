@@ -15,7 +15,7 @@ import { generateCompletion, GenerateCompletionResponse } from "../api.ts";
 
 export default async function start_chat(
   denops: Denops,
-  abort: AbortController,
+  signal: AbortSignal,
   model: string,
   opener?: "split" | "vsplit" | "tabnew" | "edit" | "new" | "vnew",
 ) {
@@ -45,20 +45,7 @@ export default async function start_chat(
           denops,
           async (uPrompt) => {
             const prompt = ensure(uPrompt, is.String);
-            await promptCallback(denops, abort, bufnr, model, prompt);
-          },
-        ),
-      },
-    );
-    await denops.cmd(
-      "call prompt_setinterrupt(bufnr, function('ollama#internal#callback_helper', [denops_name, lambda_id]))",
-      {
-        bufnr,
-        denops_name: denops.name,
-        lambda_id: lambda.register(
-          denops,
-          () => {
-            abort.abort();
+            await promptCallback(denops, signal, bufnr, model, prompt);
           },
         ),
       },
@@ -71,7 +58,7 @@ export default async function start_chat(
 
 async function promptCallback(
   denops: Denops,
-  abort: AbortController,
+  signal: AbortSignal,
   bufnr: number,
   model: string,
   prompt: string,
@@ -125,7 +112,7 @@ async function promptCallback(
   try {
     // call generateCompletion
     const result = await generateCompletion({ model, prompt, context }, {
-      init: { signal: abort.signal },
+      init: { signal },
     });
     if (!result.body) {
       return;

@@ -22,7 +22,7 @@ function formatResponseItem(item: PullModelResponse) {
 
 export default async function pull_model(
   denops: Denops,
-  abort: AbortController,
+  signal: AbortSignal,
   name: string,
   insecure?: boolean,
 ) {
@@ -33,9 +33,7 @@ export default async function pull_model(
   });
 
   try {
-    const result = await pullModel({ name, insecure }, {
-      init: { signal: abort.signal },
-    });
+    const result = await pullModel({ name, insecure }, { init: { signal } });
     if (!result.body) {
       return;
     }
