@@ -13,10 +13,10 @@ import {
 
 import { generateCompletion } from "../api.ts";
 
-const abort = new AbortController();
 
 export default async function start_chat(
   denops: Denops,
+  abort: AbortController,
   model: string,
   opener?: "split" | "vsplit" | "tabnew" | "edit" | "new" | "vnew",
 ) {
@@ -46,7 +46,7 @@ export default async function start_chat(
           denops,
           async (uPrompt) => {
             const prompt = ensure(uPrompt, is.String);
-            await promptCallback(denops, bufnr, model, prompt);
+            await promptCallback(denops, abort, bufnr, model, prompt);
           },
         ),
       },
@@ -72,6 +72,7 @@ export default async function start_chat(
 
 async function promptCallback(
   denops: Denops,
+  abort: AbortController,
   bufnr: number,
   model: string,
   prompt: string,
@@ -121,11 +122,12 @@ async function promptCallback(
       }
     },
   });
-  abort.signal.addEventListener("abort", writer.abort.bind(writer));
 
   try {
     // call generateCompletion
-    const result = await generateCompletion({ model, prompt, context });
+    const result = await generateCompletion({ model, prompt, context }, {
+      init: { signal: abort.signal },
+    });
     if (!result.body) {
       return;
     }
