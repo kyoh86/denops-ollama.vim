@@ -35,10 +35,7 @@ export default async function start_chat(
     await option.buflisted.setBuffer(denops, bufnr, true);
     await option.swapfile.setBuffer(denops, bufnr, false);
     await fn.bufload(denops, bufnr);
-    await fn.setbufline(denops, bufnr, 1, [
-      "Enter the name of the completion to generate: ",
-    ]);
-    await fn.prompt_setprompt(denops, bufnr, ">> ");
+    await fn.prompt_setprompt(denops, bufnr, `(${model})>> `);
     await denops.cmd(
       "call prompt_setcallback(bufnr, function('ollama#internal#callback_helper', [denops_name, lambda_id]))",
       {
