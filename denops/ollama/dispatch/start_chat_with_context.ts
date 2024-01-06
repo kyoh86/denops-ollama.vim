@@ -197,6 +197,11 @@ async function promptCallback(
   const contents: string[] = [];
   const writer = new WritableStream<GenerateChatCompletionResponse>({
     write: async (item) => {
+      if ("error" in item) {
+        signal.dispatchEvent(new Event("error"));
+        await fn.append(denops, bufnr, `ERROR: ${item.error}`);
+        return;
+      }
       if (item.done) {
         messages.push({
           role: "assistant",

@@ -1,9 +1,8 @@
 import {
   is,
-  ObjectOf as O,
-  Predicate as P,
+  type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { RequestOptions } from "./types.ts";
+import { isErrorResponse, type RequestOptions } from "./types.ts";
 import { doPost } from "./base.ts";
 import { parseJSONStream } from "./base.ts";
 
@@ -12,7 +11,7 @@ import { parseJSONStream } from "./base.ts";
 // Endpoint: /api/pull
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#pull-a-model
 
-const pullModelParamFields = {
+export const isPullModelParam = is.ObjectOf({
   // Name of the model to pull
   name: is.String,
 
@@ -22,39 +21,26 @@ const pullModelParamFields = {
 
   // (optional) If false the response will be returned as a single response object, rather than a stream of objects
   stream: is.OptionalOf(is.Boolean),
-};
+});
+export type PullModelParam = PredicateType<typeof isPullModelParam>;
 
-export type PullModelParam = O<
-  typeof pullModelParamFields
->;
-export const isPullModelParam: P<
-  PullModelParam
-> = is.ObjectOf(
-  pullModelParamFields,
-);
+export const isPullModelResponse = is.OneOf([
+  isErrorResponse,
+  is.ObjectOf({
+    // Status of the pull
+    status: is.String,
 
-const pullModelResponseFields = {
-  // Status of the pull
-  status: is.String,
+    // Digest of the model
+    digest: is.OptionalOf(is.String),
 
-  // Digest of the model
-  digest: is.OptionalOf(is.String),
+    // Total size of the model
+    total: is.OptionalOf(is.Number),
 
-  // Total size of the model
-  total: is.OptionalOf(is.Number),
-
-  // Amount of the model that has been pulled
-  completed: is.OptionalOf(is.Number),
-};
-
-export type PullModelResponse = O<
-  typeof pullModelResponseFields
->;
-export const isPullModelResponse: P<
-  PullModelResponse
-> = is.ObjectOf(
-  pullModelResponseFields,
-);
+    // Amount of the model that has been pulled
+    completed: is.OptionalOf(is.Number),
+  }),
+]);
+export type PullModelResponse = PredicateType<typeof isPullModelResponse>;
 
 /**
  * Pull a model

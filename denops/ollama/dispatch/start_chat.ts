@@ -83,6 +83,10 @@ async function promptCallback(
   let continuation = false;
   const writer = new WritableStream<GenerateCompletionResponse>({
     write: async (item) => {
+      if ("error" in item) {
+        signal.dispatchEvent(new Event("error"));
+        return;
+      }
       const newLines = item.response.split(/\r?\n/);
       const info = await fn.getbufinfo(denops, bufnr);
       const lastLineAt = info[0].linecount - 1;

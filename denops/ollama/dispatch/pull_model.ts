@@ -1,24 +1,8 @@
 import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
+import * as bytes from "https://deno.land/std@0.211.0/fmt/bytes.ts";
 import { pullModel, PullModelResponse } from "../api.ts";
 import { getLogger } from "https://deno.land/std@0.211.0/log/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
-
-function formatResponseItem(item: PullModelResponse) {
-  const words: string[] = [];
-  if (item.total) {
-    if (item.completed) {
-      words.push(
-        `${item.completed}/${item.total} bytes (${
-          Math.round(10000 * item.completed / item.total) / 100
-        }%)`,
-      );
-    } else {
-      words.push(`total: ${item.total} bytes`);
-    }
-  }
-  words.push(item.status);
-  return words.join(" ");
-}
 
 export default async function pull_model(
   denops: Denops,
@@ -28,7 +12,24 @@ export default async function pull_model(
 ) {
   const writer = new WritableStream<PullModelResponse>({
     write: async (item) => {
-      await helper.echo(denops, `Pulling ${name}: ${formatResponseItem(item)}`);
+      if ("error" in item) {
+        signal.dispatchEvent(new Event("error"));
+        return;
+      }
+      const words: string[] = [];
+      if (item.total) {
+        if (item.completed) {
+          words.push(
+            `${bytes.format(item.completed, { binary: true })}/${
+              bytes.format(item.total, { binary: true })
+            } (${Math.round(10000 * item.completed / item.total) / 100}%)`,
+          );
+        } else {
+          words.push(`total: ${item.total} bytes`);
+        }
+      }
+      words.push(item.status);
+      await helper.echo(denops, `Pulling ${name}: ${words.join(" ")}`);
     },
   });
 

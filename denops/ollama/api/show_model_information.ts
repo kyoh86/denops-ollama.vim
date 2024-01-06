@@ -1,66 +1,58 @@
 import {
   ensure,
   is,
-  ObjectOf as O,
-  Predicate as P,
+  type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { doPost } from "./base.ts";
-import { RequestOptions, Result } from "./types.ts";
+import { isErrorResponse, type RequestOptions, type Result } from "./types.ts";
 
 // Definitions for the endpoint to "Show model information"
 // Method: POST
 // Endpoint: /api/show
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#show-model-information
 
-const showModelInformationParamFields = {
+export const isShowModelInformationParam = is.ObjectOf({
   // Name of the model to show information about
   name: is.String,
-};
-
-export type ShowModelInformationParam = O<
-  typeof showModelInformationParamFields
+});
+export type ShowModelInformationParam = PredicateType<
+  typeof isShowModelInformationParam
 >;
-export const isShowModelInformationParam: P<
-  ShowModelInformationParam
-> = is.ObjectOf(
-  showModelInformationParamFields,
-);
 
-const showModelInformationResponseFields = {
-  // The model file
-  modelfile: is.String,
+export const isShowModelInformationResponse = is.OneOf([
+  isErrorResponse,
+  is.ObjectOf({
+    // The model file
+    modelfile: is.String,
 
-  // The parameters
-  parameters: is.String,
+    // The parameters
+    parameters: is.String,
 
-  // The template
-  template: is.String,
+    // The template
+    template: is.String,
 
-  // Details about the model
-  details: is.ObjectOf({
-    // Format of the model
-    format: is.String,
+    // Details about the model
+    details: is.ObjectOf({
+      // Format of the model
+      format: is.String,
 
-    // Family of the model
-    family: is.String,
+      // Family of the model
+      family: is.String,
 
-    // Families of the model
-    families: is.ArrayOf(is.String),
+      // Families of the model
+      families: is.ArrayOf(is.String),
 
-    // Size of the parameters
-    parameter_size: is.String,
+      // Size of the parameters
+      parameter_size: is.String,
 
-    // Quantization level of the model
-    quantization_level: is.String,
+      // Quantization level of the model
+      quantization_level: is.String,
+    }),
   }),
-};
-
-export type ShowModelInformationResponse = O<
-  typeof showModelInformationResponseFields
+]);
+export type ShowModelInformationResponse = PredicateType<
+  typeof isShowModelInformationResponse
 >;
-export const isShowModelInformationResponse: P<
-  ShowModelInformationResponse
-> = is.ObjectOf(showModelInformationResponseFields);
 
 /**
  * Show information about a model including details, modelfile, template, parameters, license, and system prompt.

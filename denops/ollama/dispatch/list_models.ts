@@ -9,9 +9,13 @@ export default async function list_models(
   denops: Denops,
   _signal: AbortSignal,
 ) {
-  const { body: { models } } = await listLocalModels();
+  const { body } = await listLocalModels();
+  if ("error" in body) {
+    helper.echoerr(denops, body.error);
+    return;
+  }
   const table = Table.fromJson(
-    models.map((model) => {
+    body.models.map((model) => {
       return {
         NAME: model.name,
         ID: model.digest.slice(0, 12),

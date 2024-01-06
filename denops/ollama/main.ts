@@ -20,7 +20,7 @@ import {
 } from "./dispatch/start_chat_with_context.ts";
 import { isOpener } from "./dispatch/types.ts";
 
-const abort = new AbortController();
+let abort = new AbortController();
 
 export async function main(denops: Denops) {
   const cacheFile = join(xdg.cache(), "denops-ollama-vim", "log.txt");
@@ -66,6 +66,7 @@ export async function main(denops: Denops) {
       uModel: unknown,
       uOpener: unknown,
     ) {
+      abort = new AbortController();
       await start_chat(
         denops,
         abort.signal,
@@ -79,6 +80,7 @@ export async function main(denops: Denops) {
       uContext: unknown,
       uOpener: unknown,
     ) {
+      abort = new AbortController();
       await start_chat_with_context(
         denops,
         abort.signal,
@@ -89,13 +91,15 @@ export async function main(denops: Denops) {
     },
 
     async list_models() {
-      return await list_models(
+      abort = new AbortController();
+      await list_models(
         denops,
         abort.signal,
       );
     },
 
     async pull_model(uName: unknown, uInsecure: unknown) {
+      abort = new AbortController();
       await pull_model(
         denops,
         abort.signal,
@@ -111,6 +115,7 @@ export async function main(denops: Denops) {
     },
 
     async delete_model(uName: unknown) {
+      abort = new AbortController();
       await delete_model(
         denops,
         abort.signal,

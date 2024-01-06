@@ -1,9 +1,8 @@
 import {
   is,
-  ObjectOf as O,
-  Predicate as P,
+  type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { RequestOptions } from "./types.ts";
+import { isErrorResponse, type RequestOptions } from "./types.ts";
 import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
 
@@ -12,7 +11,7 @@ import { doPost } from "./base.ts";
 // Endpoint: /api/create
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#create-a-model
 
-const createModelParamFields = {
+export const isCreateModelParam = is.ObjectOf({
   // Name of the model to create
   name: is.String,
   // (optional) Contents of the Modelfile
@@ -21,26 +20,16 @@ const createModelParamFields = {
   stream: is.OptionalOf(is.Boolean),
   // (optional) Path to the Modelfile
   path: is.OptionalOf(is.String),
-};
+});
+export type CreateModelParam = PredicateType<typeof isCreateModelParam>;
 
-export type CreateModelParam = O<
-  typeof createModelParamFields
->;
-export const isCreateModelParam: P<
-  CreateModelParam
-> = is.ObjectOf(
-  createModelParamFields,
-);
-
-const createModelResponseFields = {
-  status: is.String,
-};
-
-export type CreateModelResponse = O<typeof createModelResponseFields>;
-export const isCreateModelResponse: P<CreateModelResponse> = is
-  .ObjectOf(
-    createModelResponseFields,
-  );
+export const isCreateModelResponse = is.OneOf([
+  isErrorResponse,
+  is.ObjectOf({
+    status: is.String,
+  }),
+]);
+export type CreateModelResponse = PredicateType<typeof isCreateModelResponse>;
 
 /**
  * Create a model from a Modelfile.

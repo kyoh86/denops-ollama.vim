@@ -1,9 +1,8 @@
 import {
   is,
-  ObjectOf as O,
-  Predicate as P,
+  type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { isFormat, RequestOptions } from "./types.ts";
+import { isErrorResponse, isFormat, type RequestOptions } from "./types.ts";
 import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
 
@@ -12,7 +11,7 @@ import { doPost } from "./base.ts";
 // Endpoint: /api/generate
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#generate-a-completion
 
-const generateCompletionParamFields = {
+export const isGenerateCompletionParam = is.ObjectOf({
   // The model name
   model: is.String,
   // The prompt to generate a response for
@@ -33,48 +32,41 @@ const generateCompletionParamFields = {
   stream: is.OptionalOf(is.Boolean),
   // (optional) If true no formatting will be applied to the prompt. You may choose to use the raw parameter if you are specifying a full templated prompt in your request to the API.
   raw: is.OptionalOf(is.Boolean),
-};
-
-export type GenerateCompletionParam = O<
-  typeof generateCompletionParamFields
+});
+export type GenerateCompletionParam = PredicateType<
+  typeof isGenerateCompletionParam
 >;
-export const isGenerateCompletionParam: P<GenerateCompletionParam> = is
-  .ObjectOf(
-    generateCompletionParamFields,
-  );
 
-const generateCompletionResponseFields = {
-  // The model name
-  model: is.String,
-  // The time the request was received
-  created_at: is.String,
-  // Empty if the response was streamed, if not streamed, this will contain the full response
-  response: is.String,
-  // The response stream has ended
-  done: is.Boolean,
-  // Time spent generating the response
-  total_duration: is.OptionalOf(is.Number),
-  // Time spent in nanoseconds loading the model
-  load_duration: is.OptionalOf(is.Number),
-  // Number of tokens in the prompt
-  prompt_eval_count: is.OptionalOf(is.Number),
-  // Time spent in nanoseconds evaluating the prompt
-  prompt_eval_duration: is.OptionalOf(is.Number),
-  // Number of tokens the response
-  eval_count: is.OptionalOf(is.Number),
-  // Time in nanoseconds spent generating the response
-  eval_duration: is.OptionalOf(is.Number),
-  // An encoding of the conversation used in this response, this can be sent in the next request to keep a conversational memory
-  context: is.OptionalOf(is.ArrayOf(is.Number)),
-};
-
-export type GenerateCompletionResponse = O<
-  typeof generateCompletionResponseFields
+export const isGenerateCompletionResponse = is.OneOf([
+  isErrorResponse,
+  is.ObjectOf({
+    // The model name
+    model: is.String,
+    // The time the request was received
+    created_at: is.String,
+    // Empty if the response was streamed, if not streamed, this will contain the full response
+    response: is.String,
+    // The response stream has ended
+    done: is.Boolean,
+    // Time spent generating the response
+    total_duration: is.OptionalOf(is.Number),
+    // Time spent in nanoseconds loading the model
+    load_duration: is.OptionalOf(is.Number),
+    // Number of tokens in the prompt
+    prompt_eval_count: is.OptionalOf(is.Number),
+    // Time spent in nanoseconds evaluating the prompt
+    prompt_eval_duration: is.OptionalOf(is.Number),
+    // Number of tokens the response
+    eval_count: is.OptionalOf(is.Number),
+    // Time in nanoseconds spent generating the response
+    eval_duration: is.OptionalOf(is.Number),
+    // An encoding of the conversation used in this response, this can be sent in the next request to keep a conversational memory
+    context: is.OptionalOf(is.ArrayOf(is.Number)),
+  }),
+]);
+export type GenerateCompletionResponse = PredicateType<
+  typeof isGenerateCompletionResponse
 >;
-export const isGenerateCompletionResponse: P<GenerateCompletionResponse> = is
-  .ObjectOf(
-    generateCompletionResponseFields,
-  );
 
 /** Generate a response for a given prompt with a provided model.
  * This is a streaming endpoint, so there will be a series of responses.

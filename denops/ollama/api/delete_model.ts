@@ -1,9 +1,8 @@
 import {
   is,
-  ObjectOf as O,
-  Predicate as P,
+  type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { RequestOptions, Result } from "./types.ts";
+import type { RequestOptions, Result } from "./types.ts";
 import { doDelete } from "./base.ts";
 
 // Definitions for the endpoint to "Delete a model"
@@ -11,19 +10,11 @@ import { doDelete } from "./base.ts";
 // Endpoint: /api/delete
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#delete-a-model
 
-const deleteModelParamFields = {
+export const isDeleteModelParam = is.ObjectOf({
   // Model name to delete
   name: is.String,
-};
-
-export type DeleteModelParam = O<
-  typeof deleteModelParamFields
->;
-export const isDeleteModelParam: P<
-  DeleteModelParam
-> = is.ObjectOf(
-  deleteModelParamFields,
-);
+});
+export type DeleteModelParam = PredicateType<typeof isDeleteModelParam>;
 
 /** Copy a model. Creates a model with another name from an existing model. */
 export async function deleteModel(

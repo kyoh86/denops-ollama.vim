@@ -1,10 +1,9 @@
 import {
   ensure,
   is,
-  ObjectOf as O,
-  Predicate as P,
+  type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { RequestOptions, Result } from "./types.ts";
+import { isErrorResponse, type RequestOptions, type Result } from "./types.ts";
 import { doPost } from "./base.ts";
 
 // Definitions for the endpoint to "Generate embeddings"
@@ -12,31 +11,25 @@ import { doPost } from "./base.ts";
 // Endpoint: /api/embeddings
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#generate-embeddings
 
-const generateEmbeddingsParamFields = {
+export const isGenerateEmbeddingsParam = is.ObjectOf({
   //  Name of model to generate embeddings from
   model: is.String,
   // Text to generate embeddings for
   prompt: is.String,
-};
-
-export type GenerateEmbeddingsParam = O<
-  typeof generateEmbeddingsParamFields
+});
+export type GenerateEmbeddingsParam = PredicateType<
+  typeof isGenerateEmbeddingsParam
 >;
-export const isGenerateEmbeddingsParam: P<GenerateEmbeddingsParam> = is
-  .ObjectOf(
-    generateEmbeddingsParamFields,
-  );
 
-const generateEmbeddingsResponseFields = {
-  embedding: is.ArrayOf(is.Number),
-};
-
-export type GenerateEmbeddingsResponse = O<
-  typeof generateEmbeddingsResponseFields
+export const isGenerateEmbeddingsResponse = is.OneOf([
+  isErrorResponse,
+  is.ObjectOf({
+    embedding: is.ArrayOf(is.Number),
+  }),
+]);
+export type GenerateEmbeddingsResponse = PredicateType<
+  typeof isGenerateEmbeddingsResponse
 >;
-export const isGenerateEmbeddingsResponse: P<
-  GenerateEmbeddingsResponse
-> = is.ObjectOf(generateEmbeddingsResponseFields);
 
 /** Generate embeddings from a model. */
 export async function generateEmbeddings(

@@ -1,10 +1,9 @@
 import {
   ensure,
   is,
-  ObjectOf as O,
-  Predicate as P,
+  type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { RequestOptions, Result } from "./types.ts";
+import { isErrorResponse, type RequestOptions, type Result } from "./types.ts";
 import { doGet } from "./base.ts";
 
 // Definitions for the endpoint to "List local models"
@@ -12,28 +11,27 @@ import { doGet } from "./base.ts";
 // Endpoint: /api/tags
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#list-local-models
 
-const listLocalModelsResponseFields = {
-  models: is.ArrayOf(is.ObjectOf({
-    name: is.String,
-    modified_at: is.String,
-    size: is.Number,
-    digest: is.String,
-    details: is.ObjectOf({
-      format: is.String,
-      family: is.String,
-      families: is.Unknown,
-      parameter_size: is.String,
-      quantization_level: is.String,
-    }),
-  })),
-};
-export type ListLocalModelsResponse = O<
-  typeof listLocalModelsResponseFields
+export const isListLocalModelsResponse = is.OneOf([
+  isErrorResponse,
+  is.ObjectOf({
+    models: is.ArrayOf(is.ObjectOf({
+      name: is.String,
+      modified_at: is.String,
+      size: is.Number,
+      digest: is.String,
+      details: is.ObjectOf({
+        format: is.String,
+        family: is.String,
+        families: is.Unknown,
+        parameter_size: is.String,
+        quantization_level: is.String,
+      }),
+    })),
+  }),
+]);
+export type ListLocalModelsResponse = PredicateType<
+  typeof isListLocalModelsResponse
 >;
-export const isListLocalModelsResponse: P<ListLocalModelsResponse> = is
-  .ObjectOf(
-    listLocalModelsResponseFields,
-  );
 
 /**
  * List models that are available locally.

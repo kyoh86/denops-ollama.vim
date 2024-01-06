@@ -1,10 +1,8 @@
 import {
   is,
-  ObjectOf as O,
-  Predicate as P,
-  PredicateType,
+  type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
-import { isFormat, RequestOptions } from "./types.ts";
+import { isErrorResponse, isFormat, type RequestOptions } from "./types.ts";
 import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
 
@@ -13,25 +11,19 @@ import { doPost } from "./base.ts";
 // Endpoint: /api/chat
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#generate-a-chat-completion
 
-const generateChatCompletionMessageFields = {
+export const isGenerateChatCompletionMessage = is.ObjectOf({
   // The role of the message, either system, user or assistant
   role: is.LiteralOneOf(["system", "user", "assistant"]),
   // The content of the message
   content: is.String,
   // (optional) A list of images to include in the message (for multimodal models such as llava)
   images: is.OptionalOf(is.ArrayOf(is.String)),
-};
-
-export type GenerateChatCompletionMessage = O<
-  typeof generateChatCompletionMessageFields
+});
+export type GenerateChatCompletionMessage = PredicateType<
+  typeof isGenerateChatCompletionMessage
 >;
-export const isGenerateChatCompletionMessage: P<
-  GenerateChatCompletionMessage
-> = is.ObjectOf(
-  generateChatCompletionMessageFields,
-);
 
-const generateChatCompletionParamFields = {
+export const isGenerateChatCompletionParam = is.ObjectOf({
   // Basic parameters:
   // The model name
   model: is.String,
@@ -52,23 +44,14 @@ const generateChatCompletionParamFields = {
 
   // If false the response will be returned as a single response object, rather than a stream of objects
   stream: is.OptionalOf(is.Boolean),
-};
-
-export type GenerateChatCompletionParam = O<
-  typeof generateChatCompletionParamFields
+});
+export type GenerateChatCompletionParam = PredicateType<
+  typeof isGenerateChatCompletionParam
 >;
-export const isGenerateChatCompletionParam: P<
-  GenerateChatCompletionParam
-> = is.ObjectOf(
-  generateChatCompletionParamFields,
-);
 
 /** The response from the generate chat completion endpoint */
-export type GenerateChatCompletionResponse = PredicateType<
-  typeof isGenerateChatCompletionResponse
->;
-
 export const isGenerateChatCompletionResponse = is.OneOf([
+  isErrorResponse,
   is.ObjectOf({
     // The model that was used
     model: is.String,
@@ -114,6 +97,10 @@ export const isGenerateChatCompletionResponse = is.OneOf([
     eval_count: is.OptionalOf(is.Number),
   }),
 ]);
+export type GenerateChatCompletionResponse = PredicateType<
+  typeof isGenerateChatCompletionResponse
+>;
+
 /**
  * Generate the next message in a chat with a provided model.
  * This is a streaming endpoint, so there will be a series of responses.
