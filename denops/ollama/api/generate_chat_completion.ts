@@ -2,6 +2,7 @@ import {
   is,
   ObjectOf as O,
   Predicate as P,
+  PredicateType,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import { isFormat, RequestOptions } from "./types.ts";
 import { parseJSONStream } from "./base.ts";
@@ -63,55 +64,56 @@ export const isGenerateChatCompletionParam: P<
 );
 
 /** The response from the generate chat completion endpoint */
-const GenerateChatCompletionResponseFields = {
-  // The model that was used
-  model: is.String,
-
-  // The time the request was created
-  created_at: is.String,
-
-  // The message that was generated
-  message: is.OptionalOf(is.ObjectOf({
-    // The role of the message, either system, user or assistant
-    role: is.LiteralOneOf(["system", "user", "assistant"]),
-
-    // The content of the message
-    content: is.String,
-
-    // (optional) A list of images to include in the message (for multimodal models such as llava)
-    images: is.OptionalOf(is.ArrayOf(is.String)),
-  })),
-
-  // Whether the request is done
-  done: is.Boolean,
-
-  // The total duration of the request
-  total_duration: is.OptionalOf(is.Number),
-
-  // The duration of loading the model
-  load_duration: is.OptionalOf(is.Number),
-
-  // The number of times the prompt was evaluated
-  prompt_eval_count: is.OptionalOf(is.Number),
-
-  // The duration of evaluating the prompt
-  prompt_eval_duration: is.OptionalOf(is.Number),
-
-  // The number of times the model was evaluated
-  eval_count: is.OptionalOf(is.Number),
-
-  // The duration of evaluating the model
-  eval_duration: is.OptionalOf(is.Number),
-};
-
-export type GenerateChatCompletionResponse = O<
-  typeof GenerateChatCompletionResponseFields
+export type GenerateChatCompletionResponse = PredicateType<
+  typeof isGenerateChatCompletionResponse
 >;
 
-export const isGenerateChatCompletionResponse: P<
-  GenerateChatCompletionResponse
-> = is.ObjectOf(GenerateChatCompletionResponseFields);
+export const isGenerateChatCompletionResponse = is.OneOf([
+  is.ObjectOf({
+    // The model that was used
+    model: is.String,
 
+    // The time the request was created
+    created_at: is.String,
+
+    // The message that was generated
+    message: isGenerateChatCompletionMessage,
+
+    // Whether the request is done
+    done: is.LiteralOf(false),
+  }),
+  is.ObjectOf({
+    // The model that was used
+    model: is.String,
+
+    // The time the request was created
+    created_at: is.String,
+
+    // The message that was generated
+    message: is.OptionalOf(isGenerateChatCompletionMessage),
+
+    // Whether the request is done
+    done: is.LiteralOf(true),
+
+    // The total duration of the request
+    total_duration: is.Number,
+
+    // The duration of loading the model
+    load_duration: is.Number,
+
+    // The number of times the prompt was evaluated
+    prompt_eval_count: is.Number,
+
+    // The duration of evaluating the prompt
+    prompt_eval_duration: is.Number,
+
+    // The duration of evaluating the model
+    eval_duration: is.Number,
+
+    // The number of times the model was evaluated
+    eval_count: is.OptionalOf(is.Number),
+  }),
+]);
 /**
  * Generate the next message in a chat with a provided model.
  * This is a streaming endpoint, so there will be a series of responses.

@@ -76,15 +76,15 @@ export async function main(denops: Denops) {
 
     async start_chat_with_context(
       uModel: unknown,
-      uOpener: unknown,
       uContext: unknown,
+      uOpener: unknown,
     ) {
       await start_chat_with_context(
         denops,
         abort.signal,
         ensure(uModel, is.String),
+        ensure(uContext, isChatContext),
         maybe(uOpener, isOpener),
-        maybe(uContext, isChatContext),
       );
     },
 

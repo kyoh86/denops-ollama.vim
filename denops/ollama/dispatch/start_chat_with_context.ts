@@ -8,7 +8,9 @@ import {
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
 import {
   generateChatCompletion,
+  GenerateChatCompletionMessage,
   GenerateChatCompletionResponse,
+  isGenerateChatCompletionMessage,
 } from "../api.ts";
 import { Opener } from "./types.ts";
 import { getLogger } from "https://deno.land/std@0.211.0/log/mod.ts";
@@ -33,7 +35,7 @@ const chatContextFields = {
   selection: is.OptionalOf(is.Boolean),
   currentBuffer: is.OptionalOf(is.Boolean),
   buffers: is.OptionalOf(is.ArrayOf(isBufferInfo)),
-  files: is.OptionalOf(is.ArrayOf(is.String)),
+  // UNDONE: files: is.OptionalOf(is.ArrayOf(is.String)),
   lastMessasge: is.OptionalOf(is.String),
 };
 
@@ -76,34 +78,42 @@ async function getBuffer(denops: Denops, buf: ChatContextBufferInfo) {
 
 async function contextToMessages(
   denops: Denops,
-  context?: ChatContext,
-): Promise<string[]> {
-  if (!context) {
-    return [];
-  }
-  const messages: string[] = [];
+  context: ChatContext,
+): Promise<GenerateChatCompletionMessage[]> {
+  const messages: GenerateChatCompletionMessage[] = [];
   if (context.headMessage) {
-    messages.push(context.headMessage);
+    messages.push({ role: "user", content: context.headMessage });
   }
   if (context.selection) {
     const selection = await getVisualSelection(denops);
     if (selection && selection !== "") {
-      messages.push("Now I'm selecting text:\n" + selection);
+      messages.push({
+        role: "user",
+        content: "Now I'm selecting text:\n" + selection,
+      });
     }
   }
   if (context.currentBuffer) {
     const bufferContent = await fn.getline(denops, 1, "$");
-    messages.push("Now I'm in the buffer with the contents:\n" + bufferContent);
+    messages.push({
+      role: "user",
+      content: "Now I'm in the buffer with the contents:\n" + bufferContent,
+    });
   }
   for (const buf of context.buffers ?? []) {
     const buffer = await getBuffer(denops, buf);
-    messages.push(
-      `Now the file ${buffer.name} being opened in the buffer ${buffer.bufnr} with the contents:\n${buffer.content}`,
-    );
+    messages.push({
+      role: "user",
+      content:
+        `Now the file ${buffer.name} being opened in the buffer ${buffer.bufnr} with the contents:\n${buffer.content}`,
+    });
   }
-  // TODO: files
+  // UNDONE: files
   if (context.lastMessasge) {
-    messages.push(context.lastMessasge);
+    messages.push({
+      role: "user",
+      content: context.lastMessasge,
+    });
   }
   return messages;
 }
@@ -112,15 +122,20 @@ export async function start_chat_with_context(
   denops: Denops,
   signal: AbortSignal,
   model: string,
+  context: ChatContext,
   opener?: Opener,
-  context?: ChatContext,
 ) {
-  //TODO: convert context to chat message
+  const messages = await contextToMessages(denops, context);
   const now = datetime.format(new Date(), "yyyy-MM-ddTHH-mm-ss.SSS");
   const bufname = `ollama://chat/${now}`;
-  const bufnr = await fn.bufadd(denops, bufname);
-
   await batch.batch(denops, async () => {
+    const bufnr = await fn.bufadd(denops, bufname);
+    await fn.setbufvar(
+      denops,
+      bufnr,
+      "ollama_generate_chat_completion_messages",
+      messages,
+    );
     await option.filetype.setBuffer(
       denops,
       bufnr,
@@ -161,15 +176,15 @@ async function promptCallback(
   model: string,
   prompt: string,
 ) {
-  const context = maybe(
+  const messages = maybe(
     await fn.getbufvar(
       denops,
       bufnr,
-      "ollama_generate_completion_context",
+      "ollama_generate_chat_completion_messages",
     ),
-    is.ArrayOf(is.Number),
-  );
-  getLogger("denops-ollama-verbose").debug(`reserved context: ${context}`);
+    is.ArrayOf(isGenerateChatCompletionMessage),
+  ) || [];
+  getLogger("denops-ollama-verbose").debug(`reserved messages: ${messages}`);
   getLogger("denops-ollama-verbose").debug(`prompt: ${prompt}`);
 
   if (prompt === "exit") {
@@ -179,37 +194,43 @@ async function promptCallback(
 
   // prepare writer to set response to buffer
   let continuation = false;
+  const contents: string[] = [];
   const writer = new WritableStream<GenerateChatCompletionResponse>({
     write: async (item) => {
-      const newLines = item.response.split(/\r?\n/);
+      if (item.done) {
+        messages.push({
+          role: "assistant",
+          content: contents.join(""),
+        });
+        await fn.setbufvar(
+          denops,
+          bufnr,
+          "ollama_generate_chat_completion_messages",
+          messages,
+        );
+        return;
+      }
+      const content = item.message.content;
+      contents.push(content);
+      const newLines = content.split(/\r?\n/);
       const info = await fn.getbufinfo(denops, bufnr);
       const lastLineAt = info[0].linecount - 1;
       if (continuation) {
         const lastLine = await fn.getline(denops, lastLineAt);
         await fn.setline(denops, lastLineAt, lastLine + newLines[0]);
       } else {
-        getLogger("denops-ollama-verbose").debug(`content: "${newLines[0]}"`);
-        getLogger("denops-ollama-verbose").debug(`lastLineAt: ${lastLineAt}`);
         await fn.append(denops, lastLineAt, newLines[0]);
         continuation = true;
       }
       if (newLines.length > 0) {
         await fn.append(denops, lastLineAt, newLines.slice(1));
       }
-      if (item.context) {
-        await fn.setbufvar(
-          denops,
-          bufnr,
-          "ollama_generate_completion_context",
-          item.context,
-        );
-      }
     },
   });
 
   try {
     // call generateCompletion
-    const result = await generateChatCompletion({ model, prompt, context }, {
+    const result = await generateChatCompletion({ model, messages }, {
       init: { signal },
     });
     if (!result.body) {
