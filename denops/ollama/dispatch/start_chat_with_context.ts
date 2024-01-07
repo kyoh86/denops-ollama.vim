@@ -9,7 +9,6 @@ import {
 import {
   generateChatCompletion,
   GenerateChatCompletionMessage,
-  GenerateChatCompletionResponse,
   isGenerateChatCompletionMessage,
 } from "../api.ts";
 import { Opener } from "./types.ts";
@@ -20,6 +19,9 @@ import * as option from "https://deno.land/x/denops_std@v5.2.0/option/mod.ts";
 import * as datetime from "https://deno.land/std@0.211.0/datetime/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
 import * as lambda from "https://deno.land/x/denops_std@v5.2.0/lambda/mod.ts";
+import PromptBufferEcho from "../util/prompt_buffer_echo.ts";
+import { abortableAsyncIterable } from "https://deno.land/std@0.203.0/async/mod.ts";
+import { canceller } from "../util/cancellable.ts";
 
 const isBufferInfo = is.OneOf([
   is.Number,
@@ -120,7 +122,6 @@ async function contextToMessages(
 
 export async function start_chat_with_context(
   denops: Denops,
-  signal: AbortSignal,
   model: string,
   context: ChatContext,
   opener?: Opener,
@@ -158,7 +159,7 @@ export async function start_chat_with_context(
           denops,
           async (uPrompt) => {
             const prompt = ensure(uPrompt, is.String);
-            await promptCallback(denops, signal, bufnr, model, prompt);
+            await promptCallback(denops, bufnr, model, prompt);
           },
         ),
       },
@@ -171,7 +172,6 @@ export async function start_chat_with_context(
 
 async function promptCallback(
   denops: Denops,
-  signal: AbortSignal,
   bufnr: number,
   model: string,
   prompt: string,
@@ -188,63 +188,48 @@ async function promptCallback(
   getLogger("denops-ollama-verbose").debug(`prompt: ${prompt}`);
 
   if (prompt === "exit") {
-    await helper.execute(denops, `bunload! ${bufnr}`);
+    await helper.execute(denops, `bdelete! ${bufnr}`);
     return;
   }
 
-  // prepare writer to set response to buffer
-  let continuation = false;
   const contents: string[] = [];
-  const writer = new WritableStream<GenerateChatCompletionResponse>({
-    write: async (item) => {
-      if ("error" in item) {
-        signal.dispatchEvent(new Event("error"));
-        await fn.append(denops, bufnr, `ERROR: ${item.error}`);
-        return;
-      }
-      if (item.done) {
-        messages.push({
-          role: "assistant",
-          content: contents.join(""),
-        });
-        await fn.setbufvar(
-          denops,
-          bufnr,
-          "ollama_generate_chat_completion_messages",
-          messages,
-        );
-        return;
-      }
-      const content = item.message.content;
-      contents.push(content);
-      const newLines = content.split(/\r?\n/);
-      const info = await fn.getbufinfo(denops, bufnr);
-      const lastLineAt = info[0].linecount - 1;
-      if (continuation) {
-        const lastLine = await fn.getline(denops, lastLineAt);
-        await fn.setline(denops, lastLineAt, lastLine + newLines[0]);
-      } else {
-        await fn.append(denops, lastLineAt, newLines[0]);
-        continuation = true;
-      }
-      if (newLines.length > 0) {
-        await fn.append(denops, lastLineAt, newLines.slice(1));
-      }
-    },
-  });
-
+  const { signal, cancel } = canceller(denops);
   try {
-    // call generateCompletion
     const result = await generateChatCompletion({ model, messages }, {
       init: { signal },
     });
     if (!result.body) {
       return;
     }
-    await result.body.pipeTo(writer);
+    const p = new PromptBufferEcho(bufnr);
+    for await (
+      const item of abortableAsyncIterable(result.body.values(), signal)
+    ) {
+      if ("error" in item) throw new Error(item.error);
+      if (!item.message) continue;
+
+      // memory message history
+      contents.push(item.message.content);
+
+      // put response to buffer
+      await p.put(denops, item.message.content);
+    }
+
+    // memory message history
+    messages.push({
+      role: "assistant",
+      content: contents.join(""),
+    });
+    await fn.setbufvar(
+      denops,
+      bufnr,
+      "ollama_generate_chat_completion_messages",
+      messages,
+    );
   } catch (err) {
     getLogger("denops-ollama").error(err);
   } finally {
+    cancel();
     await fn.setbufvar(denops, bufnr, "&modified", 0);
   }
 }

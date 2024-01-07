@@ -5,11 +5,10 @@ import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
 
 export default async function delete_model(
   denops: Denops,
-  signal: AbortSignal,
   name: string,
 ) {
   try {
-    await deleteModel({ name }, { init: { signal } });
+    await deleteModel({ name });
     helper.echo(denops, `Deleted ${name}`);
   } catch (err) {
     getLogger("denops-ollama").error(err);

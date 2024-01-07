@@ -11,13 +11,15 @@ import {
   is,
   maybe,
 } from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
+import { abortableAsyncIterable } from "https://deno.land/std@0.203.0/async/mod.ts";
 
-import { generateCompletion, GenerateCompletionResponse } from "../api.ts";
+import { generateCompletion } from "../api.ts";
 import { Opener } from "./types.ts";
+import PromptBufferEcho from "../util/prompt_buffer_echo.ts";
+import { canceller } from "../util/cancellable.ts";
 
 export default async function start_chat(
   denops: Denops,
-  signal: AbortSignal,
   model: string,
   opener?: Opener,
 ) {
@@ -45,7 +47,7 @@ export default async function start_chat(
           denops,
           async (uPrompt) => {
             const prompt = ensure(uPrompt, is.String);
-            await promptCallback(denops, signal, bufnr, model, prompt);
+            await promptCallback(denops, bufnr, model, prompt);
           },
         ),
       },
@@ -58,7 +60,6 @@ export default async function start_chat(
 
 async function promptCallback(
   denops: Denops,
-  signal: AbortSignal,
   bufnr: number,
   model: string,
   prompt: string,
@@ -75,33 +76,25 @@ async function promptCallback(
   getLogger("denops-ollama-verbose").debug(`prompt: ${prompt}`);
 
   if (prompt === "exit") {
-    await helper.execute(denops, `bunload! ${bufnr}`);
+    await helper.execute(denops, `bdelete! ${bufnr}`);
     return;
   }
 
-  // prepare writer to set response to buffer
-  let continuation = false;
-  const writer = new WritableStream<GenerateCompletionResponse>({
-    write: async (item) => {
-      if ("error" in item) {
-        signal.dispatchEvent(new Event("error"));
-        return;
-      }
-      const newLines = item.response.split(/\r?\n/);
-      const info = await fn.getbufinfo(denops, bufnr);
-      const lastLineAt = info[0].linecount - 1;
-      if (continuation) {
-        const lastLine = await fn.getline(denops, lastLineAt);
-        await fn.setline(denops, lastLineAt, lastLine + newLines[0]);
-      } else {
-        getLogger("denops-ollama-verbose").debug(`content: "${newLines[0]}"`);
-        getLogger("denops-ollama-verbose").debug(`lastLineAt: ${lastLineAt}`);
-        await fn.append(denops, lastLineAt, newLines[0]);
-        continuation = true;
-      }
-      if (newLines.length > 0) {
-        await fn.append(denops, lastLineAt, newLines.slice(1));
-      }
+  const { signal, cancel } = canceller(denops);
+  try {
+    const result = await generateCompletion({ model, prompt, context }, {
+      init: { signal },
+    });
+    if (!result.body) {
+      return;
+    }
+    const p = new PromptBufferEcho(bufnr);
+    for await (
+      const item of abortableAsyncIterable(result.body.values(), signal)
+    ) {
+      if ("error" in item) throw new Error(item.error);
+
+      // memory completion context
       if (item.context) {
         await fn.setbufvar(
           denops,
@@ -110,21 +103,14 @@ async function promptCallback(
           item.context,
         );
       }
-    },
-  });
 
-  try {
-    // call generateCompletion
-    const result = await generateCompletion({ model, prompt, context }, {
-      init: { signal },
-    });
-    if (!result.body) {
-      return;
+      // put response to buffer
+      await p.put(denops, item.response);
     }
-    await result.body.pipeTo(writer);
   } catch (err) {
     getLogger("denops-ollama").error(err);
   } finally {
+    cancel();
     await fn.setbufvar(denops, bufnr, "&modified", 0);
   }
 }

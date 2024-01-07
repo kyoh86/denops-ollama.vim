@@ -1,5 +1,4 @@
 import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
-import * as mapping from "https://deno.land/x/denops_std@v5.2.0/mapping/mod.ts";
 import xdg from "https://deno.land/x/xdg@v10.6.0/src/mod.deno.ts";
 import { join } from "https://deno.land/std@0.211.0/path/mod.ts";
 import { ensureFile } from "https://deno.land/std@0.211.0/fs/mod.ts";
@@ -19,8 +18,7 @@ import {
   start_chat_with_context,
 } from "./dispatch/start_chat_with_context.ts";
 import { isOpener } from "./dispatch/types.ts";
-
-let abort = new AbortController();
+import { mapCancel } from "./util/cancellable.ts";
 
 export async function main(denops: Denops) {
   const cacheFile = join(xdg.cache(), "denops-ollama-vim", "log.txt");
@@ -47,29 +45,15 @@ export async function main(denops: Denops) {
     },
   });
 
-  mapping.map(
-    denops,
-    "<C-c>",
-    `ollama#internal#cancel_helper("${denops.name}")`,
-    {
-      expr: true,
-      mode: ["n"],
-    },
-  );
+  mapCancel(denops);
 
   denops.dispatcher = {
-    cancel() {
-      abort.abort();
-    },
-
     async start_chat(
       uModel: unknown,
       uOpener: unknown,
     ) {
-      abort = new AbortController();
       await start_chat(
         denops,
-        abort.signal,
         ensure(uModel, is.String),
         maybe(uOpener, isOpener),
       );
@@ -80,10 +64,8 @@ export async function main(denops: Denops) {
       uContext: unknown,
       uOpener: unknown,
     ) {
-      abort = new AbortController();
       await start_chat_with_context(
         denops,
-        abort.signal,
         ensure(uModel, is.String),
         ensure(uContext, isChatContext),
         maybe(uOpener, isOpener),
@@ -91,18 +73,14 @@ export async function main(denops: Denops) {
     },
 
     async list_models() {
-      abort = new AbortController();
       await list_models(
         denops,
-        abort.signal,
       );
     },
 
     async pull_model(uName: unknown, uInsecure: unknown) {
-      abort = new AbortController();
       await pull_model(
         denops,
-        abort.signal,
         ensure(
           uName,
           is.String,
@@ -115,10 +93,8 @@ export async function main(denops: Denops) {
     },
 
     async delete_model(uName: unknown) {
-      abort = new AbortController();
       await delete_model(
         denops,
-        abort.signal,
         ensure(
           uName,
           is.String,

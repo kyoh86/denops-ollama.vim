@@ -7,7 +7,6 @@ import { listLocalModels } from "../api.ts";
 
 export default async function list_models(
   denops: Denops,
-  _signal: AbortSignal,
 ) {
   const { body } = await listLocalModels();
   if ("error" in body) {
