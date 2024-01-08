@@ -6,7 +6,7 @@ import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
 
 export function mapCancel(denops: Denops) {
   // See ../../../autoload/ollama/internal.vim
-  map(denops, "<C-c>", `ollama#internal#cancel_helper()`, {
+  map(denops, "<C-c>", `ollama#internal#cancel()`, {
     expr: true,
     mode: ["n"],
   });
@@ -21,7 +21,7 @@ export async function canceller(denops: Denops) {
       "OllamaCancel",
       `call ollama#internal#notify_callback("${denops.name}", "${
         lambda.register(denops, () => {
-          abort.abort();
+          abort.abort("cancelled");
         })
       }")`,
       { once: true },

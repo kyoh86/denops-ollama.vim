@@ -38,6 +38,7 @@ export default async function start_chat(
     await option.swapfile.setBuffer(denops, bufnr, false);
     await fn.bufload(denops, bufnr);
     await fn.prompt_setprompt(denops, bufnr, `(${model})>> `);
+    await fn.prompt_setinterrupt(denops, bufnr, "ollama#internal#cancel");
     await denops.cmd(
       "call prompt_setcallback(bufnr, function('ollama#internal#notify_callback', [l:denops_name, l:lambda_id]))",
       {

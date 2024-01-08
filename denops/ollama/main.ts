@@ -29,6 +29,9 @@ export async function main(denops: Denops) {
       console: new handlers.ConsoleHandler("DEBUG"),
       cache: new handlers.RotatingFileHandler("DEBUG", {
         filename: cacheFile,
+        formatter: (record) => {
+          return `${record.datetime.toISOString()} ${record.levelName} ${record.msg}`;
+        },
         maxBytes: 1024 * 1024,
         maxBackupCount: 1,
       }),
@@ -48,6 +51,10 @@ export async function main(denops: Denops) {
   mapCancel(denops);
 
   denops.dispatcher = {
+    async open_log() {
+      await denops.cmd(`edit ${cacheFile}`);
+    },
+
     async start_chat(
       uModel: unknown,
       uOpener: unknown,

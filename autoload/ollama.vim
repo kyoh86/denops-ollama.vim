@@ -1,3 +1,8 @@
+" Open log file.
+function ollama#open_log()
+  call denops#notify("ollama", "open_log", [])
+endfunction
+
 " Start chat with Ollama.
 function ollama#start_chat(...)
   call denops#notify("ollama", "start_chat", a:000)
