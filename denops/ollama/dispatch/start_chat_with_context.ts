@@ -131,17 +131,8 @@ export async function start_chat_with_context(
   const bufname = `ollama://chat/${now}`;
   await batch.batch(denops, async () => {
     const bufnr = await fn.bufadd(denops, bufname);
-    await fn.setbufvar(
-      denops,
-      bufnr,
-      "ollama_generate_chat_completion_messages",
-      messages,
-    );
-    await option.filetype.setBuffer(
-      denops,
-      bufnr,
-      "ollama.chat",
-    );
+    await fn.setbufvar(denops, bufnr, "ollama_chat_context", messages);
+    await option.filetype.setBuffer(denops, bufnr, "ollama.chat");
     await option.buftype.setBuffer(denops, bufnr, "prompt");
     await option.buflisted.setBuffer(denops, bufnr, true);
     await option.swapfile.setBuffer(denops, bufnr, false);
@@ -183,11 +174,7 @@ async function promptCallback(
   getLogger("denops-ollama-verbose").debug(`prompt: ${prompt}`);
 
   const messages = maybe(
-    await fn.getbufvar(
-      denops,
-      bufnr,
-      "ollama_generate_chat_completion_messages",
-    ),
+    await fn.getbufvar(denops, bufnr, "ollama_chat_context"),
     is.ArrayOf(isGenerateChatCompletionMessage),
   ) || [];
   getLogger("denops-ollama-verbose").debug(`reserved messages: ${messages}`);
@@ -220,12 +207,7 @@ async function promptCallback(
       role: "assistant",
       content: contents.join(""),
     });
-    await fn.setbufvar(
-      denops,
-      bufnr,
-      "ollama_generate_chat_completion_messages",
-      messages,
-    );
+    await fn.setbufvar(denops, bufnr, "ollama_chat_context", messages);
   } catch (err) {
     getLogger("denops-ollama").error(err);
   } finally {

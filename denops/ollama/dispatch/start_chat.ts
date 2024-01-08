@@ -71,11 +71,7 @@ async function promptCallback(
   getLogger("denops-ollama-verbose").debug(`prompt: ${prompt}`);
 
   const context = maybe(
-    await fn.getbufvar(
-      denops,
-      bufnr,
-      "ollama_generate_completion_context",
-    ),
+    await fn.getbufvar(denops, bufnr, "ollama_chat_context"),
     is.ArrayOf(is.Number),
   );
   getLogger("denops-ollama-verbose").debug(`reserved context: ${context}`);
@@ -96,12 +92,7 @@ async function promptCallback(
 
       // memory completion context
       if (item.context) {
-        await fn.setbufvar(
-          denops,
-          bufnr,
-          "ollama_generate_completion_context",
-          item.context,
-        );
+        await fn.setbufvar(denops, bufnr, "ollama_chat_context", item.context);
       }
 
       // put response to buffer
