@@ -4,7 +4,7 @@ import { pullModel } from "../api.ts";
 import { getLogger } from "https://deno.land/std@0.211.0/log/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
 import { canceller } from "../util/cancellable.ts";
-import { abortableAsyncIterable } from "https://deno.land/std@0.203.0/async/mod.ts";
+import { abortableAsyncIterable } from "https://deno.land/std@0.211.0/async/mod.ts";
 
 export default async function pull_model(
   denops: Denops,

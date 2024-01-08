@@ -5,7 +5,7 @@ import {
   maybe,
   ObjectOf as O,
   PredicateType,
-} from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
 import {
   generateChatCompletion,
   GenerateChatCompletionMessage,
@@ -20,7 +20,7 @@ import * as datetime from "https://deno.land/std@0.211.0/datetime/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
 import * as lambda from "https://deno.land/x/denops_std@v5.2.0/lambda/mod.ts";
 import PromptBufferEcho from "../util/prompt_buffer_echo.ts";
-import { abortableAsyncIterable } from "https://deno.land/std@0.203.0/async/mod.ts";
+import { abortableAsyncIterable } from "https://deno.land/std@0.211.0/async/mod.ts";
 import { canceller } from "../util/cancellable.ts";
 
 const isBufferInfo = is.OneOf([

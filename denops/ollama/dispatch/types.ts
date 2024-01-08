@@ -1,7 +1,7 @@
 import {
   is,
   PredicateType,
-} from "https://deno.land/x/unknownutil@v3.11.0/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
 
 export const isOpener = is.OneOf([
   is.LiteralOf("split"),
