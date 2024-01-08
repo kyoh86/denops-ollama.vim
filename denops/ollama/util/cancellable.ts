@@ -4,9 +4,9 @@ import { generateUniqueString } from "https://deno.land/x/denops_std@v5.2.0/util
 import * as autocmd from "https://deno.land/x/denops_std@v5.2.0/autocmd/mod.ts";
 import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
 
-export function mapCancel(denops: Denops) {
+export async function mapCancel(denops: Denops) {
   // See ../../../autoload/ollama/internal.vim
-  map(denops, "<C-c>", `ollama#internal#cancel()`, {
+  await map(denops, "<C-c>", `ollama#internal#cancel()`, {
     expr: true,
     mode: ["n"],
   });

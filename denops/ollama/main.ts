@@ -48,7 +48,7 @@ export async function main(denops: Denops) {
     },
   });
 
-  mapCancel(denops);
+  await mapCancel(denops);
 
   denops.dispatcher = {
     async open_log() {
