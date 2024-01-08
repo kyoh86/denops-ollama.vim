@@ -151,7 +151,7 @@ export async function start_chat_with_context(
     ]);
     await fn.prompt_setprompt(denops, bufnr, `(${model})>> `);
     await denops.cmd(
-      "call prompt_setcallback(bufnr, function('ollama#internal#callback_helper', [denops_name, lambda_id]))",
+      "call prompt_setcallback(bufnr, function('ollama#internal#notify_callback', [l:denops_name, l:lambda_id]))",
       {
         bufnr,
         denops_name: denops.name,
@@ -176,6 +176,12 @@ async function promptCallback(
   model: string,
   prompt: string,
 ) {
+  if (prompt === "exit") {
+    await helper.execute(denops, `bdelete! ${bufnr}`);
+    return;
+  }
+  getLogger("denops-ollama-verbose").debug(`prompt: ${prompt}`);
+
   const messages = maybe(
     await fn.getbufvar(
       denops,
@@ -185,15 +191,9 @@ async function promptCallback(
     is.ArrayOf(isGenerateChatCompletionMessage),
   ) || [];
   getLogger("denops-ollama-verbose").debug(`reserved messages: ${messages}`);
-  getLogger("denops-ollama-verbose").debug(`prompt: ${prompt}`);
-
-  if (prompt === "exit") {
-    await helper.execute(denops, `bdelete! ${bufnr}`);
-    return;
-  }
 
   const contents: string[] = [];
-  const { signal, cancel } = canceller(denops);
+  const { signal, cancel } = await canceller(denops);
   try {
     const result = await generateChatCompletion({ model, messages }, {
       init: { signal },

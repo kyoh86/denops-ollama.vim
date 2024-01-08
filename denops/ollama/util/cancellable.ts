@@ -12,24 +12,25 @@ export function mapCancel(denops: Denops) {
   });
 }
 
-export function canceller(denops: Denops) {
+export async function canceller(denops: Denops) {
   const abort = new AbortController();
   const group = generateUniqueString();
-  const callback = lambda.register(denops, () => {
-    abort.abort();
-  });
-  autocmd.group(denops, group, (helper) => {
+  await autocmd.group(denops, group, (helper) => {
     helper.define(
       "User",
       "OllamaCancel",
-      `call ollama#internal#callback_helper("${denops.name}", "${callback}")`,
+      `call ollama#internal#notify_callback("${denops.name}", "${
+        lambda.register(denops, () => {
+          abort.abort();
+        })
+      }")`,
       { once: true },
     );
   });
   return {
     signal: abort.signal,
-    cancel: () => {
-      autocmd.remove(denops, "User", "OllamaCancel", { group });
+    cancel: async () => {
+      await autocmd.remove(denops, "User", "OllamaCancel", { group });
       abort.abort();
     },
   };
