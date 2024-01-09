@@ -23,10 +23,10 @@ Deno.test("generateCompletion", async (t) => {
     });
     try {
       await t.step("should call fetch with the correct arguments", async () => {
-        const result = await generateCompletion({
-          model: "model1",
-          prompt: "How to run?",
-        });
+        const result = await generateCompletion(
+          "model1",
+          "How to run?",
+        );
         assertEquals(result.response.status, 200);
         assertSpyCalls(fetchStub, 1);
         assertSpyCallArgs(fetchStub, 0, [
@@ -76,14 +76,13 @@ Deno.test("generateCompletion", async (t) => {
     try {
       await t.step("should call fetch with the correct arguments", async () => {
         const result = await generateCompletion(
+          "model1",
+          "run",
           {
-            model: "model1",
-            prompt: "run",
             context: [1, 2, 3],
             format: "json",
             images: ["foo-image-1", "foo-image-2"],
             system: "foo-system",
-            stream: true,
             raw: true,
             template: "How to %s?",
           },
@@ -97,7 +96,7 @@ Deno.test("generateCompletion", async (t) => {
           new URL("https://example.com:33562/api/generate"),
           {
             body:
-              '{"model":"model1","prompt":"run","context":[1,2,3],"format":"json","images":["foo-image-1","foo-image-2"],"system":"foo-system","stream":true,"raw":true,"template":"How to %s?"}',
+              '{"model":"model1","prompt":"run","context":[1,2,3],"format":"json","images":["foo-image-1","foo-image-2"],"system":"foo-system","raw":true,"template":"How to %s?"}',
             headers: { "Content-Type": "application/json" },
             method: "POST",
           },

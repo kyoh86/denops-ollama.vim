@@ -96,7 +96,7 @@ async function promptCallback(
 
   const { signal, cancel } = await canceller(denops);
   try {
-    const result = await generateCompletion({ model, prompt, context }, {
+    const result = await generateCompletion(model, prompt, { context }, {
       signal,
     });
     if (!result.body) {
