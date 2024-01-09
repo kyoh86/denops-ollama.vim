@@ -13,7 +13,7 @@ export default async function pull_model(
 ) {
   const { signal, cancel } = await canceller(denops);
   try {
-    const result = await pullModel({ name, insecure }, { init: { signal } });
+    const result = await pullModel({ name, insecure }, { signal });
     if (!result.body) {
       return;
     }

@@ -46,7 +46,6 @@ Deno.test("copyModel", async (t) => {
           },
           {
             baseUrl: "https://example.com:33562",
-            init: { referrer: "https://example.com:33562/foo" },
           },
         );
         assertEquals(result.response.status, 200);
@@ -54,7 +53,6 @@ Deno.test("copyModel", async (t) => {
         assertSpyCallArgs(fetchStub, 0, [
           new URL("https://example.com:33562/api/copy"),
           {
-            referrer: "https://example.com:33562/foo",
             body: '{"source":"model1","destination":"model2"}',
             headers: { "Content-Type": "application/json" },
             method: "POST",

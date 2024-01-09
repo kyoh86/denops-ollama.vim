@@ -19,7 +19,7 @@ export function doPost<T>(
   return fetch(
     new URL(path, baseUrl),
     {
-      ...options?.init,
+      ...(options?.signal ? { signal: options?.signal } : {}),
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(param),
@@ -35,7 +35,7 @@ export function doGet(
   return fetch(
     new URL(path, baseUrl),
     {
-      ...options?.init,
+      ...(options?.signal ? { signal: options?.signal } : {}),
       method: "GET",
     },
   );
@@ -50,7 +50,7 @@ export function doDelete<T>(
   return fetch(
     new URL(path, baseUrl),
     {
-      ...options?.init,
+      ...(options?.signal ? { signal: options?.signal } : {}),
       method: "DELETE",
       body: JSON.stringify(param),
     },

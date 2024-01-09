@@ -205,7 +205,7 @@ async function promptCallback(
   const { signal, cancel } = await canceller(denops);
   try {
     const result = await generateChatCompletion({ model, messages }, {
-      init: { signal },
+      signal,
     });
     if (!result.body) {
       return;

@@ -89,7 +89,6 @@ Deno.test("generateCompletion", async (t) => {
           },
           {
             baseUrl: "https://example.com:33562",
-            init: { referrer: "https://example.com:33562/foo" },
           },
         );
         assertEquals(result.response.status, 200);
@@ -97,7 +96,6 @@ Deno.test("generateCompletion", async (t) => {
         assertSpyCallArgs(fetchStub, 0, [
           new URL("https://example.com:33562/api/generate"),
           {
-            referrer: "https://example.com:33562/foo",
             body:
               '{"model":"model1","prompt":"run","context":[1,2,3],"format":"json","images":["foo-image-1","foo-image-2"],"system":"foo-system","stream":true,"raw":true,"template":"How to %s?"}',
             headers: { "Content-Type": "application/json" },

@@ -8,7 +8,7 @@ export const isFormat = is.OptionalOf(is.LiteralOf("json"));
 
 export interface RequestOptions {
   baseUrl?: string | URL;
-  init?: RequestInit;
+  signal?: AbortSignal;
 }
 
 export interface Result<T> {
