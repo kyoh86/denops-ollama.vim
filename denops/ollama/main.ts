@@ -7,7 +7,10 @@ import {
   is,
   maybe,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
-import { handlers, setup } from "https://deno.land/std@0.211.0/log/mod.ts";
+import {
+  handlers as logHandlers,
+  setup as setupLog,
+} from "https://deno.land/std@0.211.0/log/mod.ts";
 
 import start_chat from "./dispatch/start_chat.ts";
 import list_models from "./dispatch/list_models.ts";
@@ -18,16 +21,17 @@ import {
   start_chat_with_context,
 } from "./dispatch/start_chat_with_context.ts";
 import { isOpener } from "./dispatch/types.ts";
+import { setup as setupHighlight } from "../util/buffer_highlight.ts";
 import { mapCancel } from "./util/cancellable.ts";
 
 export async function main(denops: Denops) {
   const cacheFile = join(xdg.cache(), "denops-ollama-vim", "log.txt");
   await ensureFile(cacheFile);
 
-  setup({
+  setupLog({
     handlers: {
-      console: new handlers.ConsoleHandler("DEBUG"),
-      cache: new handlers.RotatingFileHandler("DEBUG", {
+      console: new logHandlers.ConsoleHandler("DEBUG"),
+      cache: new logHandlers.RotatingFileHandler("DEBUG", {
         filename: cacheFile,
         formatter: (record) => {
           return `${record.datetime.toISOString()} ${record.levelName} ${record.msg}`;
@@ -49,6 +53,7 @@ export async function main(denops: Denops) {
   });
 
   await mapCancel(denops);
+  await setupHighlight(denops);
 
   denops.dispatcher = {
     async open_log() {

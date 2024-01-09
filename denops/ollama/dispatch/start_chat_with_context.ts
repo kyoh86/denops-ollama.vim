@@ -21,7 +21,10 @@ import {
   isGenerateChatCompletionMessage,
 } from "../api.ts";
 import PromptBufferEcho from "../util/prompt_buffer_echo.ts";
-import BufferHighlight from "../util/buffer_highlight.ts";
+import {
+  type BufferHighlight,
+  createBufferHighlight,
+} from "../util/buffer_highlight.ts";
 import { canceller } from "../util/cancellable.ts";
 
 const isBufferInfo = is.OneOf([
@@ -139,8 +142,7 @@ export async function start_chat_with_context(
     await option.swapfile.setBuffer(denops, bufnr, false);
     await fn.bufload(denops, bufnr);
 
-    const highlighter = new BufferHighlight(bufnr);
-    await highlighter.setup(denops);
+    const highlighter = await createBufferHighlight(denops, bufnr);
 
     await fn.prompt_setprompt(denops, bufnr, `(${model})>> `);
     await fn.prompt_setinterrupt(denops, bufnr, "ollama#internal#cancel");
@@ -162,7 +164,11 @@ export async function start_chat_with_context(
     await helper.execute(denops, "setlocal wrap");
     await helper.execute(denops, "startinsert");
 
-    await highlighter.markPrefix(denops, 2, `(${model})>> `);
+    await highlighter.markPrefix(
+      denops,
+      2,
+      await fn.strlen(denops, `(${model})>> `),
+    );
   });
 }
 
@@ -180,7 +186,11 @@ async function promptCallback(
   getLogger("denops-ollama-verbose").debug(`prompt: ${prompt}`);
 
   const info = await fn.getbufinfo(denops, bufnr);
-  highlighter.markPrefix(denops, info[0].linecount, `(${model})>> `);
+  highlighter.markPrefix(
+    denops,
+    info[0].linecount,
+    await fn.strlen(denops, `(${model})>> `),
+  );
 
   const messages = maybe(
     await fn.getbufvar(denops, bufnr, "ollama_chat_context"),
