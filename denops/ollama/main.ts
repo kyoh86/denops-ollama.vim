@@ -21,7 +21,7 @@ import {
   start_chat_with_context,
 } from "./dispatch/start_chat_with_context.ts";
 import { isOpener } from "./dispatch/types.ts";
-import { setup as setupHighlight } from "../util/buffer_highlight.ts";
+import { setup as setupHighlight } from "./util/buffer_highlight.ts";
 import { mapCancel } from "./util/cancellable.ts";
 
 export async function main(denops: Denops) {
