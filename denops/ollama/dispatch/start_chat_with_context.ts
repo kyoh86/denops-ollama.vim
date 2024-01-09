@@ -22,6 +22,7 @@ import * as lambda from "https://deno.land/x/denops_std@v5.2.0/lambda/mod.ts";
 import PromptBufferEcho from "../util/prompt_buffer_echo.ts";
 import { abortableAsyncIterable } from "https://deno.land/std@0.211.0/async/mod.ts";
 import { canceller } from "../util/cancellable.ts";
+import BufferHighlight from "../util/buffer_highlight.ts";
 
 const isBufferInfo = is.OneOf([
   is.Number,
@@ -69,12 +70,12 @@ async function getBuffer(denops: Denops, buf: ChatContextBufferInfo) {
     return {
       name,
       bufnr: buf,
-      content: await fn.getbufline(denops, buf, 1, "$"),
+      content: (await fn.getbufline(denops, buf, 1, "$")).join("\n"),
     };
   }
   return {
     ...buf,
-    content: await fn.getbufline(denops, buf.bufnr, 1, "$"),
+    content: (await fn.getbufline(denops, buf.bufnr, 1, "$")).join("\n"),
   };
 }
 
@@ -91,7 +92,7 @@ async function contextToMessages(
     if (selection && selection !== "") {
       messages.push({
         role: "user",
-        content: "Now I'm selecting text:\n" + selection,
+        content: "Here is selecting text:\n" + selection,
       });
     }
   }
@@ -99,7 +100,8 @@ async function contextToMessages(
     const bufferContent = await fn.getline(denops, 1, "$");
     messages.push({
       role: "user",
-      content: "Now I'm in the buffer with the contents:\n" + bufferContent,
+      content: "Here is the contents in the current buffer:\n" +
+        bufferContent.join("\n"),
     });
   }
   for (const buf of context.buffers ?? []) {
@@ -107,7 +109,7 @@ async function contextToMessages(
     messages.push({
       role: "user",
       content:
-        `Now the file ${buffer.name} being opened in the buffer ${buffer.bufnr} with the contents:\n${buffer.content}`,
+        `Here is the file ${buffer.name} being opened in the buffer ${buffer.bufnr} with the contents:\n${buffer.content}`,
     });
   }
   // UNDONE: files
@@ -137,6 +139,10 @@ export async function start_chat_with_context(
     await option.buflisted.setBuffer(denops, bufnr, true);
     await option.swapfile.setBuffer(denops, bufnr, false);
     await fn.bufload(denops, bufnr);
+
+    const highlighter = new BufferHighlight(bufnr);
+    await highlighter.setup(denops);
+
     await fn.setbufline(denops, bufnr, 1, [
       "Enter the prompt:",
     ]);
@@ -151,7 +157,7 @@ export async function start_chat_with_context(
           denops,
           async (uPrompt) => {
             const prompt = ensure(uPrompt, is.String);
-            await promptCallback(denops, bufnr, model, prompt);
+            await promptCallback(denops, highlighter, bufnr, model, prompt);
           },
         ),
       },
@@ -159,11 +165,14 @@ export async function start_chat_with_context(
     await helper.execute(denops, `${opener ?? "tabnew"} ${bufname}`);
     await helper.execute(denops, "setlocal wrap");
     await helper.execute(denops, "startinsert");
+
+    await highlighter.markPrefix(denops, 2, `(${model})>> `);
   });
 }
 
 async function promptCallback(
   denops: Denops,
+  highlighter: BufferHighlight,
   bufnr: number,
   model: string,
   prompt: string,
@@ -174,11 +183,18 @@ async function promptCallback(
   }
   getLogger("denops-ollama-verbose").debug(`prompt: ${prompt}`);
 
+  const info = await fn.getbufinfo(denops, bufnr);
+  highlighter.markPrefix(denops, info[0].linecount - 1, `(${model})>> `);
+  highlighter.markPrefix(denops, info[0].linecount, `(${model})>> `);
+
   const messages = maybe(
     await fn.getbufvar(denops, bufnr, "ollama_chat_context"),
     is.ArrayOf(isGenerateChatCompletionMessage),
   ) || [];
   getLogger("denops-ollama-verbose").debug(`reserved messages: ${messages}`);
+
+  messages.push({ role: "user", content: prompt });
+  await fn.setbufvar(denops, bufnr, "ollama_chat_context", messages);
 
   const contents: string[] = [];
   const { signal, cancel } = await canceller(denops);
