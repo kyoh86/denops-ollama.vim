@@ -1,28 +1,28 @@
+import { getLogger } from "https://deno.land/std@0.211.0/log/mod.ts";
+import * as datetime from "https://deno.land/std@0.211.0/datetime/mod.ts";
+import { abortableAsyncIterable } from "https://deno.land/std@0.211.0/async/mod.ts";
 import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
+import * as fn from "https://deno.land/x/denops_std@v5.2.0/function/mod.ts";
+import * as batch from "https://deno.land/x/denops_std@v5.2.0/batch/batch.ts";
+import * as option from "https://deno.land/x/denops_std@v5.2.0/option/mod.ts";
+import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
+import * as lambda from "https://deno.land/x/denops_std@v5.2.0/lambda/mod.ts";
 import {
   ensure,
   is,
   maybe,
-  ObjectOf as O,
   PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
+
+import type { Opener } from "./types.ts";
 import {
   generateChatCompletion,
-  GenerateChatCompletionMessage,
+  type GenerateChatCompletionMessage,
   isGenerateChatCompletionMessage,
 } from "../api.ts";
-import { Opener } from "./types.ts";
-import { getLogger } from "https://deno.land/std@0.211.0/log/mod.ts";
-import * as fn from "https://deno.land/x/denops_std@v5.2.0/function/mod.ts";
-import * as batch from "https://deno.land/x/denops_std@v5.2.0/batch/batch.ts";
-import * as option from "https://deno.land/x/denops_std@v5.2.0/option/mod.ts";
-import * as datetime from "https://deno.land/std@0.211.0/datetime/mod.ts";
-import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
-import * as lambda from "https://deno.land/x/denops_std@v5.2.0/lambda/mod.ts";
 import PromptBufferEcho from "../util/prompt_buffer_echo.ts";
-import { abortableAsyncIterable } from "https://deno.land/std@0.211.0/async/mod.ts";
-import { canceller } from "../util/cancellable.ts";
 import BufferHighlight from "../util/buffer_highlight.ts";
+import { canceller } from "../util/cancellable.ts";
 
 const isBufferInfo = is.OneOf([
   is.Number,
@@ -33,17 +33,15 @@ const isBufferInfo = is.OneOf([
 ]);
 type ChatContextBufferInfo = PredicateType<typeof isBufferInfo>;
 
-const chatContextFields = {
+export const isChatContext = is.ObjectOf({
   headMessage: is.OptionalOf(is.String),
   selection: is.OptionalOf(is.Boolean),
   currentBuffer: is.OptionalOf(is.Boolean),
   buffers: is.OptionalOf(is.ArrayOf(isBufferInfo)),
   // UNDONE: files: is.OptionalOf(is.ArrayOf(is.String)),
   lastMessasge: is.OptionalOf(is.String),
-};
-
-export type ChatContext = O<typeof chatContextFields>;
-export const isChatContext = is.ObjectOf(chatContextFields);
+});
+export type ChatContext = PredicateType<typeof isChatContext>;
 
 async function getVisualSelection(denops: Denops) {
   // Why is this not a built-in Vim script function?!
@@ -128,9 +126,10 @@ export async function start_chat_with_context(
   context: ChatContext,
   opener?: Opener,
 ) {
-  const messages = await contextToMessages(denops, context);
   const now = datetime.format(new Date(), "yyyy-MM-ddTHH-mm-ss.SSS");
   const bufname = `ollama://chat/${now}`;
+  const messages = await contextToMessages(denops, context);
+
   await batch.batch(denops, async () => {
     const bufnr = await fn.bufadd(denops, bufname);
     await fn.setbufvar(denops, bufnr, "ollama_chat_context", messages);
@@ -143,9 +142,6 @@ export async function start_chat_with_context(
     const highlighter = new BufferHighlight(bufnr);
     await highlighter.setup(denops);
 
-    await fn.setbufline(denops, bufnr, 1, [
-      "Enter the prompt:",
-    ]);
     await fn.prompt_setprompt(denops, bufnr, `(${model})>> `);
     await fn.prompt_setinterrupt(denops, bufnr, "ollama#internal#cancel");
     await denops.cmd(
@@ -184,7 +180,6 @@ async function promptCallback(
   getLogger("denops-ollama-verbose").debug(`prompt: ${prompt}`);
 
   const info = await fn.getbufinfo(denops, bufnr);
-  highlighter.markPrefix(denops, info[0].linecount - 1, `(${model})>> `);
   highlighter.markPrefix(denops, info[0].linecount, `(${model})>> `);
 
   const messages = maybe(
