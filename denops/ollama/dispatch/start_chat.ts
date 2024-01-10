@@ -22,7 +22,7 @@ import {
 } from "../util/highlight_prefix.ts";
 import { canceller } from "../util/cancellable.ts";
 
-export default async function start_chat(
+export default async function startChat(
   denops: Denops,
   model: string,
   opener?: Opener,

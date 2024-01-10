@@ -12,13 +12,13 @@ import {
   setup as setupLog,
 } from "https://deno.land/std@0.211.0/log/mod.ts";
 
-import start_chat from "./dispatch/start_chat.ts";
-import list_models from "./dispatch/list_models.ts";
-import pull_model from "./dispatch/pull_model.ts";
-import delete_model from "./dispatch/delete_model.ts";
+import startChat from "./dispatch/start_chat.ts";
+import listModels from "./dispatch/list_models.ts";
+import pullModel from "./dispatch/pull_model.ts";
+import deleteModel from "./dispatch/delete_model.ts";
 import {
   isChatContext,
-  start_chat_with_context,
+  startChatWithContext,
 } from "./dispatch/start_chat_with_context.ts";
 import { isOpener } from "./dispatch/types.ts";
 import { setup as setupHighlight } from "./util/highlight_prefix.ts";
@@ -56,27 +56,27 @@ export async function main(denops: Denops) {
   await setupHighlight(denops);
 
   denops.dispatcher = {
-    async open_log() {
+    async openLog() {
       await denops.cmd(`edit ${cacheFile}`);
     },
 
-    async start_chat(
+    async startChat(
       uModel: unknown,
       uOpener: unknown,
     ) {
-      await start_chat(
+      await startChat(
         denops,
         ensure(uModel, is.String),
         maybe(uOpener, isOpener),
       );
     },
 
-    async start_chat_with_context(
+    async startChatWithContext(
       uModel: unknown,
       uContext: unknown,
       uOpener: unknown,
     ) {
-      await start_chat_with_context(
+      await startChatWithContext(
         denops,
         ensure(uModel, is.String),
         ensure(uContext, isChatContext),
@@ -84,14 +84,14 @@ export async function main(denops: Denops) {
       );
     },
 
-    async list_models() {
-      await list_models(
+    async listModels() {
+      await listModels(
         denops,
       );
     },
 
-    async pull_model(uName: unknown, uInsecure: unknown) {
-      await pull_model(
+    async pullModel(uName: unknown, uInsecure: unknown) {
+      await pullModel(
         denops,
         ensure(
           uName,
@@ -104,8 +104,8 @@ export async function main(denops: Denops) {
       );
     },
 
-    async delete_model(uName: unknown) {
-      await delete_model(
+    async deleteModel(uName: unknown) {
+      await deleteModel(
         denops,
         ensure(
           uName,

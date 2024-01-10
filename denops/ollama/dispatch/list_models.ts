@@ -5,7 +5,7 @@ import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
 import { Table } from "https://deno.land/x/cliffy@v1.0.0-rc.3/table/mod.ts";
 import { listLocalModels } from "../api.ts";
 
-export default async function list_models(
+export default async function listModels(
   denops: Denops,
 ) {
   const { body } = await listLocalModels();

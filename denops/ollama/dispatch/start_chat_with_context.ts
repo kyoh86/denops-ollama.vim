@@ -123,7 +123,7 @@ async function contextToMessages(
   return messages;
 }
 
-export async function start_chat_with_context(
+export async function startChatWithContext(
   denops: Denops,
   model: string,
   context: ChatContext,
