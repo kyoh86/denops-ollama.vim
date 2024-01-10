@@ -20,6 +20,7 @@ export { isPullModelParams, type PullModelParams };
 export const isPullModelOpts = is.AllOf([
   is.ObjectOf({
     insecure: is.OptionalOf(is.Boolean),
+    timeout: is.OptionalOf(is.Number),
   }),
   isReqOpts,
 ]);
@@ -32,7 +33,7 @@ export default async function pullModel(
   opts?: PullModelOpts,
   params?: PullModelParams,
 ) {
-  const { signal, cancel } = await canceller(denops);
+  const { signal, cancel } = await canceller(denops, opts?.timeout);
   try {
     const result = await pullModelAPI(
       name,

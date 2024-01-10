@@ -12,8 +12,11 @@ export async function mapCancel(denops: Denops) {
   });
 }
 
-export async function canceller(denops: Denops) {
+export async function canceller(denops: Denops, timeout?: number) {
   const abort = new AbortController();
+  if (timeout) {
+    setTimeout(() => abort.abort(), timeout);
+  }
   const group = generateUniqueString();
   await autocmd.group(denops, group, (helper) => {
     helper.define(

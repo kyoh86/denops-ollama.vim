@@ -64,6 +64,7 @@ ollama#start_chat({model} [, {options} [, {params}]])
 			split, new	open a new split
 			vsplit, vnew	open a new vertical split
 			edit		open in the current window
+		timeout	Time limit.
 		baseUrl	The base of the URL to request.
 			(DEFAULT): "http://localhost:11434"
 
@@ -96,6 +97,7 @@ ollama#start_chat_with_context({model}, {context} [, {options} [, {params}]])
 			split, new	open a new split
 			vsplit, vnew	open a new vertical split
 			edit		open in the current window
+		timeout	Time limit.
 		baseUrl	The base of the URL to request.
 			(DEFAULT): "http://localhost:11434"
 
@@ -133,6 +135,7 @@ ollama#pull_model({name} [, {options} [, {params}]])
 	You can specify {options} with fields in below.
 		insecure	If it is true, allow insecure connections to
 				the library.
+		timeout		Time limit.
 		baseUrl	The base of the URL to request.
 			(DEFAULT): "http://localhost:11434"
 

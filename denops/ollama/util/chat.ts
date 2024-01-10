@@ -42,7 +42,11 @@ export abstract class ChatBase<TContext> {
     prompt: string,
   ): Promise<void>;
 
-  constructor(protected readonly model: string, private context?: TContext) {}
+  constructor(
+    protected readonly model: string,
+    private timeout?: number,
+    private context?: TContext,
+  ) {}
 
   protected async setContext(denops: Denops, bufnr: number, context: TContext) {
     if (context === undefined) return;
@@ -168,7 +172,7 @@ export abstract class ChatBase<TContext> {
       );
       getLogger("denops-ollama-verbose").debug(`reserved context: ${context}`);
 
-      const { signal, cancel } = await canceller(denops);
+      const { signal, cancel } = await canceller(denops, this.timeout);
       try {
         await this.process(denops, bufnr, context, signal, prompt);
       } catch (err) {

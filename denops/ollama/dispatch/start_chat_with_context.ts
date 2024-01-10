@@ -16,7 +16,7 @@ import {
   isGenerateChatCompletionParams,
 } from "../api.ts";
 import { ChatBase, isOpener, type Opener } from "../util/chat.ts";
-import { isReqOpts, ReqOpts } from "./types.ts";
+import { isReqOpts } from "./types.ts";
 
 export {
   type GenerateChatCompletionParams,
@@ -125,10 +125,10 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
   constructor(
     model: string,
     messages: GenerateChatCompletionMessage[],
-    private opts?: ReqOpts,
+    private opts?: StartChatWithContextOpts,
     private params?: GenerateChatCompletionParams,
   ) {
-    super(model, messages);
+    super(model, opts?.timeout, messages);
   }
 
   parseContext(context: unknown): GenerateChatCompletionMessage[] | undefined {
@@ -177,6 +177,7 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
 export const isStartChatWithContextOpts = is.AllOf([
   is.ObjectOf({
     opener: is.OptionalOf(isOpener),
+    timeout: is.OptionalOf(is.Number),
   }),
   isReqOpts,
 ]);

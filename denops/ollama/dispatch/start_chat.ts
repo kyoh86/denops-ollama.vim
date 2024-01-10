@@ -12,7 +12,7 @@ import {
   type GenerateCompletionParams,
   isGenerateCompletionParams,
 } from "../api.ts";
-import { isReqOpts, ReqOpts } from "./types.ts";
+import { isReqOpts } from "./types.ts";
 export {
   type GenerateCompletionParams,
   isGenerateCompletionParams,
@@ -23,7 +23,7 @@ export {
 class Chat extends ChatBase<number[]> {
   constructor(
     model: string,
-    private opts?: ReqOpts,
+    private opts?: StartChatOpts,
     private params?: GenerateCompletionParams,
   ) {
     super(model);
@@ -68,6 +68,7 @@ class Chat extends ChatBase<number[]> {
 export const isStartChatOpts = is.AllOf([
   is.ObjectOf({
     opener: is.OptionalOf(isOpener),
+    timeout: is.OptionalOf(is.Number),
   }),
   isReqOpts,
 ]);
