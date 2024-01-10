@@ -153,11 +153,11 @@ export abstract class ChatBase<TContext> {
     while (true) {
       const prompt = await Promise.race([
         this.#queue.pop(),
-        this.#finish.notified(),
+        (async () => {
+          await this.#finish.notified();
+          return "exit";
+        })(),
       ]);
-      if (typeof prompt !== "string") {
-        break;
-      }
       if (prompt === "exit") {
         await helper.execute(denops, `silent! bdelete! ${bufnr}`);
         break;
