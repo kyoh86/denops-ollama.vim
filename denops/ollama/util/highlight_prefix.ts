@@ -7,41 +7,45 @@ export async function setup(denops: Denops) {
 export type HighlightPrefix = (
   denops: Denops,
   lnum: number,
-  bytes: number,
 ) => Promise<void>;
 
 export async function prepareHighlightPrefix(
   denops: Denops,
   bufnr: number,
+  size: number,
 ): Promise<HighlightPrefix> {
   if (denops.meta.host === "nvim") {
-    return highlightPrefixForNeovim(bufnr);
+    return highlightPrefixForNeovim(bufnr, size);
   }
   if (denops.meta.host == "vim") {
-    return await highlightPrefixForVim(denops, bufnr);
+    return await highlightPrefixForVim(denops, bufnr, size);
   }
   throw new Error(`Unsupported host: ${denops.meta.host}`);
 }
 
-async function highlightPrefixForVim(denops: Denops, bufnr: number) {
+async function highlightPrefixForVim(
+  denops: Denops,
+  bufnr: number,
+  size: number,
+) {
   await denops.call("prop_type_add", "ollama-prompt", {
     bufnr,
     highlight: "OllamaPrompt",
   });
 
-  return async (denops: Denops, lnum: number, bytes: number) => {
+  return async (denops: Denops, lnum: number) => {
     await denops.call("prop_add", "ollama-prompt", {
       bufnr,
       highlight: "OllamaPrompt",
       col: 1,
       lnum: lnum,
-      length: bytes,
+      length: size,
     });
   };
 }
 
-function highlightPrefixForNeovim(bufnr: number) {
-  return async (denops: Denops, lnum: number, bytes: number) => {
+function highlightPrefixForNeovim(bufnr: number, size: number) {
+  return async (denops: Denops, lnum: number) => {
     await denops.call(
       "nvim_buf_add_highlight",
       bufnr,
@@ -49,7 +53,7 @@ function highlightPrefixForNeovim(bufnr: number) {
       "OllamaPrompt",
       lnum - 1,
       0,
-      bytes,
+      size,
     );
   };
 }

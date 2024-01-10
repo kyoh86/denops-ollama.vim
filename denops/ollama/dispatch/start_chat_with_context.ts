@@ -1,31 +1,19 @@
-import { getLogger } from "https://deno.land/std@0.211.0/log/mod.ts";
-import * as datetime from "https://deno.land/std@0.211.0/datetime/mod.ts";
 import { abortableAsyncIterable } from "https://deno.land/std@0.211.0/async/mod.ts";
 import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
 import * as fn from "https://deno.land/x/denops_std@v5.2.0/function/mod.ts";
-import * as batch from "https://deno.land/x/denops_std@v5.2.0/batch/batch.ts";
 import * as option from "https://deno.land/x/denops_std@v5.2.0/option/mod.ts";
-import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
-import * as lambda from "https://deno.land/x/denops_std@v5.2.0/lambda/mod.ts";
 import {
-  ensure,
   is,
   maybe,
   PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
 
-import type { Opener } from "../types.ts";
 import {
   generateChatCompletion,
   type GenerateChatCompletionMessage,
   isGenerateChatCompletionMessage,
 } from "../api.ts";
-import { bufEcho } from "../util/prompt_buffer_echo.ts";
-import {
-  type HighlightPrefix,
-  prepareHighlightPrefix,
-} from "../util/highlight_prefix.ts";
-import { canceller } from "../util/cancellable.ts";
+import { ChatBase, Opener } from "../util/chat.ts";
 
 const isBufferInfo = is.OneOf([
   is.Number,
@@ -123,94 +111,27 @@ async function contextToMessages(
   return messages;
 }
 
-export async function startChatWithContext(
-  denops: Denops,
-  model: string,
-  context: ChatContext,
-  opener?: Opener,
-) {
-  const now = datetime.format(new Date(), "yyyy-MM-ddTHH-mm-ss.SSS");
-  const bufname = `ollama://chat/${now}`;
-  const messages = await contextToMessages(denops, context);
-
-  await batch.batch(denops, async () => {
-    const bufnr = await fn.bufadd(denops, bufname);
-    await fn.setbufvar(denops, bufnr, "ollama_chat_context", messages);
-    await option.filetype.setBuffer(denops, bufnr, "ollama.chat");
-    await option.buftype.setBuffer(denops, bufnr, "prompt");
-    await option.buflisted.setBuffer(denops, bufnr, true);
-    await option.swapfile.setBuffer(denops, bufnr, false);
-    await fn.bufload(denops, bufnr);
-
-    const highlight = await prepareHighlightPrefix(denops, bufnr);
-
-    await fn.prompt_setprompt(denops, bufnr, `(${model})>> `);
-    await fn.prompt_setinterrupt(denops, bufnr, "ollama#internal#cancel");
-    await denops.cmd(
-      "call prompt_setcallback(bufnr, function('ollama#internal#notify_callback', [l:denops_name, l:lambda_id]))",
-      {
-        bufnr,
-        denops_name: denops.name,
-        lambda_id: lambda.register(
-          denops,
-          async (uPrompt) => {
-            const prompt = ensure(uPrompt, is.String);
-            await promptCallback(denops, highlight, bufnr, model, prompt);
-          },
-        ),
-      },
-    );
-    await helper.execute(denops, `${opener ?? "tabnew"} ${bufname}`);
-    await helper.execute(denops, "setlocal wrap");
-    await helper.execute(denops, "startinsert");
-
-    await highlight(
-      denops,
-      2,
-      await fn.strlen(denops, `(${model})>> `),
-    );
-  });
-}
-
-async function promptCallback(
-  denops: Denops,
-  highlight: HighlightPrefix,
-  bufnr: number,
-  model: string,
-  prompt: string,
-) {
-  if (prompt === "exit") {
-    await helper.execute(denops, `bdelete! ${bufnr}`);
-    return;
+class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
+  parseContext(context: unknown): GenerateChatCompletionMessage[] | undefined {
+    return maybe(context, is.ArrayOf(isGenerateChatCompletionMessage));
   }
-  getLogger("denops-ollama-verbose").debug(`prompt: ${prompt}`);
+  async process(
+    denops: Denops,
+    bufnr: number,
+    context: GenerateChatCompletionMessage[] | undefined,
+    signal: AbortSignal,
+    prompt: string,
+  ): Promise<void> {
+    const contents: string[] = [];
+    const messages = [...context ?? [], { role: "user", content: prompt }];
 
-  const info = await fn.getbufinfo(denops, bufnr);
-  highlight(
-    denops,
-    info[0].linecount,
-    await fn.strlen(denops, `(${model})>> `),
-  );
-
-  const messages = maybe(
-    await fn.getbufvar(denops, bufnr, "ollama_chat_context"),
-    is.ArrayOf(isGenerateChatCompletionMessage),
-  ) || [];
-  getLogger("denops-ollama-verbose").debug(`reserved messages: ${messages}`);
-
-  messages.push({ role: "user", content: prompt });
-  await fn.setbufvar(denops, bufnr, "ollama_chat_context", messages);
-
-  const contents: string[] = [];
-  const { signal, cancel } = await canceller(denops);
-  try {
-    const result = await generateChatCompletion({ model, messages }, {
-      signal,
-    });
+    const result = await generateChatCompletion(
+      { model: this.model, messages },
+      { signal },
+    );
     if (!result.body) {
       return;
     }
-    const p = bufEcho(bufnr);
     for await (
       const item of abortableAsyncIterable(result.body.values(), signal)
     ) {
@@ -221,19 +142,24 @@ async function promptCallback(
       contents.push(item.message.content);
 
       // put response to buffer
-      await p(denops, item.message.content);
+      await this.echo(denops, bufnr, item.message.content);
     }
 
     // memory message history
-    messages.push({
+    await this.setContext(denops, bufnr, [...messages, {
       role: "assistant",
       content: contents.join(""),
-    });
-    await fn.setbufvar(denops, bufnr, "ollama_chat_context", messages);
-  } catch (err) {
-    getLogger("denops-ollama").error(err);
-  } finally {
-    cancel();
-    await fn.setbufvar(denops, bufnr, "&modified", 0);
+    }]);
   }
+}
+
+export async function startChatWithContext(
+  denops: Denops,
+  model: string,
+  context: ChatContext,
+  opener?: Opener,
+) {
+  const messages = await contextToMessages(denops, context);
+  const chat = new Chat(model, messages);
+  await chat.start(denops, opener);
 }
