@@ -2,7 +2,7 @@ import {
   is,
   type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
-import { isErrorResponse, isFormat, type RequestOptions } from "./types.ts";
+import { isErrorResponse, isFormat, type RequestInit } from "./types.ts";
 import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
 
@@ -109,10 +109,10 @@ export type GenerateChatCompletionResponse = PredicateType<
  */
 export async function generateChatCompletion(
   param: GenerateChatCompletionParam,
-  options?: RequestOptions,
+  init?: RequestInit,
 ) {
   return parseJSONStream(
-    await doPost("/api/chat", param, options),
+    await doPost("/api/chat", param, init),
     isGenerateChatCompletionResponse,
   );
 }

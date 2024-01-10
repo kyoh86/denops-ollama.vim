@@ -2,7 +2,7 @@ import {
   is,
   type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
-import { isErrorResponse, type RequestOptions } from "./types.ts";
+import { isErrorResponse, type RequestInit } from "./types.ts";
 import { doPost } from "./base.ts";
 import { parseJSONStream } from "./base.ts";
 
@@ -49,10 +49,10 @@ export type PullModelResponse = PredicateType<typeof isPullModelResponse>;
  */
 export async function pullModel(
   param: PullModelParam,
-  options?: RequestOptions,
+  init?: RequestInit,
 ) {
   return parseJSONStream(
-    await doPost("/api/pull", param, options),
+    await doPost("/api/pull", param, init),
     isPullModelResponse,
   );
 }

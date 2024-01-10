@@ -3,7 +3,7 @@ import {
   is,
   type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
-import { isErrorResponse, type RequestOptions, type Result } from "./types.ts";
+import { isErrorResponse, type RequestInit, type Result } from "./types.ts";
 import { doPost } from "./base.ts";
 
 // Definitions for the endpoint to "Generate embeddings"
@@ -34,9 +34,9 @@ export type GenerateEmbeddingsResponse = PredicateType<
 /** Generate embeddings from a model. */
 export async function generateEmbeddings(
   params: GenerateEmbeddingsParam,
-  options?: RequestOptions,
+  init?: RequestInit,
 ): Promise<Result<GenerateEmbeddingsResponse>> {
-  const response = await doPost("/api/embeddings", params, options);
+  const response = await doPost("/api/embeddings", params, init);
   return {
     response,
     body: ensure(await response.json(), isGenerateEmbeddingsResponse),

@@ -2,7 +2,7 @@ import {
   is,
   type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
-import { isErrorResponse, type RequestOptions } from "./types.ts";
+import { isErrorResponse, type RequestInit } from "./types.ts";
 import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
 
@@ -69,10 +69,10 @@ export async function generateCompletion(
   // The prompt to generate a response for
   prompt: string,
   param?: GenerateCompletionParam,
-  options?: RequestOptions,
+  init?: RequestInit,
 ) {
   return parseJSONStream(
-    await doPost("/api/generate", { model, prompt, ...param }, options),
+    await doPost("/api/generate", { model, prompt, ...param }, init),
     isGenerateCompletionResponse,
   );
 }

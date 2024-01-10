@@ -2,7 +2,7 @@ import {
   is,
   type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
-import type { RequestOptions, Result } from "./types.ts";
+import type { RequestInit, Result } from "./types.ts";
 import { doDelete } from "./base.ts";
 
 // Definitions for the endpoint to "Delete a model"
@@ -19,9 +19,9 @@ export type DeleteModelParam = PredicateType<typeof isDeleteModelParam>;
 /** Copy a model. Creates a model with another name from an existing model. */
 export async function deleteModel(
   params: DeleteModelParam,
-  options?: RequestOptions,
+  init?: RequestInit,
 ): Promise<Result<undefined>> {
-  const response = await doDelete("/api/delete", params, options);
+  const response = await doDelete("/api/delete", params, init);
   return {
     response,
     body: undefined,

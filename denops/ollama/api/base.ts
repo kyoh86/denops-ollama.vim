@@ -6,20 +6,20 @@ import {
   JSONLinesParseStream,
   type JSONValue,
 } from "https://deno.land/x/jsonlines@v1.2.2/mod.ts";
-import { RequestOptions } from "./types.ts";
+import { RequestInit } from "./types.ts";
 
 const defaultBaseUrl = "http://localhost:11434";
 
 export function doPost<T>(
   path: string,
   param: T,
-  options?: RequestOptions,
+  init?: RequestInit,
 ) {
-  const baseUrl = options?.baseUrl ?? defaultBaseUrl;
+  const baseUrl = init?.baseUrl ?? defaultBaseUrl;
   return fetch(
     new URL(path, baseUrl),
     {
-      ...(options?.signal ? { signal: options?.signal } : {}),
+      ...(init?.signal ? { signal: init?.signal } : {}),
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(param),
@@ -29,13 +29,13 @@ export function doPost<T>(
 
 export function doGet(
   path: string,
-  options?: RequestOptions,
+  init?: RequestInit,
 ) {
-  const baseUrl = options?.baseUrl ?? defaultBaseUrl;
+  const baseUrl = init?.baseUrl ?? defaultBaseUrl;
   return fetch(
     new URL(path, baseUrl),
     {
-      ...(options?.signal ? { signal: options?.signal } : {}),
+      ...(init?.signal ? { signal: init?.signal } : {}),
       method: "GET",
     },
   );
@@ -44,13 +44,13 @@ export function doGet(
 export function doDelete<T>(
   path: string,
   param: T,
-  options?: RequestOptions,
+  init?: RequestInit,
 ) {
-  const baseUrl = options?.baseUrl ?? defaultBaseUrl;
+  const baseUrl = init?.baseUrl ?? defaultBaseUrl;
   return fetch(
     new URL(path, baseUrl),
     {
-      ...(options?.signal ? { signal: options?.signal } : {}),
+      ...(init?.signal ? { signal: init?.signal } : {}),
       method: "DELETE",
       body: JSON.stringify(param),
     },

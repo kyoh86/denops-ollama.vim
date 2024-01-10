@@ -6,7 +6,7 @@ import {
 // The format to return a response in. Currently the only accepted value is json
 export const isFormat = is.OptionalOf(is.LiteralOf("json"));
 
-export interface RequestOptions {
+export interface RequestInit {
   baseUrl?: string | URL;
   signal?: AbortSignal;
 }

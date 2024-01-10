@@ -2,7 +2,7 @@ import {
   is,
   type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
-import type { RequestOptions, Result } from "./types.ts";
+import type { RequestInit, Result } from "./types.ts";
 import { doPost } from "./base.ts";
 
 // Definitions for the endpoint to "Copy a model"
@@ -21,9 +21,9 @@ export type CopyModelParam = PredicateType<typeof isCopyModelParam>;
 /** Copy a model. Creates a model with another name from an existing model. */
 export async function copyModel(
   param: CopyModelParam,
-  options?: RequestOptions,
+  init?: RequestInit,
 ): Promise<Result<undefined>> {
-  const response = await doPost("/api/copy", param, options);
+  const response = await doPost("/api/copy", param, init);
   return {
     response,
     body: undefined,
