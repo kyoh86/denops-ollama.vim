@@ -1,6 +1,8 @@
 import { getLogger } from "https://deno.land/std@0.211.0/log/mod.ts";
 import * as datetime from "https://deno.land/std@0.211.0/datetime/mod.ts";
 import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
+import { generateUniqueString } from "https://deno.land/x/denops_std@v5.2.0/util.ts";
+import * as autocmd from "https://deno.land/x/denops_std@v5.2.0/autocmd/mod.ts";
 import * as fn from "https://deno.land/x/denops_std@v5.2.0/function/mod.ts";
 import * as batch from "https://deno.land/x/denops_std@v5.2.0/batch/mod.ts";
 import * as option from "https://deno.land/x/denops_std@v5.2.0/option/mod.ts";
@@ -11,6 +13,7 @@ import {
   is,
   PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
+import { Queue } from "https://deno.land/x/async@v2.1.0/queue.ts";
 
 import {
   type HighlightPrefix,
@@ -48,6 +51,31 @@ export abstract class ChatBase<TContext> {
   }
 
   async #setupBuf(denops: Denops, bufnr: number) {
+    const group = generateUniqueString();
+    const abort = new AbortController();
+    await autocmd.group(denops, group, (helper) => {
+      helper.define(
+        "BufEnter",
+        `<buffer=${bufnr}>`,
+        `call ollama#internal#notify_callback("${denops.name}", "${
+          lambda.register(denops, async () => {
+            await this.processAll(denops, abort.signal, bufnr);
+          })
+        }")`,
+        { once: true },
+      );
+      helper.define(
+        "BufUnload",
+        `<buffer=${bufnr}>`,
+        `call ollama#internal#notify_callback("${denops.name}", "${
+          lambda.register(denops, () => {
+            abort.abort();
+            this.#queue.push("exit");
+          })
+        }")`,
+        { once: true },
+      );
+    });
     await option.filetype.setBuffer(denops, bufnr, "ollama.chat");
     await option.buftype.setBuffer(denops, bufnr, "prompt");
     await option.buflisted.setBuffer(denops, bufnr, true);
@@ -64,6 +92,8 @@ export abstract class ChatBase<TContext> {
   }
 
   #firstLine = true;
+  #queue = new Queue<string>();
+
   async start(denops: Denops, opener?: Opener) {
     const now = datetime.format(new Date(), "yyyy-MM-ddTHH-mm-ss.SSS");
     const bufname = `ollama://chat/${now}`;
@@ -120,34 +150,42 @@ export abstract class ChatBase<TContext> {
     }
   }
 
+  async processAll(denops: Denops, signal: AbortSignal, bufnr: number) {
+    while (!signal.aborted) {
+      const prompt = await this.#queue.pop();
+      if (prompt === "exit") {
+        await helper.execute(denops, `silent! bdelete! ${bufnr}`);
+        return;
+      }
+
+      const context = this.parseContext(
+        await fn.getbufvar(denops, bufnr, "ollama_chat_context"),
+      );
+      getLogger("denops-ollama-verbose").debug(`reserved context: ${context}`);
+
+      const { signal: reqSignal, cancel } = await canceller(denops);
+      try {
+        await this.process(denops, bufnr, context, reqSignal, prompt);
+      } catch (err) {
+        getLogger("denops-ollama").error(err);
+      } finally {
+        cancel();
+        await fn.setbufvar(denops, bufnr, "&modified", 0);
+      }
+    }
+    denops.cmd("echomsg 'finished'");
+  }
+
   async #promptCallback(
     denops: Denops,
     bufnr: number,
     highlight: HighlightPrefix,
     prompt: string,
   ) {
-    if (prompt === "exit") {
-      await helper.execute(denops, `bdelete! ${bufnr}`);
-      return;
-    }
     getLogger("denops-ollama-verbose").debug(`prompt: ${prompt}`);
 
     const info = await fn.getbufinfo(denops, bufnr);
     highlight!(denops, info[0].linecount);
-
-    const context = this.parseContext(
-      await fn.getbufvar(denops, bufnr, "ollama_chat_context"),
-    );
-    getLogger("denops-ollama-verbose").debug(`reserved context: ${context}`);
-
-    const { signal, cancel } = await canceller(denops);
-    try {
-      await this.process(denops, bufnr, context, signal, prompt);
-    } catch (err) {
-      getLogger("denops-ollama").error(err);
-    } finally {
-      cancel();
-      await fn.setbufvar(denops, bufnr, "&modified", 0);
-    }
+    this.#queue.push(prompt);
   }
 }
