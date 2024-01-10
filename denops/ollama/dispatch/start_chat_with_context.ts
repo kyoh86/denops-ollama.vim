@@ -1,19 +1,28 @@
 import { abortableAsyncIterable } from "https://deno.land/std@0.211.0/async/mod.ts";
-import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
+import { type Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
 import * as fn from "https://deno.land/x/denops_std@v5.2.0/function/mod.ts";
 import * as option from "https://deno.land/x/denops_std@v5.2.0/option/mod.ts";
 import {
   is,
   maybe,
-  PredicateType,
+  type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
 
 import {
   generateChatCompletion,
   type GenerateChatCompletionMessage,
+  type GenerateChatCompletionParam,
   isGenerateChatCompletionMessage,
+  isGenerateChatCompletionParam,
 } from "../api.ts";
-import { ChatBase, Opener } from "../util/chat.ts";
+import { ChatBase, isOpener, type Opener } from "../util/chat.ts";
+
+export {
+  type GenerateChatCompletionParam,
+  isGenerateChatCompletionParam,
+  isOpener,
+  type Opener,
+};
 
 const isBufferInfo = is.OneOf([
   is.Number,
@@ -112,6 +121,14 @@ async function contextToMessages(
 }
 
 class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
+  constructor(
+    model: string,
+    messages: GenerateChatCompletionMessage[],
+    private params?: GenerateChatCompletionParam,
+  ) {
+    super(model, messages);
+  }
+
   parseContext(context: unknown): GenerateChatCompletionMessage[] | undefined {
     return maybe(context, is.ArrayOf(isGenerateChatCompletionMessage));
   }
@@ -126,7 +143,7 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
     const messages = [...context ?? [], { role: "user", content: prompt }];
 
     const result = await generateChatCompletion(
-      { model: this.model, messages },
+      { ...this.params, model: this.model, messages },
       { signal },
     );
     if (!result.body) {
@@ -158,8 +175,9 @@ export async function startChatWithContext(
   model: string,
   context: ChatContext,
   opener?: Opener,
+  params?: GenerateChatCompletionParam,
 ) {
   const messages = await contextToMessages(denops, context);
-  const chat = new Chat(model, messages);
+  const chat = new Chat(model, messages, params);
   await chat.start(denops, opener);
 }

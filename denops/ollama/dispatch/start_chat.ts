@@ -2,12 +2,21 @@ import { abortableAsyncIterable } from "https://deno.land/std@0.211.0/async/mod.
 import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
 import { is, maybe } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
 
-import { ChatBase, type Opener } from "../util/chat.ts";
-import { generateCompletion } from "../api.ts";
+import { ChatBase, isOpener, type Opener } from "../util/chat.ts";
+import {
+  generateCompletion,
+  type GenerateCompletionParam,
+  isGenerateCompletionParam,
+} from "../api.ts";
+export {
+  type GenerateCompletionParam,
+  isGenerateCompletionParam,
+  isOpener,
+  type Opener,
+};
 
 class Chat extends ChatBase<number[]> {
-  constructor(model: string) {
-    // TODO: support options
+  constructor(model: string, private params?: GenerateCompletionParam) {
     super(model);
   }
 
@@ -22,7 +31,10 @@ class Chat extends ChatBase<number[]> {
     signal: AbortSignal,
     prompt: string,
   ): Promise<void> {
-    const result = await generateCompletion(this.model, prompt, { context }, {
+    const result = await generateCompletion(this.model, prompt, {
+      ...this.params,
+      context,
+    }, {
       signal,
     });
     if (!result.body) {
@@ -48,7 +60,8 @@ export default async function startChat(
   denops: Denops,
   model: string,
   opener?: Opener,
+  params?: GenerateCompletionParam,
 ) {
-  const chat = new Chat(model);
+  const chat = new Chat(model, params);
   await chat.start(denops, opener);
 }

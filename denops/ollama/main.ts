@@ -1,18 +1,22 @@
-import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
-import xdg from "https://deno.land/x/xdg@v10.6.0/src/mod.deno.ts";
 import { join } from "https://deno.land/std@0.211.0/path/mod.ts";
 import { ensureFile } from "https://deno.land/std@0.211.0/fs/mod.ts";
+import {
+  handlers as logHandlers,
+  setup as setupLog,
+} from "https://deno.land/std@0.211.0/log/mod.ts";
+import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
 import {
   ensure,
   is,
   maybe,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
-import {
-  handlers as logHandlers,
-  setup as setupLog,
-} from "https://deno.land/std@0.211.0/log/mod.ts";
+import xdg from "https://deno.land/x/xdg@v10.6.0/src/mod.deno.ts";
 
-import startChat from "./dispatch/start_chat.ts";
+import init from "./dispatch/init.ts";
+import startChat, {
+  isGenerateCompletionParam,
+  isOpener,
+} from "./dispatch/start_chat.ts";
 import listModels from "./dispatch/list_models.ts";
 import pullModel from "./dispatch/pull_model.ts";
 import deleteModel from "./dispatch/delete_model.ts";
@@ -20,9 +24,6 @@ import {
   isChatContext,
   startChatWithContext,
 } from "./dispatch/start_chat_with_context.ts";
-import { isOpener } from "./util/chat.ts";
-import { setup as setupHighlight } from "./util/highlight_prefix.ts";
-import { mapCancel } from "./util/cancellable.ts";
 
 export async function main(denops: Denops) {
   const cacheFile = join(xdg.cache(), "denops-ollama-vim", "log.txt");
@@ -52,8 +53,7 @@ export async function main(denops: Denops) {
     },
   });
 
-  await mapCancel(denops);
-  await setupHighlight(denops);
+  await init(denops);
 
   denops.dispatcher = {
     async openLog() {
@@ -63,11 +63,13 @@ export async function main(denops: Denops) {
     async startChat(
       uModel: unknown,
       uOpener: unknown,
+      uParams: unknown,
     ) {
       await startChat(
         denops,
         ensure(uModel, is.String),
         maybe(uOpener, isOpener),
+        maybe(uParams, isGenerateCompletionParam),
       );
     },
 
@@ -75,12 +77,14 @@ export async function main(denops: Denops) {
       uModel: unknown,
       uContext: unknown,
       uOpener: unknown,
+      uParams: unknown,
     ) {
       await startChatWithContext(
         denops,
         ensure(uModel, is.String),
         ensure(uContext, isChatContext),
         maybe(uOpener, isOpener),
+        maybe(uParams, isGenerateChatCompletionParam),
       );
     },
 
