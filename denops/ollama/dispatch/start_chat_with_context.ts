@@ -16,6 +16,7 @@ import {
   isGenerateChatCompletionParam,
 } from "../api.ts";
 import { ChatBase, isOpener, type Opener } from "../util/chat.ts";
+import { Options } from "./types.ts";
 
 export {
   type GenerateChatCompletionParam,
@@ -125,6 +126,7 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
     model: string,
     messages: GenerateChatCompletionMessage[],
     private params?: GenerateChatCompletionParam,
+    private options?: Options,
   ) {
     super(model, messages);
   }
@@ -144,7 +146,7 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
 
     const result = await generateChatCompletion(
       { ...this.params, model: this.model, messages },
-      { signal },
+      { ...this.options, signal },
     );
     if (!result.body) {
       return;
@@ -176,8 +178,9 @@ export async function startChatWithContext(
   context: ChatContext,
   opener?: Opener,
   params?: GenerateChatCompletionParam,
+  options?: Options,
 ) {
   const messages = await contextToMessages(denops, context);
-  const chat = new Chat(model, messages, params);
+  const chat = new Chat(model, messages, params, options);
   await chat.start(denops, opener);
 }

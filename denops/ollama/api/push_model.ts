@@ -2,7 +2,7 @@ import {
   is,
   type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
-import { isErrorResponse, type RequestInit } from "./types.ts";
+import { isErrorResponse, type ReqInit } from "./types.ts";
 import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
 
@@ -59,7 +59,7 @@ export type PushModelResponse = PredicateType<typeof isPushModelResponse>;
  */
 export async function pushModel(
   param: PushModelParam,
-  init?: RequestInit,
+  init?: ReqInit,
 ) {
   return parseJSONStream(
     await doPost("/api/push", param, init),

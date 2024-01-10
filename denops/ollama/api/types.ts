@@ -1,12 +1,12 @@
 import {
   is,
-  PredicateType,
+  type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
 
 // The format to return a response in. Currently the only accepted value is json
 export const isFormat = is.OptionalOf(is.LiteralOf("json"));
 
-export interface RequestInit {
+export interface ReqInit {
   baseUrl?: string | URL;
   signal?: AbortSignal;
 }

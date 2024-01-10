@@ -8,6 +8,7 @@ import {
   type GenerateCompletionParam,
   isGenerateCompletionParam,
 } from "../api.ts";
+import { Options } from "./types.ts";
 export {
   type GenerateCompletionParam,
   isGenerateCompletionParam,
@@ -16,7 +17,11 @@ export {
 };
 
 class Chat extends ChatBase<number[]> {
-  constructor(model: string, private params?: GenerateCompletionParam) {
+  constructor(
+    model: string,
+    private params?: GenerateCompletionParam,
+    private options?: Options,
+  ) {
     super(model);
   }
 
@@ -31,12 +36,12 @@ class Chat extends ChatBase<number[]> {
     signal: AbortSignal,
     prompt: string,
   ): Promise<void> {
-    const result = await generateCompletion(this.model, prompt, {
-      ...this.params,
-      context,
-    }, {
-      signal,
-    });
+    const result = await generateCompletion(
+      this.model,
+      prompt,
+      { ...this.params, context },
+      { ...this.options, signal },
+    );
     if (!result.body) {
       return;
     }
@@ -61,7 +66,8 @@ export default async function startChat(
   model: string,
   opener?: Opener,
   params?: GenerateCompletionParam,
+  options?: Options,
 ) {
-  const chat = new Chat(model, params);
+  const chat = new Chat(model, params, options);
   await chat.start(denops, opener);
 }

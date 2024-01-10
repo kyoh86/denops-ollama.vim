@@ -2,7 +2,7 @@ import {
   is,
   type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
-import { isErrorResponse, type RequestInit } from "./types.ts";
+import { isErrorResponse, type ReqInit } from "./types.ts";
 import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
 
@@ -39,7 +39,7 @@ export type CreateModelResponse = PredicateType<typeof isCreateModelResponse>;
  */
 export async function createModel(
   param: CreateModelParam,
-  init?: RequestInit,
+  init?: ReqInit,
 ) {
   return parseJSONStream(
     await doPost("/api/create", param, init),

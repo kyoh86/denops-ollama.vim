@@ -4,7 +4,7 @@ import {
   type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
 import { doPost } from "./base.ts";
-import { isErrorResponse, type RequestInit, type Result } from "./types.ts";
+import { isErrorResponse, type ReqInit, type Result } from "./types.ts";
 
 // Definitions for the endpoint to "Show model information"
 // Method: POST
@@ -61,7 +61,7 @@ export type ShowModelInformationResponse = PredicateType<
  */
 export async function showModelInformation(
   param: ShowModelInformationParam,
-  init?: RequestInit,
+  init?: ReqInit,
 ): Promise<Result<ShowModelInformationResponse>> {
   const response = await doPost("/api/show", param, init);
   return {

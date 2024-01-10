@@ -5,15 +5,20 @@ import { getLogger } from "https://deno.land/std@0.211.0/log/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
 import { canceller } from "../util/cancellable.ts";
 import { abortableAsyncIterable } from "https://deno.land/std@0.211.0/async/mod.ts";
+import { Options } from "./types.ts";
 
 export default async function pullModel(
   denops: Denops,
   name: string,
   insecure?: boolean,
+  options?: Options,
 ) {
   const { signal, cancel } = await canceller(denops);
   try {
-    const result = await pullModelAPI({ name, insecure }, { signal });
+    const result = await pullModelAPI(
+      { name, insecure },
+      { ...options, signal },
+    );
     if (!result.body) {
       return;
     }

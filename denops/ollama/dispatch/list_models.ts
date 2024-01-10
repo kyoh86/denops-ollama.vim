@@ -4,11 +4,13 @@ import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
 import { Table } from "https://deno.land/x/cliffy@v1.0.0-rc.3/table/mod.ts";
 import { listLocalModels } from "../api.ts";
+import { Options } from "./types.ts";
 
 export default async function listModels(
   denops: Denops,
+  options?: Options,
 ) {
-  const { body } = await listLocalModels();
+  const { body } = await listLocalModels({ ...options });
   if ("error" in body) {
     helper.echoerr(denops, body.error);
     return;

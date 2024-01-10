@@ -3,7 +3,7 @@ import {
   is,
   type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
-import { isErrorResponse, type RequestInit, type Result } from "./types.ts";
+import { isErrorResponse, type ReqInit, type Result } from "./types.ts";
 import { doGet } from "./base.ts";
 
 // Definitions for the endpoint to "List local models"
@@ -37,7 +37,7 @@ export type ListLocalModelsResponse = PredicateType<
  * List models that are available locally.
  */
 export async function listLocalModels(
-  init?: RequestInit,
+  init?: ReqInit,
 ): Promise<Result<ListLocalModelsResponse>> {
   const response = await doGet("/api/tags", init);
   return {

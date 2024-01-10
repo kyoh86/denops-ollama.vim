@@ -6,14 +6,14 @@ import {
   JSONLinesParseStream,
   type JSONValue,
 } from "https://deno.land/x/jsonlines@v1.2.2/mod.ts";
-import { RequestInit } from "./types.ts";
+import { ReqInit } from "./types.ts";
 
 const defaultBaseUrl = "http://localhost:11434";
 
 export function doPost<T>(
   path: string,
   param: T,
-  init?: RequestInit,
+  init?: ReqInit,
 ) {
   const baseUrl = init?.baseUrl ?? defaultBaseUrl;
   return fetch(
@@ -29,7 +29,7 @@ export function doPost<T>(
 
 export function doGet(
   path: string,
-  init?: RequestInit,
+  init?: ReqInit,
 ) {
   const baseUrl = init?.baseUrl ?? defaultBaseUrl;
   return fetch(
@@ -44,7 +44,7 @@ export function doGet(
 export function doDelete<T>(
   path: string,
   param: T,
-  init?: RequestInit,
+  init?: ReqInit,
 ) {
   const baseUrl = init?.baseUrl ?? defaultBaseUrl;
   return fetch(
