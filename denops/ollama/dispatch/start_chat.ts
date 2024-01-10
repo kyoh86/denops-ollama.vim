@@ -13,9 +13,9 @@ import {
   maybe,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
 
-import type { Opener } from "./types.ts";
+import type { Opener } from "../types.ts";
 import { generateCompletion } from "../api.ts";
-import PromptBufferEcho from "../util/prompt_buffer_echo.ts";
+import { bufEcho } from "../util/prompt_buffer_echo.ts";
 import {
   type HighlightPrefix,
   prepareHighlightPrefix,
@@ -98,7 +98,7 @@ async function promptCallback(
     if (!result.body) {
       return;
     }
-    const p = new PromptBufferEcho(bufnr);
+    const p = bufEcho(bufnr);
     for await (
       const item of abortableAsyncIterable(result.body.values(), signal)
     ) {
@@ -110,7 +110,7 @@ async function promptCallback(
       }
 
       // put response to buffer
-      await p.put(denops, item.response);
+      await p(denops, item.response);
     }
   } catch (err) {
     getLogger("denops-ollama").error(err);

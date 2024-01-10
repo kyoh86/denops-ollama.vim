@@ -14,13 +14,13 @@ import {
   PredicateType,
 } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
 
-import type { Opener } from "./types.ts";
+import type { Opener } from "../types.ts";
 import {
   generateChatCompletion,
   type GenerateChatCompletionMessage,
   isGenerateChatCompletionMessage,
 } from "../api.ts";
-import PromptBufferEcho from "../util/prompt_buffer_echo.ts";
+import { bufEcho } from "../util/prompt_buffer_echo.ts";
 import {
   type HighlightPrefix,
   prepareHighlightPrefix,
@@ -210,7 +210,7 @@ async function promptCallback(
     if (!result.body) {
       return;
     }
-    const p = new PromptBufferEcho(bufnr);
+    const p = bufEcho(bufnr);
     for await (
       const item of abortableAsyncIterable(result.body.values(), signal)
     ) {
@@ -221,7 +221,7 @@ async function promptCallback(
       contents.push(item.message.content);
 
       // put response to buffer
-      await p.put(denops, item.message.content);
+      await p(denops, item.message.content);
     }
 
     // memory message history

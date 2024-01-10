@@ -20,7 +20,7 @@ import {
   isChatContext,
   startChatWithContext,
 } from "./dispatch/start_chat_with_context.ts";
-import { isOpener } from "./dispatch/types.ts";
+import { isOpener } from "./types.ts";
 import { setup as setupHighlight } from "./util/highlight_prefix.ts";
 import { mapCancel } from "./util/cancellable.ts";
 
