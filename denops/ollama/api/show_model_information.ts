@@ -11,10 +11,7 @@ import { isErrorResponse, type ReqInit, type Result } from "./types.ts";
 // Endpoint: /api/show
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#show-model-information
 
-export const isShowModelInformationParam = is.ObjectOf({
-  // Name of the model to show information about
-  name: is.String,
-});
+export const isShowModelInformationParam = is.ObjectOf({});
 export type ShowModelInformationParam = PredicateType<
   typeof isShowModelInformationParam
 >;
@@ -60,10 +57,11 @@ export type ShowModelInformationResponse = PredicateType<
  * @param init
  */
 export async function showModelInformation(
-  param: ShowModelInformationParam,
+  name: string,
+  param?: ShowModelInformationParam,
   init?: ReqInit,
 ): Promise<Result<ShowModelInformationResponse>> {
-  const response = await doPost("/api/show", param, init);
+  const response = await doPost("/api/show", { name, ...param }, init);
   return {
     response,
     body: ensure(await response.json(), isShowModelInformationResponse),

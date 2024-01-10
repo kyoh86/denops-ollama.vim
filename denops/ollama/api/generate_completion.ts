@@ -11,24 +11,24 @@ import { doPost } from "./base.ts";
 // Endpoint: /api/generate
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#generate-a-completion
 
-export const isGenerateCompletionParam = is.ObjectOf({
-  // (optional) A list of base64-encoded images (for multimodal models such as llava)
+export const isGenerateCompletionParams = is.ObjectOf({
+  // A list of base64-encoded images (for multimodal models such as llava)
   images: is.OptionalOf(is.ArrayOf(is.String)),
-  // (optional) The format to return a response in. Currently the only accepted value is json
+  // The format to return a response in. Currently the only accepted value is json
   format: isFormat,
-  // (optional) Additional model parameters listed in the documentation for the Modelfile such as temperature
+  // Additional model parameters listed in the documentation for the Modelfile such as temperature
   options: is.OptionalOf(is.Record),
-  // (optional) System message to (overrides what is defined in the Modelfile)
+  // System message to (overrides what is defined in the Modelfile)
   system: is.OptionalOf(is.String),
-  // (optional) The full prompt or prompt template (overrides what is defined in the Modelfile)
+  // The full prompt or prompt template (overrides what is defined in the Modelfile)
   template: is.OptionalOf(is.String),
-  // (optional) The context parameter returned from a previous request to /generate, this can be used to keep a short conversational memory
+  // The context parameter returned from a previous request to /generate, this can be used to keep a short conversational memory
   context: is.OptionalOf(is.ArrayOf(is.Number)),
-  // (optional) If true no formatting will be applied to the prompt. You may choose to use the raw parameter if you are specifying a full template prompt in your request to the API.
+  // If true no formatting will be applied to the prompt. You may choose to use the raw parameter if you are specifying a full template prompt in your request to the API.
   raw: is.OptionalOf(is.Boolean),
 });
-export type GenerateCompletionParam = PredicateType<
-  typeof isGenerateCompletionParam
+export type GenerateCompletionParams = PredicateType<
+  typeof isGenerateCompletionParams
 >;
 
 export const isGenerateCompletionResponse = is.OneOf([
@@ -71,11 +71,11 @@ export async function generateCompletion(
   model: string,
   // The prompt to generate a response for
   prompt: string,
-  param?: GenerateCompletionParam,
+  params?: GenerateCompletionParams,
   init?: ReqInit,
 ) {
   return parseJSONStream(
-    await doPost("/api/generate", { model, prompt, ...param }, init),
+    await doPost("/api/generate", { model, prompt, ...params }, init),
     isGenerateCompletionResponse,
   );
 }

@@ -23,16 +23,7 @@ export type GenerateChatCompletionMessage = PredicateType<
   typeof isGenerateChatCompletionMessage
 >;
 
-export const isGenerateChatCompletionParam = is.ObjectOf({
-  // Basic parameters:
-  // The model name
-  model: is.String,
-
-  // The messages of the chat, this can be used to keep a chat memory
-  messages: is.ArrayOf(isGenerateChatCompletionMessage),
-
-  // Advanced parameters (optional):
-
+export const isGenerateChatCompletionParams = is.ObjectOf({
   // The format to return a response in. Currently the only accepted value is json
   format: isFormat,
 
@@ -45,8 +36,8 @@ export const isGenerateChatCompletionParam = is.ObjectOf({
   // If false the response will be returned as a single response object, rather than a stream of objects
   stream: is.OptionalOf(is.Boolean),
 });
-export type GenerateChatCompletionParam = PredicateType<
-  typeof isGenerateChatCompletionParam
+export type GenerateChatCompletionParams = PredicateType<
+  typeof isGenerateChatCompletionParams
 >;
 
 /** The response from the generate chat completion endpoint */
@@ -108,11 +99,14 @@ export type GenerateChatCompletionResponse = PredicateType<
  * The final response object will include statistics and additional data from the request.
  */
 export async function generateChatCompletion(
-  param: GenerateChatCompletionParam,
+  model: string,
+  // The messages of the chat, this can be used to keep a chat memory
+  messages: GenerateChatCompletionMessage[],
+  params?: GenerateChatCompletionParams,
   init?: ReqInit,
 ) {
   return parseJSONStream(
-    await doPost("/api/chat", param, init),
+    await doPost("/api/chat", { model, messages, ...params }, init),
     isGenerateChatCompletionResponse,
   );
 }

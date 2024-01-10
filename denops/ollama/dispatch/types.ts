@@ -1,3 +1,10 @@
-export interface Options {
-  baseUrl?: string | URL;
-}
+import {
+  is,
+  PredicateType,
+} from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
+
+export const isReqOpts = is.ObjectOf({
+  baseUrl: is.OneOf([is.Undefined, is.String]),
+});
+
+export type ReqOpts = PredicateType<typeof isReqOpts>;

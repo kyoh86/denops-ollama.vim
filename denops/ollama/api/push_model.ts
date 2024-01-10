@@ -11,18 +11,15 @@ import { doPost } from "./base.ts";
 // Endpoint: /api/push
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#push-a-model
 
-export const isPushModelParam = is.ObjectOf({
-  // Name of the model to push in the form of `<namespace>/<model>:<tag>`
-  name: is.String,
-
-  // (optional) Allow insecure connections to the library.
+export const isPushModelParams = is.ObjectOf({
+  // Allow insecure connections to the library.
   // Only use this if you are pushing from your own library during development.
   insecure: is.OptionalOf(is.Boolean),
 
-  // (optional) If false the response will be returned as a single response object, rather than a stream of objects
+  // If false the response will be returned as a single response object, rather than a stream of objects
   stream: is.OptionalOf(is.Boolean),
 });
-export type PushModelParam = PredicateType<typeof isPushModelParam>;
+export type PushModelParams = PredicateType<typeof isPushModelParams>;
 
 export const isPushModelResponse = is.OneOf([
   isErrorResponse,
@@ -58,11 +55,12 @@ export type PushModelResponse = PredicateType<typeof isPushModelResponse>;
  * The final response object will include statistics and additional data from the request.
  */
 export async function pushModel(
-  param: PushModelParam,
+  name: string,
+  param?: PushModelParams,
   init?: ReqInit,
 ) {
   return parseJSONStream(
-    await doPost("/api/push", param, init),
+    await doPost("/api/push", { name, ...param }, init),
     isPushModelResponse,
   );
 }

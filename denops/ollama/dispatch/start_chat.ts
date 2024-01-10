@@ -1,17 +1,21 @@
 import { abortableAsyncIterable } from "https://deno.land/std@0.211.0/async/mod.ts";
 import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
-import { is, maybe } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
+import {
+  is,
+  maybe,
+  PredicateType,
+} from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
 
 import { ChatBase, isOpener, type Opener } from "../util/chat.ts";
 import {
   generateCompletion,
-  type GenerateCompletionParam,
-  isGenerateCompletionParam,
+  type GenerateCompletionParams,
+  isGenerateCompletionParams,
 } from "../api.ts";
-import { Options } from "./types.ts";
+import { isReqOpts, ReqOpts } from "./types.ts";
 export {
-  type GenerateCompletionParam,
-  isGenerateCompletionParam,
+  type GenerateCompletionParams,
+  isGenerateCompletionParams,
   isOpener,
   type Opener,
 };
@@ -19,8 +23,8 @@ export {
 class Chat extends ChatBase<number[]> {
   constructor(
     model: string,
-    private params?: GenerateCompletionParam,
-    private options?: Options,
+    private opts?: ReqOpts,
+    private params?: GenerateCompletionParams,
   ) {
     super(model);
   }
@@ -40,7 +44,7 @@ class Chat extends ChatBase<number[]> {
       this.model,
       prompt,
       { ...this.params, context },
-      { ...this.options, signal },
+      { ...this.opts, signal },
     );
     if (!result.body) {
       return;
@@ -61,13 +65,21 @@ class Chat extends ChatBase<number[]> {
   }
 }
 
+export const isStartChatOpts = is.AllOf([
+  is.ObjectOf({
+    opener: is.OptionalOf(isOpener),
+  }),
+  isReqOpts,
+]);
+
+export type StartChatOpts = PredicateType<typeof isStartChatOpts>;
+
 export default async function startChat(
   denops: Denops,
   model: string,
-  opener?: Opener,
-  params?: GenerateCompletionParam,
-  options?: Options,
+  opts?: StartChatOpts,
+  params?: GenerateCompletionParams,
 ) {
-  const chat = new Chat(model, params, options);
-  await chat.start(denops, opener);
+  const chat = new Chat(model, opts, params);
+  await chat.start(denops, opts?.opener);
 }

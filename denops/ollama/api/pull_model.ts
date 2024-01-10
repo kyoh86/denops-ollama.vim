@@ -11,18 +11,12 @@ import { parseJSONStream } from "./base.ts";
 // Endpoint: /api/pull
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#pull-a-model
 
-export const isPullModelParam = is.ObjectOf({
-  // Name of the model to pull
-  name: is.String,
-
+export const isPullModelParams = is.ObjectOf({
   // (optional) Allow insecure connections to the library.
   // Only use this if you are pulling from your own library during development.
   insecure: is.OptionalOf(is.Boolean),
-
-  // (optional) If false the response will be returned as a single response object, rather than a stream of objects
-  stream: is.OptionalOf(is.Boolean),
 });
-export type PullModelParam = PredicateType<typeof isPullModelParam>;
+export type PullModelParams = PredicateType<typeof isPullModelParams>;
 
 export const isPullModelResponse = is.OneOf([
   isErrorResponse,
@@ -48,11 +42,12 @@ export type PullModelResponse = PredicateType<typeof isPullModelResponse>;
  * Cancelled pulls are resumed from where they left off, and multiple calls will share the same download progress.
  */
 export async function pullModel(
-  param: PullModelParam,
+  name: string,
+  params?: PullModelParams,
   init?: ReqInit,
 ) {
   return parseJSONStream(
-    await doPost("/api/pull", param, init),
+    await doPost("/api/pull", { name, ...params }, init),
     isPullModelResponse,
   );
 }

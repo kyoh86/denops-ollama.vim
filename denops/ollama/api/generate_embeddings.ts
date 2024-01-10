@@ -11,12 +11,7 @@ import { doPost } from "./base.ts";
 // Endpoint: /api/embeddings
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#generate-embeddings
 
-export const isGenerateEmbeddingsParam = is.ObjectOf({
-  //  Name of model to generate embeddings from
-  model: is.String,
-  // Text to generate embeddings for
-  prompt: is.String,
-});
+export const isGenerateEmbeddingsParam = is.ObjectOf({});
 export type GenerateEmbeddingsParam = PredicateType<
   typeof isGenerateEmbeddingsParam
 >;
@@ -33,10 +28,16 @@ export type GenerateEmbeddingsResponse = PredicateType<
 
 /** Generate embeddings from a model. */
 export async function generateEmbeddings(
-  params: GenerateEmbeddingsParam,
+  model: string,
+  prompt: string,
+  params?: GenerateEmbeddingsParam,
   init?: ReqInit,
 ): Promise<Result<GenerateEmbeddingsResponse>> {
-  const response = await doPost("/api/embeddings", params, init);
+  const response = await doPost(
+    "/api/embeddings",
+    { model, prompt, ...params },
+    init,
+  );
   return {
     response,
     body: ensure(await response.json(), isGenerateEmbeddingsResponse),

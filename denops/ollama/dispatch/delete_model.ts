@@ -1,16 +1,25 @@
 import { type Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
-import { deleteModel as deleteModelAPI } from "../api.ts";
+import {
+  deleteModel as deleteModelAPI,
+  DeleteModelParams,
+  isDeleteModelParams,
+} from "../api.ts";
 import { getLogger } from "https://deno.land/std@0.211.0/log/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
-import { Options } from "./types.ts";
+import { isReqOpts, ReqOpts } from "./types.ts";
+export { type DeleteModelParams, isDeleteModelParams };
+
+export const isDeleteModelOpts = isReqOpts;
+export type DeleteModelOpts = ReqOpts;
 
 export default async function deleteModel(
   denops: Denops,
   name: string,
-  options?: Options,
+  opts?: DeleteModelOpts,
+  params?: DeleteModelParams,
 ) {
   try {
-    await deleteModelAPI({ name }, { ...options });
+    await deleteModelAPI(name, params, { ...opts });
     helper.echo(denops, `Deleted ${name}`);
   } catch (err) {
     getLogger("denops-ollama").error(err);

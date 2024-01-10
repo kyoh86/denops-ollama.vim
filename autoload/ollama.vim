@@ -1,6 +1,6 @@
 " Open log file.
-function ollama#open_log()
-  call denops#notify("ollama", "openLog", [])
+function ollama#open_log(...)
+  call denops#notify("ollama", "openLog", a:000)
 endfunction
 
 " Start chat with Ollama.
@@ -14,8 +14,8 @@ function ollama#start_chat_with_context(...)
 endfunction
 
 " Show list models in local.
-function ollama#list_models()
-  call denops#notify("ollama", "listModels", [])
+function ollama#list_models(...)
+  call denops#notify("ollama", "listModels", a:000)
 endfunction
 
 " Pull a model from the library.
@@ -26,9 +26,4 @@ endfunction
 " Delete a model in local.
 function ollama#delete_model(...)
   call denops#notify("ollama", "deleteModel", a:000)
-endfunction
-
-" Cancell all background jobs.
-function ollama#cancel()
-  call denops#notify("ollama", "cancel", [])
 endfunction

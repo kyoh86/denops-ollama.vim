@@ -11,17 +11,15 @@ import { doPost } from "./base.ts";
 // Endpoint: /api/create
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#create-a-model
 
-export const isCreateModelParam = is.ObjectOf({
-  // Name of the model to create
-  name: is.String,
-  // (optional) Contents of the Modelfile
+export const isCreateModelParams = is.ObjectOf({
+  // Contents of the Modelfile
   modelfile: is.OptionalOf(is.String),
-  // (optional) If false the response will be returned as a single response object, rather than a stream of objects
+  // If false the response will be returned as a single response object, rather than a stream of objects
   stream: is.OptionalOf(is.Boolean),
-  // (optional) Path to the Modelfile
+  // Path to the Modelfile
   path: is.OptionalOf(is.String),
 });
-export type CreateModelParam = PredicateType<typeof isCreateModelParam>;
+export type CreateModelParams = PredicateType<typeof isCreateModelParams>;
 
 export const isCreateModelResponse = is.OneOf([
   isErrorResponse,
@@ -38,11 +36,12 @@ export type CreateModelResponse = PredicateType<typeof isCreateModelResponse>;
  * Remote model creation must also create any file blobs, fields such as FROM and ADAPTER, explicitly with the server using Create a Blob and the value to the path indicated in the response.
  */
 export async function createModel(
-  param: CreateModelParam,
+  name: string,
+  params?: CreateModelParams,
   init?: ReqInit,
 ) {
   return parseJSONStream(
-    await doPost("/api/create", param, init),
+    await doPost("/api/create", { name, ...params }, init),
     isCreateModelResponse,
   );
 }

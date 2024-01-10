@@ -13,10 +13,10 @@ Deno.test("copyModel", async (t) => {
     });
     try {
       await t.step("should call fetch with the correct arguments", async () => {
-        const result = await copyModel({
-          source: "model1",
-          destination: "model2",
-        });
+        const result = await copyModel(
+          "model1",
+          "model2",
+        );
         assertEquals(result.response.status, 200);
         assertSpyCalls(fetchStub, 1);
         assertSpyCallArgs(fetchStub, 0, [
@@ -40,10 +40,9 @@ Deno.test("copyModel", async (t) => {
     try {
       await t.step("should call fetch with the correct arguments", async () => {
         const result = await copyModel(
-          {
-            source: "model1",
-            destination: "model2",
-          },
+          "model1",
+          "model2",
+          {},
           {
             baseUrl: "https://example.com:33562",
           },

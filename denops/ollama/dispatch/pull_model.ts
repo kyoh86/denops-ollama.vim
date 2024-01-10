@@ -1,23 +1,43 @@
 import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
 import * as bytes from "https://deno.land/std@0.211.0/fmt/bytes.ts";
-import { pullModel as pullModelAPI } from "../api.ts";
+import {
+  isPullModelParams,
+  pullModel as pullModelAPI,
+  type PullModelParams,
+} from "../api.ts";
 import { getLogger } from "https://deno.land/std@0.211.0/log/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
 import { canceller } from "../util/cancellable.ts";
 import { abortableAsyncIterable } from "https://deno.land/std@0.211.0/async/mod.ts";
-import { Options } from "./types.ts";
+import { isReqOpts } from "./types.ts";
+import {
+  is,
+  PredicateType,
+} from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
+
+export { isPullModelParams, type PullModelParams };
+
+export const isPullModelOpts = is.AllOf([
+  is.ObjectOf({
+    insecure: is.OptionalOf(is.Boolean),
+  }),
+  isReqOpts,
+]);
+
+export type PullModelOpts = PredicateType<typeof isPullModelOpts>;
 
 export default async function pullModel(
   denops: Denops,
   name: string,
-  insecure?: boolean,
-  options?: Options,
+  opts?: PullModelOpts,
+  params?: PullModelParams,
 ) {
   const { signal, cancel } = await canceller(denops);
   try {
     const result = await pullModelAPI(
-      { name, insecure },
-      { ...options, signal },
+      name,
+      params,
+      { ...opts, signal },
     );
     if (!result.body) {
       return;

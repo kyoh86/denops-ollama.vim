@@ -11,16 +11,16 @@ import {
 import {
   generateChatCompletion,
   type GenerateChatCompletionMessage,
-  type GenerateChatCompletionParam,
+  type GenerateChatCompletionParams,
   isGenerateChatCompletionMessage,
-  isGenerateChatCompletionParam,
+  isGenerateChatCompletionParams,
 } from "../api.ts";
 import { ChatBase, isOpener, type Opener } from "../util/chat.ts";
-import { Options } from "./types.ts";
+import { isReqOpts, ReqOpts } from "./types.ts";
 
 export {
-  type GenerateChatCompletionParam,
-  isGenerateChatCompletionParam,
+  type GenerateChatCompletionParams,
+  isGenerateChatCompletionParams,
   isOpener,
   type Opener,
 };
@@ -125,8 +125,8 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
   constructor(
     model: string,
     messages: GenerateChatCompletionMessage[],
-    private params?: GenerateChatCompletionParam,
-    private options?: Options,
+    private opts?: ReqOpts,
+    private params?: GenerateChatCompletionParams,
   ) {
     super(model, messages);
   }
@@ -145,8 +145,10 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
     const messages = [...context ?? [], { role: "user", content: prompt }];
 
     const result = await generateChatCompletion(
-      { ...this.params, model: this.model, messages },
-      { ...this.options, signal },
+      this.model,
+      messages,
+      this.params,
+      { ...this.opts, signal },
     );
     if (!result.body) {
       return;
@@ -172,15 +174,25 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
   }
 }
 
+export const isStartChatWithContextOpts = is.AllOf([
+  is.ObjectOf({
+    opener: is.OptionalOf(isOpener),
+  }),
+  isReqOpts,
+]);
+
+export type StartChatWithContextOpts = PredicateType<
+  typeof isStartChatWithContextOpts
+>;
+
 export async function startChatWithContext(
   denops: Denops,
   model: string,
   context: ChatContext,
-  opener?: Opener,
-  params?: GenerateChatCompletionParam,
-  options?: Options,
+  opts?: StartChatWithContextOpts,
+  params?: GenerateChatCompletionParams,
 ) {
   const messages = await contextToMessages(denops, context);
-  const chat = new Chat(model, messages, params, options);
-  await chat.start(denops, opener);
+  const chat = new Chat(model, messages, opts, params);
+  await chat.start(denops, opts?.opener);
 }
