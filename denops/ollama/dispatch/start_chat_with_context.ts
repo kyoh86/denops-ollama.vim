@@ -1,7 +1,5 @@
 import { abortableAsyncIterable } from "https://deno.land/std@0.211.0/async/mod.ts";
 import { type Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
-import * as fn from "https://deno.land/x/denops_std@v5.2.0/function/mod.ts";
-import * as option from "https://deno.land/x/denops_std@v5.2.0/option/mod.ts";
 import {
   is,
   maybe,
@@ -17,6 +15,12 @@ import {
 } from "../api.ts";
 import { ChatBase, isOpener, type Opener } from "../util/chat.ts";
 import { isReqOpts } from "./types.ts";
+import {
+  getBuffer,
+  getCurrentBuffer,
+  getVisualSelection,
+  isBufferInfo,
+} from "../util/context.ts";
 
 export {
   type GenerateChatCompletionParams,
@@ -24,15 +28,6 @@ export {
   isOpener,
   type Opener,
 };
-
-const isBufferInfo = is.OneOf([
-  is.Number,
-  is.ObjectOf({
-    bufnr: is.Number,
-    name: is.String,
-  }),
-]);
-type ChatContextBufferInfo = PredicateType<typeof isBufferInfo>;
 
 export const isChatContext = is.ObjectOf({
   headMessage: is.OptionalOf(is.String),
@@ -43,40 +38,6 @@ export const isChatContext = is.ObjectOf({
   lastMessasge: is.OptionalOf(is.String),
 });
 export type ChatContext = PredicateType<typeof isChatContext>;
-
-async function getVisualSelection(denops: Denops) {
-  // Why is this not a built-in Vim script function?!
-  const [, line_start, column_start] = await fn.getpos(denops, "'<");
-  const [, line_end, column_end] = await fn.getpos(denops, "'>");
-
-  const lines = await fn.getline(denops, line_start, line_end);
-  if (lines.length == 0) {
-    return "";
-  }
-  const selection = await option.selection.get(denops);
-  lines[lines.length - 1] = lines[-1].substring(
-    0,
-    column_end - (selection === "inclusive" ? 1 : 2),
-  );
-
-  lines[0] = lines[0].substring(column_start - 1);
-  return lines.join("\n");
-}
-
-async function getBuffer(denops: Denops, buf: ChatContextBufferInfo) {
-  if (typeof buf === "number") {
-    const name = await fn.bufname(denops, buf);
-    return {
-      name,
-      bufnr: buf,
-      content: (await fn.getbufline(denops, buf, 1, "$")).join("\n"),
-    };
-  }
-  return {
-    ...buf,
-    content: (await fn.getbufline(denops, buf.bufnr, 1, "$")).join("\n"),
-  };
-}
 
 async function contextToMessages(
   denops: Denops,
@@ -96,11 +57,12 @@ async function contextToMessages(
     }
   }
   if (context.currentBuffer) {
-    const bufferContent = await fn.getline(denops, 1, "$");
+    const buffer = await getCurrentBuffer(denops);
     messages.push({
       role: "user",
-      content: "Here is the contents in the current buffer:\n" +
-        bufferContent.join("\n"),
+      content:
+        `Here is the contents in ${buffer.name} as the current buffer:\n` +
+        buffer.content,
     });
   }
   for (const buf of context.buffers ?? []) {

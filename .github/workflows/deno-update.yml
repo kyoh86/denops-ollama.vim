@@ -38,6 +38,27 @@ jobs:
       - name: Run linter
         run: deno lint
 
+      - name: Get Denops
+        run: |
+          git clone https://github.com/vim-denops/denops.vim
+          echo "DENOPS_TEST_DENOPS_PATH=${PWD}/denops.vim" >> "$GITHUB_ENV"
+
+      - uses: rhysd/action-setup-vim@v1
+        id: vim
+
+      - name: Export Vim Executable
+        run: |
+          echo "DENOPS_TEST_VIM_EXECUTABLE=${{ steps.vim.outputs.executable }}" >> "$GITHUB_ENV"
+
+      - uses: rhysd/action-setup-vim@v1
+        id: nvim
+        with:
+          neovim: true
+
+      - name: Export Neovim Executable
+        run: |
+          echo "DENOPS_TEST_NVIM_EXECUTABLE=${{ steps.nvim.outputs.executable }}" >> "$GITHUB_ENV"
+
       - name: Run tests
         run: deno test --allow-all --allow-none
 
