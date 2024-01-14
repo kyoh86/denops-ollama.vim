@@ -60,7 +60,7 @@ jobs:
           echo "DENOPS_TEST_NVIM_EXECUTABLE=${{ steps.nvim.outputs.executable }}" >> "$GITHUB_ENV"
 
       - name: Run tests
-        run: deno test --allow-all --allow-none
+        run: deno task test
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v5
