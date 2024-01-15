@@ -113,7 +113,8 @@ test({
 
 test({
   mode: "all",
-  name: "getVisualSelection should get all content in line selection",
+  name:
+    "getVisualSelection should get all content in multi-line selection (line-wise)",
   fn: async (denops) => {
     await fn.setbufline(denops, 1, 1, ["foo", "bar", "baz"]);
     await denops.cmd("normal! ggVGk");
@@ -126,7 +127,33 @@ test({
 test({
   mode: "all",
   name:
-    "getVisualSelection should get all content in multi-line selection (character-wise)",
+    "getVisualSelection should get all content in single-line selection (line-wise)",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["foo", "bar", "baz"]);
+    await denops.cmd("normal! ggV");
+
+    const content = await testtarget.getVisualSelection(denops);
+    assertEquals(content, "foo\n");
+  },
+});
+
+test({
+  mode: "all",
+  name:
+    "getVisualSelection should get all content in inverted multi-line selection (line-wise)",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["foo", "bar", "baz"]);
+    await denops.cmd("normal! GVk");
+
+    const content = await testtarget.getVisualSelection(denops);
+    assertEquals(content, "bar\nbaz\n");
+  },
+});
+
+test({
+  mode: "all",
+  name:
+    "getVisualSelection should get all content in multi-line inclusive selection (character-wise)",
   fn: async (denops) => {
     await fn.setbufline(denops, 1, 1, ["fooa", "bara", "baza"]);
     await denops.cmd("normal! gg0lvjj0l");
@@ -139,7 +166,7 @@ test({
 test({
   mode: "all",
   name:
-    "getVisualSelection should get all content in single-line selection (character-wise)",
+    "getVisualSelection should get all content in 2-length inclusive selection (character-wise)",
   fn: async (denops) => {
     await fn.setbufline(denops, 1, 1, ["fooa", "bara", "baza"]);
     await denops.cmd("normal! gg0lvl");
@@ -152,7 +179,7 @@ test({
 test({
   mode: "all",
   name:
-    "getVisualSelection should get all content in single-line selection (character-wise) with exclusive selection",
+    "getVisualSelection should get all content in 0-length esclusive selection (character-wise)",
   fn: async (denops) => {
     await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
     await option.selection.set(denops, "exclusive");
@@ -166,7 +193,7 @@ test({
 test({
   mode: "all",
   name:
-    "getVisualSelection should get all content in single-line selection (character-wise) with exclusive selection",
+    "getVisualSelection should get all content 1-length exclusive selection (character-wise)",
   fn: async (denops) => {
     await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
     await option.selection.set(denops, "exclusive");
@@ -174,5 +201,31 @@ test({
 
     const content = await testtarget.getVisualSelection(denops);
     assertEquals(content, "a");
+  },
+});
+
+test({
+  mode: "all",
+  name:
+    "getVisualSelection should get all content single-line inclusive selection (block-wise)",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
+    await denops.cmd(`normal! gg0jll`);
+
+    const content = await testtarget.getVisualSelection(denops);
+    assertEquals(content, "ar");
+  },
+});
+
+test({
+  mode: "all",
+  name:
+    "getVisualSelection should get all content multi-line inclusive selection (block-wise)",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
+    await denops.cmd(`normal! gg0jljl`);
+
+    const content = await testtarget.getVisualSelection(denops);
+    assertEquals(content, "ar\nux");
   },
 });

@@ -82,12 +82,12 @@ export async function getVisualSelection(denops: Denops) {
     return await getPosChar(denops, begin) + suffix;
   }
 
-  if (mode === "\<C-v>") {
+  if (mode === "\u0016") { // <C-v>
     const [min_c, max_c] = [begin[1], end[1]].sort();
     return (await Promise.all(
-      [...Array(end[0] - begin[0])].map(async (_, i) => {
+      [...Array(end[0] - begin[0] + 1)].map(async (_, i) => {
         const line = await fn.getline(denops, i + begin[0]);
-        return line.substring(min_c - 1, max_c - 1);
+        return line.substring(min_c - 1, max_c);
       }),
     )).join("\n") + suffix;
   }
