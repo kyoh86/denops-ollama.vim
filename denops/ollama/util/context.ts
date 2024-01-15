@@ -50,6 +50,13 @@ export async function getBuffer(denops: Denops, buf: BufferInfo) {
 const INT_MAX = 2147483647;
 type Coord = [number, number];
 
+/**
+ * Get visual selection
+ * Original is written in vimscript by haya14busa in MIT license.
+ * See original: https://github.com/haya14busa/vim-asterisk/blob/master/autoload/asterisk.vim
+ *
+ * @return string: return visual selection
+ */
 export async function getVisualSelection(denops: Denops) {
   const mode = await fn.mode(denops, 1);
   const { curswant } = ensure(
