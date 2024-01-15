@@ -4,6 +4,7 @@ import { type Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
 import * as fn from "https://deno.land/x/denops_std@v5.2.0/function/mod.ts";
 import * as option from "https://deno.land/x/denops_std@v5.2.0/option/mod.ts";
 import {
+  ensure,
   is,
   PredicateType,
 } from "https://deno.land/x/unknownutil@v3.14.0/mod.ts";
@@ -46,21 +47,101 @@ export async function getBuffer(denops: Denops, buf: BufferInfo) {
   };
 }
 
+const INT_MAX = 2147483647;
+type Coord = [number, number];
+
 export async function getVisualSelection(denops: Denops) {
-  // Why is this not a built-in Vim script function?!
-  const [, line_start, column_start] = await fn.getpos(denops, "'<");
-  const [, line_end, column_end] = await fn.getpos(denops, "'>");
-
-  const lines = await fn.getline(denops, line_start, line_end);
-  if (lines.length == 0) {
-    return "";
-  }
-  const selection = await option.selection.get(denops);
-  lines[lines.length - 1] = lines[-1].substring(
-    0,
-    column_end - (selection === "inclusive" ? 1 : 2),
+  const mode = await fn.mode(denops, 1);
+  const { curswant } = ensure(
+    await fn.winsaveview(denops),
+    is.ObjectOf({ curswant: is.Number }),
   );
+  const end_col = curswant == INT_MAX
+    ? INT_MAX
+    : await getColInVisual(denops, ".");
+  const current_pos: Coord = [await fn.line(denops, "."), end_col];
+  const other_end_pos: Coord = [
+    await fn.line(denops, "v"),
+    await getColInVisual(denops, "v"),
+  ];
+  const [begin, end] = [current_pos, other_end_pos].sort(comparePos);
+  if (await isExclusive(denops) && begin[1] !== end[1]) {
+    // Decrement column number for :set selection=exclusive
+    end[1] -= 1;
+  }
 
-  lines[0] = lines[0].substring(column_start - 1);
-  return lines.join("\n");
+  const suffix = mode === "V" ? "\n" : "";
+  if (mode !== "V" && begin[0] === end[0] && begin[1] === end[1]) {
+    return await getPosChar(denops, begin) + suffix;
+  }
+
+  if (mode === "\<C-v>") {
+    const [min_c, max_c] = [begin[1], end[1]].sort();
+    return (await Promise.all(
+      [...Array(end[0] - begin[0])].map(async (_, i) => {
+        const line = await fn.getline(denops, i + begin[0]);
+        return line.substring(min_c - 1, max_c - 1);
+      }),
+    )).join("\n") + suffix;
+  }
+
+  if (mode === "V") {
+    return (await fn.getline(denops, begin[0], end[0])).join("\n") + suffix;
+  }
+
+  if (begin[0] === end[0]) {
+    const line = await fn.getline(denops, begin[0]);
+    return line.substring(begin[1] - 1, end[1]) + suffix;
+  }
+
+  return [
+    (await fn.getline(denops, begin[0])).substring(begin[1] - 1),
+    ...(end[0] - begin[0] < 2
+      ? []
+      : await fn.getline(denops, begin[0] + 1, end[0] - 1)),
+    (await fn.getline(denops, end[0])).substring(0, end[1]),
+  ].join("\n") + suffix;
+}
+
+function comparePos(x: Coord, y: Coord) {
+  return Math.max(-1, Math.min(1, (x[0] == y[0]) ? x[1] - y[1] : x[0] - y[0]));
+}
+
+/** Get character at given position with multibyte handling
+ * @param [Number, Number] as coordinate or expression for position :h line()
+ * @return String
+ */
+async function getPosChar(denops: Denops, pos: Coord) {
+  const [line, col] = pos;
+  return await fn.matchstr(
+    denops,
+    await fn.getline(denops, line),
+    ".",
+    col - 1,
+  );
+}
+
+async function isExclusive(denops: Denops) {
+  return await option.selection.get(denops) === "exclusive";
+}
+
+/**
+ * @return number: return multibyte aware column number in Visual mode to select
+ */
+async function getColInVisual(denops: Denops, p: string) {
+  const [pos, other] = [p, p === "." ? "v" : "."];
+  const c = await fn.col(denops, pos);
+  const d =
+    comparePos(await getCoord(denops, pos), await getCoord(denops, other)) > 0
+      ? (await getPosChar(denops, [
+        await fn.line(denops, pos),
+        c - (await isExclusive(denops) ? 1 : 0),
+      ])).length - 1
+      : 0;
+  return c + d;
+}
+
+async function getCoord(denops: Denops, expr: string): Promise<Coord> {
+  const [_, l, c] = await fn.getpos(denops, expr);
+  return [l, c];
 }

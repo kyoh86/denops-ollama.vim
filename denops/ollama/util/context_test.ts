@@ -5,6 +5,7 @@ import {
 } from "https://deno.land/std@0.210.0/assert/mod.ts";
 import { test } from "https://deno.land/x/denops_test@v1.6.1/mod.ts";
 import * as fn from "https://deno.land/x/denops_std@v5.2.0/function/mod.ts";
+import * as option from "https://deno.land/x/denops_std@v5.2.0/option/mod.ts";
 import * as testtarget from "./context.ts";
 
 test({
@@ -107,5 +108,71 @@ test({
     assertEquals(buf3.name, "spec-3");
     assertEquals(buf3.bufnr, 3);
     assertEquals(buf3.content, "foo-3\nbar-3\nbaz-3");
+  },
+});
+
+test({
+  mode: "all",
+  name: "getVisualSelection should get all content in line selection",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["foo", "bar", "baz"]);
+    await denops.cmd("normal! ggVGk");
+
+    const content = await testtarget.getVisualSelection(denops);
+    assertEquals(content, "foo\nbar\n");
+  },
+});
+
+test({
+  mode: "all",
+  name:
+    "getVisualSelection should get all content in multi-line selection (character-wise)",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["fooa", "bara", "baza"]);
+    await denops.cmd("normal! gg0lvjj0l");
+
+    const content = await testtarget.getVisualSelection(denops);
+    assertEquals(content, "ooa\nbara\nba");
+  },
+});
+
+test({
+  mode: "all",
+  name:
+    "getVisualSelection should get all content in single-line selection (character-wise)",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["fooa", "bara", "baza"]);
+    await denops.cmd("normal! gg0lvl");
+
+    const content = await testtarget.getVisualSelection(denops);
+    assertEquals(content, "oo");
+  },
+});
+
+test({
+  mode: "all",
+  name:
+    "getVisualSelection should get all content in single-line selection (character-wise) with exclusive selection",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
+    await option.selection.set(denops, "exclusive");
+    await denops.cmd("normal! gg0jlvl");
+
+    const content = await testtarget.getVisualSelection(denops);
+    assertEquals(content, "a");
+  },
+});
+
+test({
+  mode: "all",
+  name:
+    "getVisualSelection should get all content in single-line selection (character-wise) with exclusive selection",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
+    await option.selection.set(denops, "exclusive");
+    await denops.cmd("normal! gg0jlv");
+
+    const content = await testtarget.getVisualSelection(denops);
+    assertEquals(content, "a");
   },
 });
