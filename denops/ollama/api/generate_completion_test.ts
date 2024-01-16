@@ -1,9 +1,9 @@
-import { assertEquals } from "https://deno.land/std@0.211.0/assert/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.212.0/assert/mod.ts";
 import {
   assertSpyCallArgs,
   assertSpyCalls,
   stub,
-} from "https://deno.land/std@0.211.0/testing/mock.ts";
+} from "https://deno.land/std@0.212.0/testing/mock.ts";
 import {
   generateCompletion,
   GenerateCompletionResponse,

@@ -1,11 +1,11 @@
-import { join } from "https://deno.land/std@0.211.0/path/mod.ts";
-import { ensureFile } from "https://deno.land/std@0.211.0/fs/mod.ts";
+import { join } from "https://deno.land/std@0.212.0/path/mod.ts";
+import { ensureFile } from "https://deno.land/std@0.212.0/fs/mod.ts";
 import {
   handlers as logHandlers,
   setup as setupLog,
-} from "https://deno.land/std@0.211.0/log/mod.ts";
+} from "https://deno.land/std@0.212.0/log/mod.ts";
 import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
-import { ensure, is } from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
+import { ensure, is } from "https://deno.land/x/unknownutil@v3.14.1/mod.ts";
 import xdg from "https://deno.land/x/xdg@v10.6.0/src/mod.deno.ts";
 
 import init from "./dispatch/init.ts";

@@ -1,10 +1,10 @@
-import { abortableAsyncIterable } from "https://deno.land/std@0.211.0/async/mod.ts";
+import { abortableAsyncIterable } from "https://deno.land/std@0.212.0/async/mod.ts";
 import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
 import {
   is,
   maybe,
   PredicateType,
-} from "https://deno.land/x/unknownutil@v3.13.0/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.14.1/mod.ts";
 
 import { ChatBase, isOpener, type Opener } from "../util/chat.ts";
 import {
