@@ -1,8 +1,11 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
 name: Deno Update
 
 on:
   schedule:
     - cron: "0 9 * * *"
+  workflow_dispatch: {}
 
 jobs:
   update:
@@ -37,8 +40,8 @@ jobs:
 
       - name: Get Denops
         run: |
-          git clone https://github.com/vim-denops/denops.vim
-          echo "DENOPS_TEST_DENOPS_PATH=${PWD}/denops.vim" >> "$GITHUB_ENV"
+          git clone https://github.com/vim-denops/denops.vim /tmp/denops.vim
+          echo "DENOPS_TEST_DENOPS_PATH=/tmp/denops.vim" >> "$GITHUB_ENV"
 
       - uses: rhysd/action-setup-vim@v1
         id: vim
