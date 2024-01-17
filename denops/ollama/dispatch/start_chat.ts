@@ -6,7 +6,7 @@ import {
   PredicateType,
 } from "https://deno.land/x/unknownutil@v3.14.1/mod.ts";
 
-import { ChatBase, isOpener, type Opener } from "../util/chat.ts";
+import { ChatBase, isOpener, type Opener } from "../ui/chat.ts";
 import {
   generateCompletion,
   type GenerateCompletionParams,

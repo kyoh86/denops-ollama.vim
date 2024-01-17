@@ -13,7 +13,7 @@ import {
   isGenerateChatCompletionMessage,
   isGenerateChatCompletionParams,
 } from "../api.ts";
-import { ChatBase, isOpener, type Opener } from "../util/chat.ts";
+import { ChatBase, isOpener, type Opener } from "../ui/chat.ts";
 import { isReqOpts } from "./types.ts";
 import {
   getBuffer,

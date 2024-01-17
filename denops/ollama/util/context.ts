@@ -1,4 +1,4 @@
-// Functions to get message from context
+// Functions to get context
 
 import { type Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
 import * as fn from "https://deno.land/x/denops_std@v5.2.0/function/mod.ts";

@@ -18,7 +18,7 @@ import { Notify, Queue } from "https://deno.land/x/async@v2.1.0/mod.ts";
 import {
   type HighlightPrefix,
   prepareHighlightPrefix,
-} from "../util/highlight_prefix.ts";
+} from "./highlight_prefix.ts";
 import { canceller } from "../util/cancellable.ts";
 
 export const isOpener = is.OneOf([
