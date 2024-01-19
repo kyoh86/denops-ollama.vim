@@ -20,6 +20,7 @@ import {
   prepareHighlightPrefix,
 } from "./highlight_prefix.ts";
 import { canceller } from "../util/cancellable.ts";
+import * as spinner from "./spinner.ts";
 
 export const isOpener = is.OneOf([
   is.LiteralOf("split"),
@@ -78,6 +79,7 @@ export abstract class ChatBase<TContext> {
         { once: true },
       );
     });
+    await spinner.init(denops, bufnr); // TODO: configure kind and highlight
     await option.filetype.setBuffer(denops, bufnr, "ollama.chat");
     await option.buftype.setBuffer(denops, bufnr, "prompt");
     await option.buflisted.setBuffer(denops, bufnr, true);
@@ -166,18 +168,19 @@ export abstract class ChatBase<TContext> {
         await helper.execute(denops, `silent! bdelete! ${bufnr}`);
         break;
       }
-
       const context = this.parseContext(
         await fn.getbufvar(denops, bufnr, "ollama_chat_context"),
       );
       getLogger("denops-ollama-verbose").debug(`reserved context: ${context}`);
 
       const { signal, cancel } = await canceller(denops, this.timeout);
+      const timer = await spinner.start(denops, bufnr);
       try {
         await this.process(denops, bufnr, context, signal, prompt);
       } catch (err) {
         getLogger("denops-ollama").error(err);
       } finally {
+        await spinner.stop(denops, bufnr, timer);
         cancel();
         await fn.setbufvar(denops, bufnr, "&modified", 0);
       }
