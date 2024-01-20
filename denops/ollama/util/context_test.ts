@@ -229,3 +229,43 @@ test({
     assertEquals(content, "ar\nux");
   },
 });
+
+test({
+  mode: "all",
+  name: "getCurrent should return empty when the cursor at the 0,0",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
+    await denops.cmd(`normal! gg0`);
+
+    const context = await testtarget.getCurrent(denops);
+    assertEquals(context.lines.length, 0);
+  },
+});
+
+test({
+  mode: "all",
+  name: "getCurrent should return first line when the cursor at the 1,0",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
+    await denops.cmd(`normal! gg0j`);
+
+    const context = await testtarget.getCurrent(denops);
+    assertEquals(context.lines.length, 1);
+    assertEquals(context.lines[0], "foo");
+  },
+});
+
+test({
+  mode: "all",
+  name:
+    "getCurrent should return fragment of the line when the cursor at middle of the line",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
+    await denops.cmd(`normal! gg0jll`);
+
+    const context = await testtarget.getCurrent(denops);
+    assertEquals(context.lines.length, 2);
+    assertEquals(context.lines[0], "foo");
+    assertEquals(context.lines[1], "ba");
+  },
+});
