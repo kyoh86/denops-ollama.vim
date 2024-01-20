@@ -13,6 +13,12 @@ function ollama#start_chat_with_context(...)
   call denops#notify("ollama", "startChatWithContext", a:000)
 endfunction
 
+	
+" Get completion for the current buffer around the cursor.
+function ollama#complete(...)
+  return denops#request("ollama", "complete", a:000)
+endfunction
+
 " Show list models in local.
 function ollama#list_models(...)
   call denops#notify("ollama", "listModels", a:000)

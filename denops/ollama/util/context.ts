@@ -55,7 +55,7 @@ export async function getCurrent(denops: Denops) {
     ret.buf = await fn.bufnr(denops);
     const [_, lnum, col] = await fn.getpos(denops, ".");
     ret.lines = await fn.getline(denops, 1, lnum);
-    ret.lines[-1] = ret.lines[-1].substring(1, col);
+    ret.lines[-1] = ret.lines[-1]?.substring(1, col) ?? "";
   });
   return ret;
 }

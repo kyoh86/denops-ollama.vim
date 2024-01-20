@@ -77,7 +77,7 @@ ollama#start_chat({model} [, {options} [, {params}]])
 
                                                            *ollama#complete()*
 ollama#complete({model} [, {options} [, {params}]])
-	Get completion for the current buffer with the cursor by the {model}.
+	Get completion for the current buffer around the cursor by the {model}.
 	See |ollama-api-definition|.
 
 	You can specify {options} with fields in below.

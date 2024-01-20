@@ -93,7 +93,7 @@ export async function main(denops: Denops) {
       uOpts: unknown,
       uParams: unknown,
     ) {
-      await complete(
+      return await complete(
         denops,
         ensure(uModel, is.String),
         ensure(uOpts, is.OneOf([is.Undefined, isCompleteOpts])),

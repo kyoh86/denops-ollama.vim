@@ -7,6 +7,7 @@ import { generateCompletion, type GenerateCompletionParams } from "../api.ts";
 import { isReqOpts } from "./types.ts";
 import { getCurrent } from "../util/context.ts";
 import { canceller } from "../util/cancellable.ts";
+import { trimAroundCode } from "../util/trim.ts";
 
 export const isCompleteOpts = is.AllOf([
   is.ObjectOf({
@@ -28,14 +29,19 @@ export default async function complete(
   try {
     const result = await generateCompletion(
       model,
-      current.lines.join("\n"),
+      [
+        "These are the contents before the cursor.",
+        ...current.lines.slice(-10, -1),
+        "You must output just generated contents that follows them in 10 lines at most.",
+        "You don't have to describe and repeating them.",
+      ].join("\n"),
       { ...params, stream: false },
       { ...opts, signal },
     );
     if ("error" in result.body) {
       throw new Error(result.body.error);
     }
-    return result.body.response;
+    return trimAroundCode(result.body.response);
   } finally {
     cancel();
   }
