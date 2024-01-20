@@ -59,39 +59,23 @@ ollama#start_chat({model} [, {options} [, {params}]])
 	See |ollama-api-definition|.
 
 	You can specify {options} with fields in below.
-		opener	How the new buffer be placed in which window:
-			tabnew		(DEFAULT) open a new tab
-			split, new	open a new split
-			vsplit, vnew	open a new vertical split
-			edit		open in the current window
-		timeout	Time limit.
-		baseUrl	The base of the URL to request.
-			(DEFAULT): "http://localhost:11434"
+		opener		How the new buffer be placed in which window:
+				tabnew		(DEFAULT) open a new tab
+				split, new	open a new split
+				vsplit, vnew	open a new vertical split
+				edit		open in the current window
+		timeout		Time limit.
+		baseUrl		The base of the URL to request.
+				(DEFAULT): "http://localhost:11434"
+		initialPrompt	Prompt to be passed to Ollama. When this is
+				specified, Ollama takes it immediately and
+				begins its reply.
 
 	And you can specify {params} as optional parameters for the API.
 		See |ollama-api-definition|.
 
 	Example: >
 	:call ollama#start_chat('codellama', {'opener': 'new'})
-<
-
-                                                           *ollama#complete()*
-ollama#complete({model}, {callback} [, {options} [, {params}]])
-	Get completion for the current buffer around the cursor by the {model}.
-	See |ollama-api-definition|.
-
-	Response should be pass to {callback}.
-
-	You can specify {options} with fields in below.
-		timeout	Time limit.
-		baseUrl	The base of the URL to request.
-			(DEFAULT): "http://localhost:11434"
-
-	And you can specify {params} as optional parameters for the API.
-		See |ollama-api-definition|.
-
-	Example: >
-	:call ollama#complete('codellama', {msg -> execute("echomsg " .. msg)})
 <
 
                                             *ollama#start_chat_with_context()*
@@ -111,14 +95,17 @@ ollama#start_chat_with_context({model}, {context} [, {options} [, {params}]])
 		lastMessage	A last message to be sent.
 
 	You can specify {options} with fields in below.
-		opener	How the new buffer be placed in which window:
-			tabnew		(DEFAULT) open a new tab
-			split, new	open a new split
-			vsplit, vnew	open a new vertical split
-			edit		open in the current window
-		timeout	Time limit.
-		baseUrl	The base of the URL to request.
-			(DEFAULT): "http://localhost:11434"
+		opener		How the new buffer be placed in which window:
+				tabnew		(DEFAULT) open a new tab
+				split, new	open a new split
+				vsplit, vnew	open a new vertical split
+				edit		open in the current window
+		timeout		Time limit.
+		baseUrl		The base of the URL to request.
+				(DEFAULT): "http://localhost:11434"
+		initialPrompt	Prompt to be passed to Ollama. When this is
+				specified, Ollama takes it immediately and
+				begins its reply.
 
 	And you can specify {params} as optional parameters for the API.
 		See |ollama-api-definition|.
@@ -132,6 +119,25 @@ ollama#start_chat_with_context({model}, {context} [, {options} [, {params}]])
 		\ 'selection': v:true,
 		\ 'buffers:' getbufinfo({'buflisted':v:true}),
 		\ })
+<
+
+                                                           *ollama#complete()*
+ollama#complete({model}, {callback} [, {options} [, {params}]])
+	Get completion for the current buffer around the cursor by the {model}.
+	See |ollama-api-definition|.
+
+	Response should be pass to {callback}.
+
+	You can specify {options} with fields in below.
+		timeout		Time limit.
+		baseUrl		The base of the URL to request.
+				(DEFAULT): "http://localhost:11434"
+
+	And you can specify {params} as optional parameters for the API.
+		See |ollama-api-definition|.
+
+	Example: >
+	:call ollama#complete('codellama', {msg -> execute("echomsg " .. msg)})
 <
 
                                                         *ollama#list_models()*
