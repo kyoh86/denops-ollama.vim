@@ -83,6 +83,19 @@ async function contextToMessages(
   return messages;
 }
 
+export const isStartChatWithContextOpts = is.AllOf([
+  is.ObjectOf({
+    opener: is.OptionalOf(isOpener),
+    timeout: is.OptionalOf(is.Number),
+    initialPrompt: is.OptionalOf(is.String),
+  }),
+  isReqOpts,
+]);
+
+export type StartChatWithContextOpts = PredicateType<
+  typeof isStartChatWithContextOpts
+>;
+
 class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
   constructor(
     model: string,
@@ -90,7 +103,7 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
     private opts?: StartChatWithContextOpts,
     private params?: GenerateChatCompletionParams,
   ) {
-    super(model, opts?.timeout, messages);
+    super(model, opts?.timeout, messages, opts?.initialPrompt);
   }
 
   parseContext(context: unknown): GenerateChatCompletionMessage[] | undefined {
@@ -135,18 +148,6 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
     }]);
   }
 }
-
-export const isStartChatWithContextOpts = is.AllOf([
-  is.ObjectOf({
-    opener: is.OptionalOf(isOpener),
-    timeout: is.OptionalOf(is.Number),
-  }),
-  isReqOpts,
-]);
-
-export type StartChatWithContextOpts = PredicateType<
-  typeof isStartChatWithContextOpts
->;
 
 export async function startChatWithContext(
   denops: Denops,

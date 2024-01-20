@@ -47,12 +47,17 @@ export abstract class ChatBase<TContext> {
     protected readonly model: string,
     private timeout?: number,
     private context?: TContext,
+    private initialPrompt?: string,
   ) {}
 
   protected async setContext(denops: Denops, bufnr: number, context: TContext) {
     if (context === undefined) return;
     this.context = context;
     await fn.setbufvar(denops, bufnr, "ollama_chat_context", context);
+  }
+
+  #promptString() {
+    return `(${this.model})>> `;
   }
 
   async #setupBuf(denops: Denops, bufnr: number) {
@@ -85,7 +90,7 @@ export abstract class ChatBase<TContext> {
     await option.buflisted.setBuffer(denops, bufnr, true);
     await option.swapfile.setBuffer(denops, bufnr, false);
     await fn.bufload(denops, bufnr);
-    await fn.prompt_setprompt(denops, bufnr, `(${this.model})>> `);
+    await fn.prompt_setprompt(denops, bufnr, this.#promptString());
     return bufnr;
   }
 
@@ -113,7 +118,7 @@ export abstract class ChatBase<TContext> {
       const highlight = await prepareHighlightPrefix(
         denops,
         bufnr,
-        await fn.strlen(denops, `(${this.model})>> `),
+        await fn.strlen(denops, this.#promptString()),
       );
       this.#firstLine = true;
       await fn.prompt_setinterrupt(denops, bufnr, "ollama#internal#cancel");
@@ -130,6 +135,13 @@ export abstract class ChatBase<TContext> {
       );
       await this.#editBuf(denops, bufname, opener);
       await highlight(denops, 1);
+      if (this.initialPrompt) {
+        await fn.appendbufline(denops, bufnr, 0, [
+          this.#promptString() + this.initialPrompt,
+        ]);
+        highlight!(denops, 1);
+        this.#queue.push(this.initialPrompt);
+      }
     });
   }
 

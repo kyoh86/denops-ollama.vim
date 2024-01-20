@@ -20,13 +20,24 @@ export {
   type Opener,
 };
 
+export const isStartChatOpts = is.AllOf([
+  is.ObjectOf({
+    opener: is.OptionalOf(isOpener),
+    timeout: is.OptionalOf(is.Number),
+    initialPrompt: is.OptionalOf(is.String),
+  }),
+  isReqOpts,
+]);
+
+export type StartChatOpts = PredicateType<typeof isStartChatOpts>;
+
 class Chat extends ChatBase<number[]> {
   constructor(
     model: string,
     private opts?: StartChatOpts,
     private params?: GenerateCompletionParams,
   ) {
-    super(model);
+    super(model, opts?.timeout, undefined, opts?.initialPrompt);
   }
 
   parseContext(context: unknown): number[] | undefined {
@@ -64,16 +75,6 @@ class Chat extends ChatBase<number[]> {
     }
   }
 }
-
-export const isStartChatOpts = is.AllOf([
-  is.ObjectOf({
-    opener: is.OptionalOf(isOpener),
-    timeout: is.OptionalOf(is.Number),
-  }),
-  isReqOpts,
-]);
-
-export type StartChatOpts = PredicateType<typeof isStartChatOpts>;
 
 export default async function startChat(
   denops: Denops,
