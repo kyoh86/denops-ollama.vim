@@ -10,7 +10,6 @@ License: MIT License
 Contents ~
 
 Install						|ollama-install|
-Setup						|ollama-setup|
 Function					|ollama-function|
 Commands					|ollama-commands|
 Keymaps						|ollama-keymaps|
@@ -27,10 +26,14 @@ You need to install *denops.vim* as a dependency.
 * vim-denops/denops.vim https://github.com/vim-denops/denops.vim
 * ollama https://ollama.ai
 
+If you want to use it, run ollama background with a model you like in local.
 
-==============================================================================
-                                                                *ollama-setup*
-Setup ~
+```console
+$ ollama pull codellama
+$ ollama serve
+```
+
+And call `ollama#start_chat` with the model name.
 
 
 ==============================================================================
@@ -74,8 +77,20 @@ ollama#start_chat({model} [, {options} [, {params}]])
 	And you can specify {params} as optional parameters for the API.
 		See |ollama-api-definition|.
 
-	Example: >
-	:call ollama#start_chat('codellama', {'opener': 'new'})
+	Example 1: Start a chat with the local Ollama server with
+	             "codellama" model.
+	>
+	call ollama#start_chat('codellama')
+<
+	Example 2: Start a new chat with the remote Ollama server.
+	>
+	call ollama#start_chat('codellama', {}, 
+		\ {'baseUrl': 'http://your-remote-server'})
+<
+	Example 3: Start a chat with a initial prompt.
+	>
+	call ollama#start_chat('codellama', 
+		\ { 'initialPrompt': 'What is your favorite color?' }, {})
 <
 
                                             *ollama#start_chat_with_context()*
@@ -110,17 +125,25 @@ ollama#start_chat_with_context({model}, {context} [, {options} [, {params}]])
 	And you can specify {params} as optional parameters for the API.
 		See |ollama-api-definition|.
 
-	Example: >
-	:call ollama#start_chat_with_context('codellama', {
-		\ 'selection': v:true,
-		\ 'buffers:' [1, {'bufnr': 2, 'name': 'foo'}],
-		\ }, {'opener': 'tabnew'})
+	Example 1: Start a new chat based on the selection text.
+	>
+	call ollama#start_chat('codellama',
+		\ {'selection': v:true},
+		\ {})
+<
+	Example 2: Start a new chat on the current buffer.
+	>
+	call ollama#start_chat('codellama',
+		\ {'selection': v:true},
+		\ {})
+<
+	Example 3: Start a new chat on the listed buffers.
+	>
 	:call ollama#start_chat_with_context('codellama', {
 		\ 'selection': v:true,
 		\ 'buffers:' getbufinfo({'buflisted':v:true}),
 		\ })
 <
-
                                                            *ollama#complete()*
 ollama#complete({model}, {callback} [, {options} [, {params}]])
 	Get completion for the current buffer around the cursor by the {model}.

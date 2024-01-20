@@ -1,6 +1,12 @@
+# BETA
+
+(THIS IS STILL IN BETA. PLEASE NOTE THAT WE MAY MAKE SOME DESTRUCTIVE CHANGES TO THE INTERFACE)
+
 # denops-ollama.vim
 
-Superpractilisticexpermientocious.
+This is the project for Vim/Neovim to chat with Ollama.
+The project is designed to provide a simple and efficient way for users to interact with Ollama in Vim/Neovim,
+and to make it easy for developers to extend and customize the plugin's functionality.
 
 ## doc
 
