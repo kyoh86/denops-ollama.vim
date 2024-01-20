@@ -90,12 +90,20 @@ export async function main(denops: Denops) {
 
     async complete(
       uModel: unknown,
+      uCallback: unknown,
       uOpts: unknown,
       uParams: unknown,
     ) {
-      return await complete(
+      await complete(
         denops,
         ensure(uModel, is.String),
+        async (msg: string) => {
+          await denops.call(
+            "denops#callback#call",
+            ensure(uCallback, is.String),
+            msg,
+          );
+        },
         ensure(uOpts, is.OneOf([is.Undefined, isCompleteOpts])),
         ensure(uParams, is.OneOf([is.Undefined, isGenerateCompletionParams])),
       );

@@ -16,7 +16,13 @@ endfunction
 	
 " Get completion for the current buffer around the cursor.
 function ollama#complete(...)
-  return denops#request("ollama", "complete", a:000)
+  let l:Cb = a:2
+  if type(l:Cb) == v:t_func
+    let l:Cb = denops#callback#register(l:Cb)
+  elseif type(l:Cb) == v:t_string
+    let l:Cb = denops#callback#register(function(l:Cb))
+  endif
+  call denops#notify("ollama", "complete", [a:1, l:Cb] + a:000[2:])
 endfunction
 
 " Show list models in local.

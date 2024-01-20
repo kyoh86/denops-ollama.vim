@@ -76,9 +76,11 @@ ollama#start_chat({model} [, {options} [, {params}]])
 <
 
                                                            *ollama#complete()*
-ollama#complete({model} [, {options} [, {params}]])
+ollama#complete({model}, {callback} [, {options} [, {params}]])
 	Get completion for the current buffer around the cursor by the {model}.
 	See |ollama-api-definition|.
+
+	Response should be pass to {callback}.
 
 	You can specify {options} with fields in below.
 		timeout	Time limit.
@@ -89,7 +91,7 @@ ollama#complete({model} [, {options} [, {params}]])
 		See |ollama-api-definition|.
 
 	Example: >
-	:call ollama#complete('codellama')
+	:call ollama#complete('codellama', {msg -> execute("echomsg " .. msg)})
 <
 
                                             *ollama#start_chat_with_context()*

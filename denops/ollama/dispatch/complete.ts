@@ -18,12 +18,15 @@ export const isCompleteOpts = is.AllOf([
 
 export type CompleteOpts = PredicateType<typeof isCompleteOpts>;
 
-export default async function complete(
+export default async function complete<T>(
   denops: Denops,
   model: string,
+  callback:
+    | ((messasge: string) => T)
+    | ((messasge: string) => Promise<T>),
   opts?: CompleteOpts,
   params?: GenerateCompletionParams,
-): Promise<string> {
+): Promise<T> {
   const current = await getCurrent(denops);
   const { signal, cancel } = await canceller(denops, opts?.timeout);
   try {
@@ -41,7 +44,11 @@ export default async function complete(
     if ("error" in result.body) {
       throw new Error(result.body.error);
     }
-    return trimAroundCode(result.body.response);
+    const ret = callback(trimAroundCode(result.body.response));
+    if (ret instanceof Promise) {
+      return await ret;
+    }
+    return ret;
   } finally {
     cancel();
   }
