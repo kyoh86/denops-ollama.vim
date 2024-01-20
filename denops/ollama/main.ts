@@ -29,6 +29,7 @@ import {
   isStartChatWithContextOpts,
   startChatWithContext,
 } from "./dispatch/start_chat_with_context.ts";
+import complete, { isCompleteOpts } from "./dispatch/complete.ts";
 
 export async function main(denops: Denops) {
   const cacheFile = join(xdg.cache(), "denops-ollama-vim", "log.txt");
@@ -83,6 +84,19 @@ export async function main(denops: Denops) {
         denops,
         ensure(uModel, is.String),
         ensure(uOpts, is.OneOf([is.Undefined, isStartChatOpts])),
+        ensure(uParams, is.OneOf([is.Undefined, isGenerateCompletionParams])),
+      );
+    },
+
+    async complete(
+      uModel: unknown,
+      uOpts: unknown,
+      uParams: unknown,
+    ) {
+      await complete(
+        denops,
+        ensure(uModel, is.String),
+        ensure(uOpts, is.OneOf([is.Undefined, isCompleteOpts])),
         ensure(uParams, is.OneOf([is.Undefined, isGenerateCompletionParams])),
       );
     },

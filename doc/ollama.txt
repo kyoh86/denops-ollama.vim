@@ -75,6 +75,23 @@ ollama#start_chat({model} [, {options} [, {params}]])
 	:call ollama#start_chat('codellama', {'opener': 'new'})
 <
 
+                                                           *ollama#complete()*
+ollama#complete({model} [, {options} [, {params}]])
+	Get completion for the current buffer with the cursor by the {model}.
+	See |ollama-api-definition|.
+
+	You can specify {options} with fields in below.
+		timeout	Time limit.
+		baseUrl	The base of the URL to request.
+			(DEFAULT): "http://localhost:11434"
+
+	And you can specify {params} as optional parameters for the API.
+		See |ollama-api-definition|.
+
+	Example: >
+	:call ollama#complete('codellama')
+<
+
                                             *ollama#start_chat_with_context()*
 ollama#start_chat_with_context({model}, {context} [, {options} [, {params}]])
 	Start chat with Ollama with the context using the {model}.

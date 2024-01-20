@@ -1,4 +1,5 @@
 import {
+  ensure,
   is,
   type PredicateType,
 } from "https://deno.land/x/unknownutil@v3.14.1/mod.ts";
@@ -62,6 +63,30 @@ export type GenerateCompletionResponse = PredicateType<
   typeof isGenerateCompletionResponse
 >;
 
+export async function generateCompletion(
+  // The model name
+  model: string,
+  // The prompt to generate a response for
+  prompt: string,
+  params?: GenerateCompletionParams & { stream?: true },
+  init?: ReqInit,
+): Promise<{
+  response: Response;
+  body: ReadableStream<GenerateCompletionResponse> | undefined;
+}>;
+
+export async function generateCompletion(
+  // The model name
+  model: string,
+  // The prompt to generate a response for
+  prompt: string,
+  params?: GenerateCompletionParams & { stream: false },
+  init?: ReqInit,
+): Promise<{
+  response: Response;
+  body: GenerateCompletionResponse;
+}>;
+
 /** Generate a response for a given prompt with a provided model.
  * This is a streaming endpoint, so there will be a series of responses.
  * The final response object will include statistics and additional data from the request.
@@ -71,11 +96,31 @@ export async function generateCompletion(
   model: string,
   // The prompt to generate a response for
   prompt: string,
-  params?: GenerateCompletionParams,
+  params?: GenerateCompletionParams & { stream?: boolean },
   init?: ReqInit,
-) {
-  return parseJSONStream(
-    await doPost("/api/generate", { model, prompt, ...params }, init),
-    isGenerateCompletionResponse,
+): Promise<
+  | {
+    response: Response;
+    body: GenerateCompletionResponse;
+  }
+  | {
+    response: Response;
+    body: ReadableStream<GenerateCompletionResponse> | undefined;
+  }
+> {
+  if (params?.stream === undefined || params.stream) {
+    return parseJSONStream(
+      await doPost("/api/generate", { model, prompt, ...params }, init),
+      isGenerateCompletionResponse,
+    );
+  }
+  const response = await doPost(
+    "/api/generate",
+    { model, prompt, ...params },
+    init,
   );
+  return {
+    response,
+    body: ensure(await response.json(), isGenerateCompletionResponse),
+  };
 }

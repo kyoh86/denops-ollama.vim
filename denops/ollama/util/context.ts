@@ -3,6 +3,7 @@
 import { type Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
 import * as fn from "https://deno.land/x/denops_std@v5.2.0/function/mod.ts";
 import * as option from "https://deno.land/x/denops_std@v5.2.0/option/mod.ts";
+import * as batch from "https://deno.land/x/denops_std@v5.2.0/batch/mod.ts";
 import {
   ensure,
   is,
@@ -45,6 +46,18 @@ export async function getBuffer(denops: Denops, buf: BufferInfo) {
     ...buf,
     content: (await fn.getbufline(denops, buf.bufnr, 1, "$")).join("\n"),
   };
+}
+
+export async function getCurrent(denops: Denops) {
+  const ret = { name: "", buf: 0, lines: [] as string[] };
+  await batch.batch(denops, async () => {
+    ret.name = await fn.bufname(denops);
+    ret.buf = await fn.bufnr(denops);
+    const [_, lnum, col] = await fn.getpos(denops, ".");
+    ret.lines = await fn.getline(denops, 1, lnum);
+    ret.lines[-1] = ret.lines[-1].substring(1, col);
+  });
+  return ret;
 }
 
 const INT_MAX = 2147483647;

@@ -14,7 +14,7 @@ export function doPost<T>(
   path: string,
   param: T,
   init?: ReqInit,
-) {
+): Promise<Response> {
   const baseUrl = init?.baseUrl ?? defaultBaseUrl;
   return fetch(
     new URL(path, baseUrl),
@@ -30,7 +30,7 @@ export function doPost<T>(
 export function doGet(
   path: string,
   init?: ReqInit,
-) {
+): Promise<Response> {
   const baseUrl = init?.baseUrl ?? defaultBaseUrl;
   return fetch(
     new URL(path, baseUrl),
@@ -45,7 +45,7 @@ export function doDelete<T>(
   path: string,
   param: T,
   init?: ReqInit,
-) {
+): Promise<Response> {
   const baseUrl = init?.baseUrl ?? defaultBaseUrl;
   return fetch(
     new URL(path, baseUrl),
@@ -60,7 +60,10 @@ export function doDelete<T>(
 export async function parseJSONList<T>(
   response: Response,
   predicate: Predicate<T>,
-) {
+): Promise<{
+  response: Response;
+  body: T[];
+}> {
   const body: T[] = [];
   await response.body
     ?.pipeThrough(new TextDecoderStream())
@@ -79,7 +82,10 @@ export async function parseJSONList<T>(
 export function parseJSONStream<T>(
   response: Response,
   predicate: Predicate<T>,
-) {
+): {
+  response: Response;
+  body: ReadableStream<T> | undefined;
+} {
   return {
     response,
     body: response.body
