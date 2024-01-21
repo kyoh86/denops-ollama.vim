@@ -9,7 +9,7 @@ test({
   fn: async (denops) => {
     const kind: sp.SpinnerName = "dots";
     const buf = await bufnr(denops);
-    await target.initSpinner(denops, buf);
+    await target.init(denops, buf);
     const id = await target.start(denops, buf);
     const timeout = sp[kind].interval * (sp[kind].frames.length + 2);
     await new Promise((resolve) => {
