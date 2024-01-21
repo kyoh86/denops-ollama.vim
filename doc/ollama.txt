@@ -1,4 +1,4 @@
-*ollama.txt* A Vim plugin as ...
+*ollama.txt* A Vim plugin as to chat with Ollama.
                                                   *ollama* *denops-ollama.txt*
 
 Author: kyoh86 <me@kyoh86.dev>
@@ -78,19 +78,16 @@ ollama#start_chat({model} [, {options} [, {params}]])
 		See |ollama-api-definition|.
 
 	Example 1: Start a chat with the local Ollama server with
-	             "codellama" model.
-	>
+	             "codellama" model. >
 	call ollama#start_chat('codellama')
 <
-	Example 2: Start a new chat with the remote Ollama server.
-	>
-	call ollama#start_chat('codellama', {}, 
+	Example 2: Start a new chat with the remote Ollama server. >
+	call ollama#start_chat('codellama',
 		\ {'baseUrl': 'http://your-remote-server'})
 <
-	Example 3: Start a chat with a initial prompt.
-	>
+	Example 3: Start a chat with a initial prompt. >
 	call ollama#start_chat('codellama', 
-		\ { 'initialPrompt': 'What is your favorite color?' }, {})
+		\ { 'initialPrompt': 'What is your favorite color?' })
 <
 
                                             *ollama#start_chat_with_context()*
@@ -125,24 +122,17 @@ ollama#start_chat_with_context({model}, {context} [, {options} [, {params}]])
 	And you can specify {params} as optional parameters for the API.
 		See |ollama-api-definition|.
 
-	Example 1: Start a new chat based on the selection text.
-	>
+	Example 1: Start a new chat based on the selection text. >
 	call ollama#start_chat('codellama',
-		\ {'selection': v:true},
-		\ {})
+		\ {'selection': v:true})
 <
-	Example 2: Start a new chat on the current buffer.
-	>
+	Example 2: Start a new chat on the current buffer. >
 	call ollama#start_chat('codellama',
-		\ {'selection': v:true},
-		\ {})
+		\ {'currentBuffer': v:true})
 <
-	Example 3: Start a new chat on the listed buffers.
-	>
-	:call ollama#start_chat_with_context('codellama', {
-		\ 'selection': v:true,
-		\ 'buffers:' getbufinfo({'buflisted':v:true}),
-		\ })
+	Example 3: Start a new chat on the listed buffers. >
+	:call ollama#start_chat_with_context('codellama', 
+		\ {'buffers:' getbufinfo({'buflisted':v:true})})
 <
                                                            *ollama#complete()*
 ollama#complete({model}, {callback} [, {options} [, {params}]])
@@ -159,7 +149,7 @@ ollama#complete({model}, {callback} [, {options} [, {params}]])
 	And you can specify {params} as optional parameters for the API.
 		See |ollama-api-definition|.
 
-	Example: >
+	Example: Request completion and echo it. >
 	:call ollama#complete('codellama', {msg -> execute("echomsg " .. msg)})
 <
 
