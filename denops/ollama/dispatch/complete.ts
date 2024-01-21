@@ -1,4 +1,4 @@
-import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
+import { Denops } from "https://deno.land/x/denops_std@v5.3.0/mod.ts";
 import {
   is,
   PredicateType,

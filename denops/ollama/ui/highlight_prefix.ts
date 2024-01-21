@@ -1,4 +1,4 @@
-import { type Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
+import { type Denops } from "https://deno.land/x/denops_std@v5.3.0/mod.ts";
 
 export async function setup(denops: Denops) {
   await denops.cmd("highlight default link OllamaPrompt Question");

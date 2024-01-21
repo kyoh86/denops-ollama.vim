@@ -1,8 +1,8 @@
-import { map } from "https://deno.land/x/denops_std@v5.2.0/mapping/mod.ts";
-import * as lambda from "https://deno.land/x/denops_std@v5.2.0/lambda/mod.ts";
-import { generateUniqueString } from "https://deno.land/x/denops_std@v5.2.0/util.ts";
-import * as autocmd from "https://deno.land/x/denops_std@v5.2.0/autocmd/mod.ts";
-import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
+import { map } from "https://deno.land/x/denops_std@v5.3.0/mapping/mod.ts";
+import * as lambda from "https://deno.land/x/denops_std@v5.3.0/lambda/mod.ts";
+import { generateUniqueString } from "https://deno.land/x/denops_std@v5.3.0/util.ts";
+import * as autocmd from "https://deno.land/x/denops_std@v5.3.0/autocmd/mod.ts";
+import { Denops } from "https://deno.land/x/denops_std@v5.3.0/mod.ts";
 
 export async function mapCancel(denops: Denops) {
   // See ../../../autoload/ollama/internal.vim

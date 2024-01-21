@@ -1,7 +1,7 @@
 import * as datetime from "https://deno.land/std@0.212.0/datetime/mod.ts";
 import * as bytes from "https://deno.land/std@0.212.0/fmt/bytes.ts";
-import { Denops } from "https://deno.land/x/denops_std@v5.2.0/mod.ts";
-import * as helper from "https://deno.land/x/denops_std@v5.2.0/helper/mod.ts";
+import { Denops } from "https://deno.land/x/denops_std@v5.3.0/mod.ts";
+import * as helper from "https://deno.land/x/denops_std@v5.3.0/helper/mod.ts";
 import { Table } from "https://deno.land/x/cliffy@v1.0.0-rc.3/table/mod.ts";
 import { listLocalModels } from "../api.ts";
 import { isReqOpts, ReqOpts } from "./types.ts";
