@@ -21,7 +21,7 @@ Other references				|ollama-references|
                                                               *ollama-install*
 Install ~
 
-You need to install *denops.vim* as a dependency.
+You need to install |denops.vim| as a dependency.
 
 * vim-denops/denops.vim https://github.com/vim-denops/denops.vim
 * ollama https://ollama.ai
