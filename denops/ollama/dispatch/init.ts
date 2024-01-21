@@ -1,6 +1,6 @@
 import { Denops } from "https://deno.land/x/denops_std@v5.3.0/mod.ts";
 import {
-  handlers as logHandlers,
+  ConsoleHandler,
   setup as setupLog,
 } from "https://deno.land/std@0.212.0/log/mod.ts";
 import xdg from "https://deno.land/x/xdg@v10.6.0/src/mod.deno.ts";
@@ -16,15 +16,7 @@ export default async function init(denops: Denops) {
 
   setupLog({
     handlers: {
-      console: new logHandlers.ConsoleHandler("DEBUG"),
-      cache: new logHandlers.RotatingFileHandler("DEBUG", {
-        filename: cacheFile,
-        formatter: (record) => {
-          return `${record.datetime.toISOString()} ${record.levelName} ${record.msg}`;
-        },
-        maxBytes: 1024 * 1024,
-        maxBackupCount: 1,
-      }),
+      console: new ConsoleHandler("DEBUG"),
     },
     loggers: {
       "denops-ollama": {
@@ -33,7 +25,7 @@ export default async function init(denops: Denops) {
       },
       "denops-ollama-verbose": {
         level: "DEBUG",
-        handlers: ["cache"],
+        handlers: [],
       },
     },
   });
