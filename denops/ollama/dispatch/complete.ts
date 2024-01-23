@@ -61,6 +61,6 @@ export async function complete<T>(
     }
     return ret;
   } finally {
-    cancel();
+    await cancel();
   }
 }

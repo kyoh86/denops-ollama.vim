@@ -1,11 +1,12 @@
 import { type Denops } from "https://deno.land/x/denops_std@v6.0.1/mod.ts";
-import { deleteModel as deleteModelAPI } from "../api.ts";
 import { getLogger } from "https://deno.land/std@0.215.0/log/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v6.0.1/helper/mod.ts";
 import {
   is,
   PredicateType,
 } from "https://deno.land/x/unknownutil@v3.14.1/mod.ts";
+
+import { deleteModel as deleteModelAPI } from "../api.ts";
 import { canceller } from "../util/cancellable.ts";
 import { isReqArgs } from "./types.ts";
 
@@ -25,6 +26,6 @@ export async function deleteModel(denops: Denops, args: DeleteModelArgs) {
   } catch (err) {
     getLogger("denops-ollama").error(err);
   } finally {
-    cancel();
+    await cancel();
   }
 }

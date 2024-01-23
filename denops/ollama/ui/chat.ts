@@ -179,7 +179,7 @@ export abstract class ChatBase<TContext> {
         getLogger("denops-ollama").error(err);
       } finally {
         await spinner.stop(denops, bufnr, timer);
-        cancel();
+        await cancel();
         await fn.setbufvar(denops, bufnr, "&modified", 0);
       }
     }

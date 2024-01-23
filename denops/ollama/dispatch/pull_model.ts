@@ -55,6 +55,6 @@ export async function pullModel(denops: Denops, args: PullModelArgs) {
   } catch (err) {
     getLogger("denops-ollama").error(err);
   } finally {
-    cancel();
+    await cancel();
   }
 }
