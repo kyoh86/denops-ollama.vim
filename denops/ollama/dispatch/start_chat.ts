@@ -8,31 +8,29 @@ import {
 
 import { isOpener } from "../ui/open.ts";
 import { ChatBase } from "../ui/chat.ts";
-import {
-  generateCompletion,
-  type GenerateCompletionParams,
-  isGenerateCompletionParams,
-} from "../api.ts";
-import { isReqOpts } from "./types.ts";
-export { type GenerateCompletionParams, isGenerateCompletionParams };
+import { generateCompletion } from "../api.ts";
+import { isReqArgs } from "./types.ts";
 
-export const isStartChatOpts = is.AllOf([
+export const isStartChatArgs = is.AllOf([
   is.ObjectOf({
     model: is.String,
     opener: is.OptionalOf(isOpener),
-    initialPrompt: is.OptionalOf(is.String),
+    message: is.OptionalOf(is.String),
+    // A list of base64-encoded images (for multimodal models such as llava)
+    images: is.OptionalOf(is.ArrayOf(is.String)),
+    // Additional model parameters listed in the documentation for the Modelfile such as temperature
+    options: is.OptionalOf(is.Record),
+    // System message to (overrides what is defined in the Modelfile)
+    system: is.OptionalOf(is.String),
   }),
-  isReqOpts,
+  isReqArgs,
 ]);
 
-export type StartChatOpts = PredicateType<typeof isStartChatOpts>;
+export type StartChatArgs = PredicateType<typeof isStartChatArgs>;
 
 class Chat extends ChatBase<number[]> {
-  constructor(
-    private opts: StartChatOpts,
-    private params?: GenerateCompletionParams,
-  ) {
-    super(opts.model, opts.timeout, undefined, opts.initialPrompt);
+  constructor(private args: StartChatArgs) {
+    super(args.model, args.timeout, undefined, args.message);
   }
 
   parseContext(context: unknown): number[] | undefined {
@@ -49,8 +47,13 @@ class Chat extends ChatBase<number[]> {
     const result = await generateCompletion(
       this.model,
       prompt,
-      { ...this.params, context },
-      { ...this.opts, signal },
+      {
+        images: this.args.images,
+        options: this.args.options,
+        system: this.args.system,
+        context,
+      },
+      { baseUrl: this.args.baseUrl, signal },
     );
     if (!result.body) {
       return;
@@ -71,11 +74,7 @@ class Chat extends ChatBase<number[]> {
   }
 }
 
-export async function startChat(
-  denops: Denops,
-  opts: StartChatOpts,
-  params?: GenerateCompletionParams,
-) {
-  const chat = new Chat(opts, params);
-  await chat.start(denops, opts?.opener);
+export async function startChat(denops: Denops, args: StartChatArgs) {
+  const chat = new Chat(args);
+  await chat.start(denops, args?.opener);
 }

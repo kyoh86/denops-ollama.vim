@@ -9,13 +9,11 @@ import {
 import {
   generateChatCompletion,
   type GenerateChatCompletionMessage,
-  type GenerateChatCompletionParams,
   isGenerateChatCompletionMessage,
-  isGenerateChatCompletionParams,
 } from "../api.ts";
 import { isOpener } from "../ui/open.ts";
 import { ChatBase } from "../ui/chat.ts";
-import { isReqOpts } from "./types.ts";
+import { isReqArgs } from "./types.ts";
 import {
   getBuffer,
   getCurrentBuffer,
@@ -23,15 +21,11 @@ import {
   isBufferInfo,
 } from "../util/context.ts";
 
-export { type GenerateChatCompletionParams, isGenerateChatCompletionParams };
-
 const isChatContext = is.ObjectOf({
-  headMessage: is.OptionalOf(is.String),
   selection: is.OptionalOf(is.Boolean),
   currentBuffer: is.OptionalOf(is.Boolean),
   buffers: is.OptionalOf(is.ArrayOf(isBufferInfo)),
   // UNDONE: files: is.OptionalOf(is.ArrayOf(is.String)),
-  lastMessasge: is.OptionalOf(is.String),
 });
 type ChatContext = PredicateType<typeof isChatContext>;
 
@@ -40,9 +34,6 @@ async function contextToMessages(
   context: ChatContext,
 ): Promise<GenerateChatCompletionMessage[]> {
   const messages: GenerateChatCompletionMessage[] = [];
-  if (context.headMessage) {
-    messages.push({ role: "user", content: context.headMessage });
-  }
   if (context.selection) {
     const selection = await getVisualSelection(denops);
     if (selection && selection !== "") {
@@ -70,37 +61,32 @@ async function contextToMessages(
     });
   }
   // UNDONE: files
-  if (context.lastMessasge) {
-    messages.push({
-      role: "user",
-      content: context.lastMessasge,
-    });
-  }
   return messages;
 }
 
-export const isStartChatWithContextOpts = is.AllOf([
+export const isStartChatWithContextArgs = is.AllOf([
   is.ObjectOf({
     model: is.String,
     context: isChatContext,
     opener: is.OptionalOf(isOpener),
-    initialPrompt: is.OptionalOf(is.String),
+    message: is.OptionalOf(is.String),
+    // Additional model parameters listed in the documentation for the Modelfile such as temperature
+    options: is.OptionalOf(is.Record),
   }),
-  isReqOpts,
+  isReqArgs,
 ]);
 
-export type StartChatWithContextOpts = PredicateType<
-  typeof isStartChatWithContextOpts
+export type StartChatWithContextArgs = PredicateType<
+  typeof isStartChatWithContextArgs
 >;
 
 class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
   constructor(
     model: string,
     messages: GenerateChatCompletionMessage[],
-    private args: StartChatWithContextOpts,
-    private params?: GenerateChatCompletionParams,
+    private args: StartChatWithContextArgs,
   ) {
-    super(model, args?.timeout, messages, args?.initialPrompt);
+    super(model, args?.timeout, messages, args?.message);
   }
 
   parseContext(context: unknown): GenerateChatCompletionMessage[] | undefined {
@@ -119,7 +105,7 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
     const result = await generateChatCompletion(
       this.model,
       messages,
-      this.params,
+      { options: this.args.options },
       { ...this.args, signal },
     );
     if (!result.body) {
@@ -148,10 +134,9 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
 
 export async function startChatWithContext(
   denops: Denops,
-  opts: StartChatWithContextOpts,
-  params?: GenerateChatCompletionParams,
+  args: StartChatWithContextArgs,
 ) {
-  const messages = await contextToMessages(denops, opts.context);
-  const chat = new Chat(opts.model, messages, opts, params);
-  await chat.start(denops, opts?.opener);
+  const messages = await contextToMessages(denops, args.context);
+  const chat = new Chat(args.model, messages, args);
+  await chat.start(denops, args?.opener);
 }

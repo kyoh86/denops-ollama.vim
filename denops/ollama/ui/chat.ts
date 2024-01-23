@@ -33,7 +33,7 @@ export abstract class ChatBase<TContext> {
     protected readonly model: string,
     private timeout?: number,
     private context?: TContext,
-    private initialPrompt?: string,
+    private message?: string,
   ) {}
 
   protected async setContext(denops: Denops, bufnr: number, context: TContext) {
@@ -121,12 +121,12 @@ export abstract class ChatBase<TContext> {
       );
       await this.#editBuf(denops, bufname, opener);
       await highlight(denops, 1);
-      if (this.initialPrompt) {
+      if (this.message) {
         await fn.appendbufline(denops, bufnr, 0, [
-          this.#promptString() + this.initialPrompt,
+          this.#promptString() + this.message,
         ]);
         highlight!(denops, 1);
-        this.#queue.push(this.initialPrompt);
+        this.#queue.push(this.message);
       }
     });
   }

@@ -41,10 +41,10 @@ And call `ollama#start_chat` with the model name.
 Function ~
 
                                                          *ollama#open_log()*
-ollama#open_log({opts})
+ollama#open_log({args})
 	Open Ollama log file.
 
-	{opts} has fields in below.
+	{args} has fields in below.
 	- opener	(Optional) How the new window be placed:
 			tabnew		(DEFAULT) open a new tab
 			split, new	open a new split
@@ -61,10 +61,10 @@ ollama#open_log({opts})
 <
 
                                                          *ollama#start_chat()*
-ollama#start_chat({opts} [, {params}])
+ollama#start_chat({args})
 	Start chat with Ollama
 
-	{opts} has fields in below.
+	{args} has fields in below.
 	- model		Ollama model name. |ollama-api-definition|
 	- opener	(Optional) How the new window be placed:
 			tabnew		(DEFAULT) open a new tab
@@ -74,12 +74,15 @@ ollama#start_chat({opts} [, {params}])
 	- timeout	(Optional) Time limit.
 	- baseUrl	(Optional) The base of the URL to request.
 			(Default: "http://localhost:11434")
-	- initialPrompt	(Optional) Prompt to be passed to Ollama.
+	- message	(Optional) Prompt to be passed to Ollama.
 			When this is specified, Ollama takes it
 			immediately and begins its reply.
-
-	And you can specify {params} as optional parameters for the API.
-	See |ollama-api-definition|.
+	- images	(Optional) A list of base64-encoded images
+			(for multimodal models such as llava)
+	- options	(Optional) Additional model parameters listed in the
+			documentation for the Modelfile such as temperature
+	- system	(Optional) System message to (overrides what is
+			defined in the Modelfile)
 
 	Example 1: Start a chat with the local Ollama server with
 	             "codellama" model. >
@@ -93,14 +96,14 @@ ollama#start_chat({opts} [, {params}])
 	Example 3: Start a chat with a initial prompt. >
 	call ollama#start_chat({
 		\ 'model': 'codellama',
-		\ 'initialPrompt': 'What is your favorite color?'})
+		\ 'message': 'What is your favorite color?'})
 <
 
                                             *ollama#start_chat_with_context()*
-ollama#start_chat_with_context({opts} [, {params}])
+ollama#start_chat_with_context({args})
 	Start chat with Ollama with the context.
 
-	{opts} has fields in below.
+	{args} has fields in below.
 	- model		Ollama model name. |ollama-api-definition|
 	- context	Specifies what kind of context should be passed to
 			Ollama in advance. It supports the following entries:
@@ -119,12 +122,11 @@ ollama#start_chat_with_context({opts} [, {params}])
 	- timeout	(Optional) Time limit.
 	- baseUrl	(Optional) The base of the URL to request.
 			(Default: "http://localhost:11434")
-- initialPrompt	Prompt to be passed to Ollama. When this is
+	- message	(Optional) Prompt to be passed to Ollama. When this is
 			specified, Ollama takes it immediately and
 			begins its reply.
-
-	And you can specify {params} as optional parameters for the API.
-	See |ollama-api-definition|.
+	- options	(Optional) Additional model parameters listed in the
+			documentation for the Modelfile such as temperature
 
 	Example 1: Start a new chat based on the selection text. >
 	call ollama#start_chat({
@@ -142,18 +144,21 @@ ollama#start_chat_with_context({opts} [, {params}])
 		\ 'context': {'buffers:' getbufinfo({'buflisted':v:true})}})
 <
                                                            *ollama#complete()*
-ollama#complete({opts} [, {params}])
+ollama#complete({args})
 	Get completion for the current buffer around the cursor.
 
-	{opts} has fields in below.
+	{args} has fields in below.
 	- model		Ollama model name. |ollama-api-definition|
 	- callback	A function should take response.
 	- timeout	(Optional) Time limit.
 	- baseUrl	(Optional) The base of the URL to request.
 			(Default: "http://localhost:11434")
-
-	And you can specify {params} as optional parameters for the API.
-	See |ollama-api-definition|.
+	- images	(Optional) A list of base64-encoded images
+			(for multimodal models such as llava)
+	- options	(Optional) Additional model parameters listed in the
+			documentation for the Modelfile such as temperature
+	- system	(Optional) System message to (overrides what is
+			defined in the Modelfile)
 
 	Example: Request completion and echo it. >
 	:call ollama#complete({
@@ -162,10 +167,10 @@ ollama#complete({opts} [, {params}])
 <
 
                                                         *ollama#list_models()*
-ollama#list_models({opts})
+ollama#list_models({args})
 	Show list models in local.
 
-	{opts} has fields in below.
+	{args} has fields in below.
 	- timeout	(Optional) Time limit.
 	- baseUrl	(Optional) The base of the URL to request.
 			(Default: "http://localhost:11434")
@@ -175,10 +180,10 @@ ollama#list_models({opts})
 <
 
                                                          *ollama#pull_model()*
-ollama#pull_model({name} [, {opts} [, {params}]])
+ollama#pull_model({args})
 	Pull a model from the library.
 
-	{opts} has fields in below.
+	{args} has fields in below.
 	- name		Ollama model name. |ollama-api-definition|
 	- insecure	(Optional) If it is true, allow insecure connections
 			to the library.
@@ -186,18 +191,15 @@ ollama#pull_model({name} [, {opts} [, {params}]])
 	- baseUrl	(Optional) The base of the URL to request.
 			(Default: "http://localhost:11434")
 
-	And you can specify {params} as optional parameters for the API.
-	See |ollama-api-definition|.
-
 	Example: >
 	:call ollama#pull_model({'model': 'codellama'})
 <
 
                                                        *ollama#delete_model()*
-ollama#delete_model({name} [, {opts}])
+ollama#delete_model({args})
 	Delete a model in local.
 
-	{opts} has fields in below.
+	{args} has fields in below.
 	- name		Ollama model name. |ollama-api-definition|
 	- timeout	(Optional) Time limit.
 	- baseUrl	(Optional) The base of the URL to request.
