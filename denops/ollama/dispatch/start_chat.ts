@@ -6,24 +6,20 @@ import {
   PredicateType,
 } from "https://deno.land/x/unknownutil@v3.15.0/mod.ts";
 
-import { ChatBase, isOpener, type Opener } from "../ui/chat.ts";
+import { isOpener } from "../ui/open.ts";
+import { ChatBase } from "../ui/chat.ts";
 import {
   generateCompletion,
   type GenerateCompletionParams,
   isGenerateCompletionParams,
 } from "../api.ts";
 import { isReqOpts } from "./types.ts";
-export {
-  type GenerateCompletionParams,
-  isGenerateCompletionParams,
-  isOpener,
-  type Opener,
-};
+export { type GenerateCompletionParams, isGenerateCompletionParams };
 
 export const isStartChatOpts = is.AllOf([
   is.ObjectOf({
+    model: is.String,
     opener: is.OptionalOf(isOpener),
-    timeout: is.OptionalOf(is.Number),
     initialPrompt: is.OptionalOf(is.String),
   }),
   isReqOpts,
@@ -33,11 +29,10 @@ export type StartChatOpts = PredicateType<typeof isStartChatOpts>;
 
 class Chat extends ChatBase<number[]> {
   constructor(
-    model: string,
-    private opts?: StartChatOpts,
+    private opts: StartChatOpts,
     private params?: GenerateCompletionParams,
   ) {
-    super(model, opts?.timeout, undefined, opts?.initialPrompt);
+    super(opts.model, opts.timeout, undefined, opts.initialPrompt);
   }
 
   parseContext(context: unknown): number[] | undefined {
@@ -76,12 +71,11 @@ class Chat extends ChatBase<number[]> {
   }
 }
 
-export default async function startChat(
+export async function startChat(
   denops: Denops,
-  model: string,
-  opts?: StartChatOpts,
+  opts: StartChatOpts,
   params?: GenerateCompletionParams,
 ) {
-  const chat = new Chat(model, opts, params);
+  const chat = new Chat(opts, params);
   await chat.start(denops, opts?.opener);
 }

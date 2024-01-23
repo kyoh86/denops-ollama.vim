@@ -19,26 +19,25 @@ export { isPullModelParams, type PullModelParams };
 
 export const isPullModelOpts = is.AllOf([
   is.ObjectOf({
+    name: is.String,
     insecure: is.OptionalOf(is.Boolean),
-    timeout: is.OptionalOf(is.Number),
   }),
   isReqOpts,
 ]);
 
 export type PullModelOpts = PredicateType<typeof isPullModelOpts>;
 
-export default async function pullModel(
+export async function pullModel(
   denops: Denops,
-  name: string,
-  opts?: PullModelOpts,
+  args: PullModelOpts,
   params?: PullModelParams,
 ) {
-  const { signal, cancel } = await canceller(denops, opts?.timeout);
+  const { signal, cancel } = await canceller(denops, args?.timeout);
   try {
     const result = await pullModelAPI(
       name,
       params,
-      { ...opts, signal },
+      { ...args, signal },
     );
     if (!result.body) {
       return;

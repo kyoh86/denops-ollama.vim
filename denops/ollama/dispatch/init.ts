@@ -10,7 +10,7 @@ import { join } from "https://deno.land/std@0.215.0/path/join.ts";
 import { setup as setupHighlight } from "../ui/highlight_prefix.ts";
 import { mapCancel } from "../util/cancellable.ts";
 
-export default async function init(denops: Denops) {
+export async function init(denops: Denops) {
   const cacheFile = join(xdg.cache(), "denops-ollama-vim", "log.txt");
   await ensureFile(cacheFile);
 

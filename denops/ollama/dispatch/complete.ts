@@ -3,7 +3,11 @@ import {
   is,
   PredicateType,
 } from "https://deno.land/x/unknownutil@v3.15.0/mod.ts";
-import { generateCompletion, type GenerateCompletionParams } from "../api.ts";
+import {
+  generateCompletion,
+  type GenerateCompletionParams,
+  isGenerateCompletionParams,
+} from "../api.ts";
 import { isReqOpts } from "./types.ts";
 import { getCurrent } from "../util/context.ts";
 import { canceller } from "../util/cancellable.ts";
@@ -11,27 +15,29 @@ import { trimAroundCode } from "../util/trim.ts";
 
 export const isCompleteOpts = is.AllOf([
   is.ObjectOf({
-    timeout: is.OptionalOf(is.Number),
+    model: is.String,
+    callback: is.String,
   }),
   isReqOpts,
 ]);
 
 export type CompleteOpts = PredicateType<typeof isCompleteOpts>;
+export { type GenerateCompletionParams, isGenerateCompletionParams };
 
-export default async function complete<T>(
+export async function complete<T>(
   denops: Denops,
-  model: string,
-  callback:
-    | ((messasge: string) => T)
-    | ((messasge: string) => Promise<T>),
-  opts?: CompleteOpts,
+  opts: Omit<CompleteOpts, "callback"> & {
+    callback:
+      | ((messasge: string) => T)
+      | ((messasge: string) => Promise<T>);
+  },
   params?: GenerateCompletionParams,
 ): Promise<T> {
   const current = await getCurrent(denops);
   const { signal, cancel } = await canceller(denops, opts?.timeout);
   try {
     const result = await generateCompletion(
-      model,
+      opts.model,
       [
         "These are the contents before the cursor.",
         ...current.lines.slice(-10, -1),
@@ -44,7 +50,7 @@ export default async function complete<T>(
     if ("error" in result.body) {
       throw new Error(result.body.error);
     }
-    const ret = callback(trimAroundCode(result.body.response));
+    const ret = opts.callback(trimAroundCode(result.body.response));
     if (ret instanceof Promise) {
       return await ret;
     }

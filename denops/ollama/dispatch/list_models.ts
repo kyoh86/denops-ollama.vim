@@ -9,9 +9,9 @@ import { isReqOpts, ReqOpts } from "./types.ts";
 export const isListModelsOpts = isReqOpts;
 export type ListModelsOpts = ReqOpts;
 
-export default async function listModels(
+export async function listModels(
   denops: Denops,
-  opts?: ListModelsOpts,
+  opts: ListModelsOpts,
 ) {
   const { body } = await listLocalModels({ ...opts });
   if ("error" in body) {

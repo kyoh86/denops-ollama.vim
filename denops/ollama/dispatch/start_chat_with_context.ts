@@ -13,7 +13,8 @@ import {
   isGenerateChatCompletionMessage,
   isGenerateChatCompletionParams,
 } from "../api.ts";
-import { ChatBase, isOpener, type Opener } from "../ui/chat.ts";
+import { isOpener } from "../ui/open.ts";
+import { ChatBase } from "../ui/chat.ts";
 import { isReqOpts } from "./types.ts";
 import {
   getBuffer,
@@ -22,14 +23,9 @@ import {
   isBufferInfo,
 } from "../util/context.ts";
 
-export {
-  type GenerateChatCompletionParams,
-  isGenerateChatCompletionParams,
-  isOpener,
-  type Opener,
-};
+export { type GenerateChatCompletionParams, isGenerateChatCompletionParams };
 
-export const isChatContext = is.ObjectOf({
+const isChatContext = is.ObjectOf({
   headMessage: is.OptionalOf(is.String),
   selection: is.OptionalOf(is.Boolean),
   currentBuffer: is.OptionalOf(is.Boolean),
@@ -37,7 +33,7 @@ export const isChatContext = is.ObjectOf({
   // UNDONE: files: is.OptionalOf(is.ArrayOf(is.String)),
   lastMessasge: is.OptionalOf(is.String),
 });
-export type ChatContext = PredicateType<typeof isChatContext>;
+type ChatContext = PredicateType<typeof isChatContext>;
 
 async function contextToMessages(
   denops: Denops,
@@ -85,8 +81,9 @@ async function contextToMessages(
 
 export const isStartChatWithContextOpts = is.AllOf([
   is.ObjectOf({
+    model: is.String,
+    context: isChatContext,
     opener: is.OptionalOf(isOpener),
-    timeout: is.OptionalOf(is.Number),
     initialPrompt: is.OptionalOf(is.String),
   }),
   isReqOpts,
@@ -100,10 +97,10 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
   constructor(
     model: string,
     messages: GenerateChatCompletionMessage[],
-    private opts?: StartChatWithContextOpts,
+    private args: StartChatWithContextOpts,
     private params?: GenerateChatCompletionParams,
   ) {
-    super(model, opts?.timeout, messages, opts?.initialPrompt);
+    super(model, args?.timeout, messages, args?.initialPrompt);
   }
 
   parseContext(context: unknown): GenerateChatCompletionMessage[] | undefined {
@@ -123,7 +120,7 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
       this.model,
       messages,
       this.params,
-      { ...this.opts, signal },
+      { ...this.args, signal },
     );
     if (!result.body) {
       return;
@@ -151,12 +148,10 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
 
 export async function startChatWithContext(
   denops: Denops,
-  model: string,
-  context: ChatContext,
-  opts?: StartChatWithContextOpts,
+  opts: StartChatWithContextOpts,
   params?: GenerateChatCompletionParams,
 ) {
-  const messages = await contextToMessages(denops, context);
-  const chat = new Chat(model, messages, opts, params);
+  const messages = await contextToMessages(denops, opts.context);
+  const chat = new Chat(opts.model, messages, opts, params);
   await chat.start(denops, opts?.opener);
 }

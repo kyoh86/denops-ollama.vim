@@ -6,16 +6,24 @@ import {
 } from "../api.ts";
 import { getLogger } from "https://deno.land/std@0.215.0/log/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v6.0.1/helper/mod.ts";
-import { isReqOpts, ReqOpts } from "./types.ts";
+import { isReqOpts } from "./types.ts";
+import {
+  is,
+  PredicateType,
+} from "https://deno.land/x/unknownutil@v3.14.1/mod.ts";
 export { type DeleteModelParams, isDeleteModelParams };
 
-export const isDeleteModelOpts = isReqOpts;
-export type DeleteModelOpts = ReqOpts;
+export const isDeleteModelOpts = is.AllOf([
+  is.ObjectOf({
+    name: is.String,
+  }),
+  isReqOpts,
+]);
+export type DeleteModelOpts = PredicateType<typeof isDeleteModelOpts>;
 
-export default async function deleteModel(
+export async function deleteModel(
   denops: Denops,
-  name: string,
-  opts?: DeleteModelOpts,
+  opts: DeleteModelOpts,
   params?: DeleteModelParams,
 ) {
   try {

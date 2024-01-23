@@ -8,11 +8,7 @@ import * as batch from "https://deno.land/x/denops_std@v6.0.1/batch/mod.ts";
 import * as option from "https://deno.land/x/denops_std@v6.0.1/option/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v6.0.1/helper/mod.ts";
 import * as lambda from "https://deno.land/x/denops_std@v6.0.1/lambda/mod.ts";
-import {
-  ensure,
-  is,
-  PredicateType,
-} from "https://deno.land/x/unknownutil@v3.15.0/mod.ts";
+import { ensure, is } from "https://deno.land/x/unknownutil@v3.15.0/mod.ts";
 import { Notify, Queue } from "https://deno.land/x/async@v2.1.0/mod.ts";
 
 import {
@@ -21,17 +17,7 @@ import {
 } from "./highlight_prefix.ts";
 import { canceller } from "../util/cancellable.ts";
 import * as spinner from "./spinner.ts";
-
-export const isOpener = is.OneOf([
-  is.LiteralOf("split"),
-  is.LiteralOf("vsplit"),
-  is.LiteralOf("tabnew"),
-  is.LiteralOf("edit"),
-  is.LiteralOf("new"),
-  is.LiteralOf("vnew"),
-]);
-
-export type Opener = PredicateType<typeof isOpener>;
+import { Opener } from "./open.ts";
 
 export abstract class ChatBase<TContext> {
   abstract parseContext(context: unknown): TContext | undefined;
