@@ -10,6 +10,7 @@ License: MIT License
 Contents ~
 
 Install						|ollama-install|
+Customize					|ollama-custom|
 Function					|ollama-function|
 Commands					|ollama-commands|
 Keymaps						|ollama-keymaps|
@@ -21,26 +22,47 @@ Other references				|ollama-references|
                                                               *ollama-install*
 Install ~
 
-You need to install |denops.vim| as a dependency.
+You need to install |denops.vim| and ollama.ai as a dependency.
 
 * vim-denops/denops.vim https://github.com/vim-denops/denops.vim
 * ollama https://ollama.ai
 
-If you want to use it, run ollama background with a model you like in local.
+If you want to use it, run ollama background with a model you like in local. >
+	$ ollama pull codellama
+	$ ollama serve
+<
 
-```console
-$ ollama pull codellama
-$ ollama serve
-```
+Ollama provides systemd unit for Linux, so if you are using it in Linux, you 
+can start it with `systemctl`. >
+	$ systemctl start ollama
+<
 
-And call `ollama#start_chat` with the model name.
+Then, you can call `ollama#start_chat` with the model name.
 
+==============================================================================
+                                                               *ollama-custom*
+Customize ~
+
+This plugin only provides some vim functions like |ollama#start_chat()| that
+have simple and flexible interface. But also they are not convenience to use
+naively for each time. So we may pre-set arguments for each functions with
+|ollama#custom#set_func_arg| and |ollama#custom#patch_args|.
+
+For example, we can set "model" argument of the |ollama#start_chat()|: >
+	call ollama#custom#set_func_arg("startChat", "model", "codellama")
+<
+Then, we can call it without the argument: >
+	call ollama#start_chat({})
+<
+It is equivalent to calling it like this: >
+	call ollama#start_chat({"model": "codellama"})
+<
 
 ==============================================================================
                                                              *ollama-function*
 Function ~
 
-                                                         *ollama#open_log()*
+                                                           *ollama#open_log()*
 ollama#open_log({args})
 	Open Ollama log file.
 
@@ -99,7 +121,7 @@ ollama#start_chat({args})
 		\ 'message': 'What is your favorite color?'})
 <
 
-                                            *ollama#start_chat_in_ctx()*
+                                                  *ollama#start_chat_in_ctx()*
 ollama#start_chat_in_ctx({args})
 	Start chat with Ollama with the context.
 
