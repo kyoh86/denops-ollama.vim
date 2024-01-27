@@ -37,7 +37,7 @@ can start it with `systemctl`. >
 	$ systemctl start ollama
 <
 
-Then, you can call `ollama#start_chat` with the model name.
+Then, you can call |ollama#start_chat()| with the model name.
 
 ==============================================================================
                                                                *ollama-custom*
