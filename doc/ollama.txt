@@ -45,16 +45,20 @@ Customize ~
 
 This plugin only provides some vim functions like |ollama#start_chat()| that
 have simple and flexible interface. But also they are not convenience to use
-naively for each time. So we may pre-set arguments for each functions with
-|ollama#custom#set_func_arg| and |ollama#custom#patch_args|.
+naively for each time.
+So we may some configure them using the following methods.
 
-For example, we can set "model" argument of the |ollama#start_chat()|: >
+- Create commands, keymaps to call functions instantly.
+- Pre-set arguments for each functions using |ollama#custom#set_func_arg| and
+  |ollama#custom#patch_args|.
+
+For example, we can pre-set "model" argument of the |ollama#start_chat()|: >
 	call ollama#custom#set_func_arg("startChat", "model", "codellama")
 <
-Then, we can call it without the argument: >
+Then, calling it without the argument: >
 	call ollama#start_chat({})
 <
-It is equivalent to calling it like this: >
+is equivalent to calling it like this: >
 	call ollama#start_chat({"model": "codellama"})
 <
 
