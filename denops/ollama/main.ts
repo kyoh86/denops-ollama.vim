@@ -1,6 +1,7 @@
 import { Denops } from "https://deno.land/x/denops_std@v6.0.1/mod.ts";
 import {
   ensure,
+  is,
   Predicate,
 } from "https://deno.land/x/unknownutil@v3.15.0/mod.ts";
 
@@ -22,23 +23,23 @@ export async function main(denops: Denops) {
 
   const argStore = new CustomArgStore();
 
-  function getArgs<T>(func: string, uArgs: unknown, pred: Predicate<T>): T {
-    return ensure(argStore.getMerged(func, ensure(uArgs, isArgs)), pred);
+  function ensureArgs<T>(func: string, uArgs: unknown, pred: Predicate<T>): T {
+    return ensure(argStore.getArgs(func, ensure(uArgs, isArgs)), pred);
   }
 
   denops.dispatcher = {
     async openLog(uArgs: unknown) {
-      const args = getArgs("openLog", uArgs, isOpenLogArgs);
+      const args = ensureArgs("openLog", uArgs, isOpenLogArgs);
       await openLog(denops, cacheFile, args);
     },
 
     async startChat(uArgs: unknown) {
-      const args = getArgs("startChat", uArgs, isStartChatArgs);
+      const args = ensureArgs("startChat", uArgs, isStartChatArgs);
       await startChat(denops, args);
     },
 
     async startChatWithContext(uArgs: unknown) {
-      const args = getArgs(
+      const args = ensureArgs(
         "startChatWithContext",
         uArgs,
         isStartChatWithContextArgs,
@@ -47,7 +48,7 @@ export async function main(denops: Denops) {
     },
 
     async complete(uArgs: unknown) {
-      const args = getArgs("complete", uArgs, isCompleteArgs);
+      const args = ensureArgs("complete", uArgs, isCompleteArgs);
       await complete(
         denops,
         {
@@ -60,18 +61,37 @@ export async function main(denops: Denops) {
     },
 
     async listModels(uArgs: unknown) {
-      const args = getArgs("listModels", uArgs, isListModelsArgs);
+      const args = ensureArgs("listModels", uArgs, isListModelsArgs);
       await listModels(denops, args);
     },
 
     async pullModel(uArgs: unknown) {
-      const args = getArgs("pullModel", uArgs, isPullModelArgs);
+      const args = ensureArgs("pullModel", uArgs, isPullModelArgs);
       await pullModel(denops, args);
     },
 
     async deleteModel(uArgs: unknown) {
-      const args = getArgs("deleteModel", uArgs, isDeleteModelArgs);
+      const args = ensureArgs("deleteModel", uArgs, isDeleteModelArgs);
       await deleteModel(denops, args);
+    },
+
+    customSetFuncArg(uFunc: unknown, uArg: unknown, value: unknown) {
+      argStore.setFuncArg(
+        ensure(uFunc, is.String),
+        ensure(uArg, is.String),
+        value,
+      );
+    },
+
+    customPatchFuncArgs(uFunc: unknown, uArgs: unknown) {
+      argStore.patchFuncArgs(
+        ensure(uFunc, is.String),
+        ensure(uArgs, is.RecordOf(isArgs)),
+      );
+    },
+
+    customPatchArgs(uArgs: unknown) {
+      argStore.patchArgs(ensure(uArgs, is.RecordOf(isArgs)));
     },
   };
 }

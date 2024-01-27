@@ -18,7 +18,11 @@ export class CustomArgStore {
    * @param {string} arg - Target arg name.
    * @param {unknown} value
    */
-  public setArg(func: string | CustomCrossFunc, arg: string, value: unknown) {
+  public setFuncArg(
+    func: string | CustomCrossFunc,
+    arg: string,
+    value: unknown,
+  ) {
     const args = this.#store.get(func) || {};
     args[arg] = value;
     this.#store.set(func, args);
@@ -29,13 +33,13 @@ export class CustomArgStore {
    * @param {string} func - Target function name or "_" to cross all functions.
    * @param {Record<string, unknown>} args - A record holding arg name and value pairs.
    */
-  public patchArgs(func: string | CustomCrossFunc, args: CustomArgs) {
+  public patchFuncArgs(func: string | CustomCrossFunc, args: CustomArgs) {
     const old = this.#store.get(func) || {};
     this.#store.set(func, { old, ...args });
   }
 
   /** Patch args for everything. */
-  public patchAll(argSet: Record<string | CustomCrossFunc, CustomArgs>) {
+  public patchArgs(argSet: Record<string | CustomCrossFunc, CustomArgs>) {
     for (const func in argSet) {
       const old = this.#store.get(func) || {};
       this.#store.set(func, { old, ...argSet[func] });
@@ -47,7 +51,7 @@ export class CustomArgStore {
    * @param {string} func - Target function name.
    * @param {Record<string, unknown>} [override] - A record hoding instant arg name and value paris
    */
-  public getMerged(func: string, override?: CustomArgs): CustomArgs {
+  public getArgs(func: string, override?: CustomArgs): CustomArgs {
     const cross = this.#store.get("_") || {};
     const target = this.#store.get(func) || {};
     return {
