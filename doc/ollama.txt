@@ -44,7 +44,7 @@ Function ~
 ollama#open_log({args})
 	Open Ollama log file.
 
-	{args} has fields in below.
+	{args} is a dictionary having fields in below.
 	- opener	(Optional) How the new window be placed:
 			tabnew		(DEFAULT) open a new tab
 			split, new	open a new split
@@ -64,7 +64,7 @@ ollama#open_log({args})
 ollama#start_chat({args})
 	Start chat with Ollama
 
-	{args} has fields in below.
+	{args} is a dictionary having fields in below.
 	- model		Ollama model name. |ollama-api-definition|
 	- opener	(Optional) How the new window be placed:
 			tabnew		(DEFAULT) open a new tab
@@ -103,7 +103,7 @@ ollama#start_chat({args})
 ollama#start_chat_with_context({args})
 	Start chat with Ollama with the context.
 
-	{args} has fields in below.
+	{args} is a dictionary having fields in below.
 	- model		Ollama model name. |ollama-api-definition|
 	- context	Specifies what kind of context should be passed to
 			Ollama in advance. It supports the following entries:
@@ -147,7 +147,7 @@ ollama#start_chat_with_context({args})
 ollama#complete({args})
 	Get completion for the current buffer around the cursor.
 
-	{args} has fields in below.
+	{args} is a dictionary having fields in below.
 	- model		Ollama model name. |ollama-api-definition|
 	- callback	A function should take response.
 	- timeout	(Optional) Time limit.
@@ -170,7 +170,7 @@ ollama#complete({args})
 ollama#list_models({args})
 	Show list models in local.
 
-	{args} has fields in below.
+	{args} is a dictionary having fields in below.
 	- timeout	(Optional) Time limit.
 	- baseUrl	(Optional) The base of the URL to request.
 			(Default: "http://localhost:11434")
@@ -183,7 +183,7 @@ ollama#list_models({args})
 ollama#pull_model({args})
 	Pull a model from the library.
 
-	{args} has fields in below.
+	{args} is a dictionary having fields in below.
 	- name		Ollama model name. |ollama-api-definition|
 	- insecure	(Optional) If it is true, allow insecure connections
 			to the library.
@@ -199,7 +199,7 @@ ollama#pull_model({args})
 ollama#delete_model({args})
 	Delete a model in local.
 
-	{args} has fields in below.
+	{args} is a dictionary having fields in below.
 	- name		Ollama model name. |ollama-api-definition|
 	- timeout	(Optional) Time limit.
 	- baseUrl	(Optional) The base of the URL to request.
