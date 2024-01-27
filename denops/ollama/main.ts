@@ -11,9 +11,9 @@ import { isListModelsArgs, listModels } from "./dispatch/list_models.ts";
 import { isPullModelArgs, pullModel } from "./dispatch/pull_model.ts";
 import { deleteModel, isDeleteModelArgs } from "./dispatch/delete_model.ts";
 import {
-  isStartChatWithContextArgs,
-  startChatWithContext,
-} from "./dispatch/start_chat_with_context.ts";
+  isStartChatInCtxArgs,
+  startChatInCtx,
+} from "./dispatch/start_chat_in_ctx.ts";
 import { complete, isCompleteArgs } from "./dispatch/complete.ts";
 import { CustomArgStore, isArgs } from "./custom/arg_store.ts";
 import { isOpenLogArgs, openLog } from "./dispatch/open_log.ts";
@@ -38,13 +38,13 @@ export async function main(denops: Denops) {
       await startChat(denops, args);
     },
 
-    async startChatWithContext(uArgs: unknown) {
+    async startChatInCtx(uArgs: unknown) {
       const args = ensureArgs(
-        "startChatWithContext",
+        "startChatInCtx",
         uArgs,
-        isStartChatWithContextArgs,
+        isStartChatInCtxArgs,
       );
-      await startChatWithContext(denops, args);
+      await startChatInCtx(denops, args);
     },
 
     async complete(uArgs: unknown) {

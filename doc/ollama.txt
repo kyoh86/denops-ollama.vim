@@ -99,8 +99,8 @@ ollama#start_chat({args})
 		\ 'message': 'What is your favorite color?'})
 <
 
-                                            *ollama#start_chat_with_context()*
-ollama#start_chat_with_context({args})
+                                            *ollama#start_chat_in_ctx()*
+ollama#start_chat_in_ctx({args})
 	Start chat with Ollama with the context.
 
 	{args} is a dictionary having fields in below.
@@ -139,7 +139,7 @@ ollama#start_chat_with_context({args})
 		\ 'context': {'currentBuffer': v:true}})
 <
 	Example 3: Start a new chat on the listed buffers. >
-	:call ollama#start_chat_with_context({
+	:call ollama#start_chat_in_ctx({
 		\ 'model': 'codellama', 
 		\ 'context': {'buffers:' getbufinfo({'buflisted':v:true})}})
 <

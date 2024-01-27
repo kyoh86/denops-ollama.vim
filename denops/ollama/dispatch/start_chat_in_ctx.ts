@@ -64,7 +64,7 @@ async function contextToMessages(
   return messages;
 }
 
-export const isStartChatWithContextArgs = is.AllOf([
+export const isStartChatInCtxArgs = is.AllOf([
   is.ObjectOf({
     model: is.String,
     context: isChatContext,
@@ -76,15 +76,15 @@ export const isStartChatWithContextArgs = is.AllOf([
   isReqArgs,
 ]);
 
-export type StartChatWithContextArgs = PredicateType<
-  typeof isStartChatWithContextArgs
+export type StartChatInCtxArgs = PredicateType<
+  typeof isStartChatInCtxArgs
 >;
 
 class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
   constructor(
     model: string,
     messages: GenerateChatCompletionMessage[],
-    private args: StartChatWithContextArgs,
+    private args: StartChatInCtxArgs,
   ) {
     super(model, args?.timeout, messages, args?.message);
   }
@@ -132,9 +132,9 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
   }
 }
 
-export async function startChatWithContext(
+export async function startChatInCtx(
   denops: Denops,
-  args: StartChatWithContextArgs,
+  args: StartChatInCtxArgs,
 ) {
   const messages = await contextToMessages(denops, args.context);
   const chat = new Chat(args.model, messages, args);

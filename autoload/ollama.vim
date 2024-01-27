@@ -9,8 +9,8 @@ function ollama#start_chat(args)
 endfunction
 
 " Start chat with Ollama within context.
-function ollama#start_chat_with_context(args)
-  call denops#notify("ollama", "startChatWithContext", [a:args])
+function ollama#start_chat_in_ctx(args)
+  call denops#notify("ollama", "startChatInCtx", [a:args])
 endfunction
 
 	

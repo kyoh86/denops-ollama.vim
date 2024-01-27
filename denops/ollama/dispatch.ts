@@ -5,5 +5,5 @@ export * from "./dispatch/init.ts";
 export * from "./dispatch/list_models.ts";
 export * from "./dispatch/pull_model.ts";
 export * from "./dispatch/start_chat.ts";
-export * from "./dispatch/start_chat_with_context.ts";
+export * from "./dispatch/start_chat_in_ctx.ts";
 export * from "./dispatch/types.ts";
