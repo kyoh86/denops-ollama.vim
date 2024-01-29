@@ -1,16 +1,16 @@
 " Open log file.
 function ollama#open_log(args)
-  call denops#notify("ollama", "openLog", [a:args])
+  call denops#notify("ollama", "open_log", [a:args])
 endfunction
 
 " Start chat with Ollama.
 function ollama#start_chat(args)
-  call denops#notify("ollama", "startChat", [a:args])
+  call denops#notify("ollama", "start_chat", [a:args])
 endfunction
 
 " Start chat with Ollama within context.
 function ollama#start_chat_in_ctx(args)
-  call denops#notify("ollama", "startChatInCtx", [a:args])
+  call denops#notify("ollama", "start_chat_in_ctx", [a:args])
 endfunction
 
 	
@@ -29,15 +29,15 @@ endfunction
 
 " Show list models in local.
 function ollama#list_models(args)
-  call denops#notify("ollama", "listModels", [a:args])
+  call denops#notify("ollama", "list_models", [a:args])
 endfunction
 
 " Pull a model from the library.
 function ollama#pull_model(args)
-  call denops#notify("ollama", "pullModel", [a:args])
+  call denops#notify("ollama", "pull_model", [a:args])
 endfunction
 
 " Delete a model in local.
 function ollama#delete_model(args)
-  call denops#notify("ollama", "deleteModel", [a:args])
+  call denops#notify("ollama", "delete_model", [a:args])
 endfunction

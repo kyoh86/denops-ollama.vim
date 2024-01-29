@@ -28,19 +28,19 @@ export async function main(denops: Denops) {
   }
 
   denops.dispatcher = {
-    async openLog(uArgs: unknown) {
-      const args = ensureArgs("openLog", uArgs, isOpenLogArgs);
+    async open_log(uArgs: unknown) {
+      const args = ensureArgs("open_log", uArgs, isOpenLogArgs);
       await openLog(denops, cacheFile, args);
     },
 
-    async startChat(uArgs: unknown) {
-      const args = ensureArgs("startChat", uArgs, isStartChatArgs);
+    async start_chat(uArgs: unknown) {
+      const args = ensureArgs("start_chat", uArgs, isStartChatArgs);
       await startChat(denops, args);
     },
 
-    async startChatInCtx(uArgs: unknown) {
+    async start_chat_in_ctx(uArgs: unknown) {
       const args = ensureArgs(
-        "startChatInCtx",
+        "start_chat_in_ctx",
         uArgs,
         isStartChatInCtxArgs,
       );
@@ -60,18 +60,18 @@ export async function main(denops: Denops) {
       );
     },
 
-    async listModels(uArgs: unknown) {
-      const args = ensureArgs("listModels", uArgs, isListModelsArgs);
+    async list_models(uArgs: unknown) {
+      const args = ensureArgs("list_models", uArgs, isListModelsArgs);
       await listModels(denops, args);
     },
 
-    async pullModel(uArgs: unknown) {
-      const args = ensureArgs("pullModel", uArgs, isPullModelArgs);
+    async pull_model(uArgs: unknown) {
+      const args = ensureArgs("pull_model", uArgs, isPullModelArgs);
       await pullModel(denops, args);
     },
 
-    async deleteModel(uArgs: unknown) {
-      const args = ensureArgs("deleteModel", uArgs, isDeleteModelArgs);
+    async delete_model(uArgs: unknown) {
+      const args = ensureArgs("delete_model", uArgs, isDeleteModelArgs);
       await deleteModel(denops, args);
     },
 

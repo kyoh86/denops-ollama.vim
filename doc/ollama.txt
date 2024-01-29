@@ -58,7 +58,7 @@ So we may some customize them with following methods.
   and |ollama#custom#patch_args()|.
 
 For example, we can pre-set "model" argument of the |ollama#start_chat()|: >
-	call ollama#custom#set_func_arg("startChat", "model", "codellama")
+	call ollama#custom#set_func_arg("start_chat", "model", "codellama")
 <
 Then, calling it without the argument: >
 	call ollama#start_chat({})
@@ -69,11 +69,11 @@ is equivalent to calling it like this: >
 
 Using |ollama#custom#patch_args()|, we can pre-set some arguments at once: >
 	call ollama#custom#patch_args({
-		\ 'startChat': {
+		\ 'start_chat': {
 			\ 'model': 'codellama',
 			\ 'opener': 'new',
 		\ },
-		\ 'openLog': {
+		\ 'open_log': {
 			\ 'opener': 'tabnew',
 		\ }
 	\ })
