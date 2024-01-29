@@ -22,7 +22,7 @@ Other references				|ollama-references|
                                                               *ollama-install*
 Install ~
 
-You need to install |denops.vim| and ollama.ai as a dependency.
+You need to install |denops.vim| and ollama.ai as dependencies.
 
 * vim-denops/denops.vim https://github.com/vim-denops/denops.vim
 * ollama https://ollama.ai
@@ -32,25 +32,30 @@ If you want to use it, run ollama background with a model you like in local. >
 	$ ollama serve
 <
 
-Ollama provides systemd unit for Linux, so if you are using it in Linux, you 
+Ollama provides systemd unit for Linux, so if you are using it in Linux, you
 can start it with `systemctl`. >
 	$ systemctl start ollama
 <
 
-Then, you can call |ollama#start_chat()| with the model name.
+Then, you can call |ollama#start_chat()| with the model name. >
+	call ollama#start_chat({'model': 'codellama'})
+<
 
 ==============================================================================
                                                                *ollama-custom*
 Customize ~
 
-This plugin only provides some vim functions like |ollama#start_chat()| that
-have simple and flexible interface. But also they are not convenience to use
-naively for each time.
-So we may some configure them using the following methods.
+This plugin only provides some vim functions and commands like
+|ollama#start_chat()| that have simple and flexible interface.
+But also they are not convenience to use naively for each time.
+So we may some customize them with following methods.
 
-- Create commands, keymaps to call functions instantly.
-- Pre-set arguments for each functions using |ollama#custom#set_func_arg| and
-  |ollama#custom#patch_args|.
+- Create commands or keymaps to call functions instantly, for example: >
+	command! Codellama call ollama#start_chat({'model': 'codellama'})
+<
+
+- Pre-set arguments for each functions using |ollama#custom#set_func_arg()|
+  and |ollama#custom#patch_args()|.
 
 For example, we can pre-set "model" argument of the |ollama#start_chat()|: >
 	call ollama#custom#set_func_arg("startChat", "model", "codellama")
@@ -61,6 +66,25 @@ Then, calling it without the argument: >
 is equivalent to calling it like this: >
 	call ollama#start_chat({"model": "codellama"})
 <
+
+Using |ollama#custom#patch_args()|, we can pre-set some arguments at once: >
+	call ollama#custom#patch_args({
+		\ 'startChat': {
+			\ 'model': 'codellama',
+			\ 'opener': 'new',
+		\ },
+		\ 'openLog': {
+			\ 'opener': 'tabnew',
+		\ }
+	\ })
+<
+
+And |ollama#custom#patch_args()| can accept `'_'` as a function name: >
+	call ollama#custom#patch_args({
+		\ '_': { 'baseUrl': 'http://localhost:33256/' }
+	\ })
+<
+It applies arguments across all functions.
 
 ==============================================================================
                                                              *ollama-function*
