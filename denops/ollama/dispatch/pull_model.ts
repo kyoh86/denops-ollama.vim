@@ -1,14 +1,14 @@
 import { Denops } from "https://deno.land/x/denops_std@v5.3.0/mod.ts";
-import * as bytes from "https://deno.land/std@0.212.0/fmt/bytes.ts";
+import * as bytes from "https://deno.land/std@0.214.0/fmt/bytes.ts";
 import {
   isPullModelParams,
   pullModel as pullModelAPI,
   type PullModelParams,
 } from "../api.ts";
-import { getLogger } from "https://deno.land/std@0.212.0/log/mod.ts";
+import { getLogger } from "https://deno.land/std@0.214.0/log/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v5.3.0/helper/mod.ts";
 import { canceller } from "../util/cancellable.ts";
-import { abortableAsyncIterable } from "https://deno.land/std@0.212.0/async/mod.ts";
+import { abortableAsyncIterable } from "https://deno.land/std@0.214.0/async/mod.ts";
 import { isReqOpts } from "./types.ts";
 import {
   is,
