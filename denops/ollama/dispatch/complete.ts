@@ -5,7 +5,7 @@ import {
 } from "https://deno.land/x/unknownutil@v3.15.0/mod.ts";
 import { generateCompletion } from "../api.ts";
 import { isReqArgs } from "./types.ts";
-import { getCurrent } from "../util/context.ts";
+import { getPrefix, getSuffix } from "../util/context.ts";
 import { canceller } from "../util/cancellable.ts";
 import { trimAroundCode } from "../util/trim.ts";
 
@@ -33,16 +33,18 @@ export async function complete<T>(
       | ((messasge: string) => Promise<T>);
   },
 ): Promise<T> {
-  const current = await getCurrent(denops);
+  const prefix = await getPrefix(denops);
+  const suffix = await getSuffix(denops);
   const { signal, cancel } = await canceller(denops, args?.timeout);
   try {
     const result = await generateCompletion(
       args.model,
       [
-        "These are the contents before the cursor.",
-        ...current.lines.slice(-10, -1),
-        "You must output just generated contents that follows them in 10 lines at most.",
-        "You don't have to describe and repeating them.",
+        "<PRE>",
+        ...prefix.lines,
+        "<SUF>",
+        ...suffix.lines,
+        "<MID>",
       ].join("\n"),
       {
         images: args.images,

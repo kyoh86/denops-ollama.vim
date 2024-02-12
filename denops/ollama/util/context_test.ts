@@ -232,24 +232,24 @@ test({
 
 test({
   mode: "all",
-  name: "getCurrent should return empty when the cursor at the 0,0",
+  name: "getPrefix should return empty when the cursor at the 0,0",
   fn: async (denops) => {
     await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
     await denops.cmd(`normal! gg0`);
 
-    const context = await testtarget.getCurrent(denops);
+    const context = await testtarget.getPrefix(denops);
     assertEquals(context.lines.length, 0);
   },
 });
 
 test({
   mode: "all",
-  name: "getCurrent should return first line when the cursor at the 1,0",
+  name: "getPrefix should return first line when the cursor at the 1,0",
   fn: async (denops) => {
     await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
     await denops.cmd(`normal! gg0j`);
 
-    const context = await testtarget.getCurrent(denops);
+    const context = await testtarget.getPrefix(denops);
     assertEquals(context.lines.length, 1);
     assertEquals(context.lines[0], "foo");
   },
@@ -258,14 +258,89 @@ test({
 test({
   mode: "all",
   name:
-    "getCurrent should return fragment of the line when the cursor at middle of the line",
+    "getPrefix should return fragment of the line when the cursor at middle of the line",
   fn: async (denops) => {
     await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
     await denops.cmd(`normal! gg0jll`);
 
-    const context = await testtarget.getCurrent(denops);
+    const context = await testtarget.getPrefix(denops);
     assertEquals(context.lines.length, 2);
     assertEquals(context.lines[0], "foo");
     assertEquals(context.lines[1], "ba");
+  },
+});
+
+test({
+  mode: "all",
+  name:
+    "getPrefix should return full of the lines when the cursor at end of the buffer",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
+    await denops.cmd(`normal! G$`);
+
+    const context = await testtarget.getPrefix(denops);
+    assertEquals(context.lines.length, 3);
+    assertEquals(context.lines[0], "foo");
+    assertEquals(context.lines[1], "bar");
+    assertEquals(context.lines[2], "qu");
+  },
+});
+
+test({
+  mode: "all",
+  name: "getSuffix should return full of the lines when the cursor at 0,0",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
+    await denops.cmd(`normal! gg0`);
+
+    const context = await testtarget.getSuffix(denops);
+    assertEquals(context.lines.length, 3);
+    assertEquals(context.lines[0], "foo");
+    assertEquals(context.lines[1], "bar");
+    assertEquals(context.lines[2], "qux");
+  },
+});
+
+test({
+  mode: "all",
+  name:
+    "getSuffix should return second and third line when the cursor at the 1,0",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
+    await denops.cmd(`normal! gg0j`);
+
+    const context = await testtarget.getSuffix(denops);
+    assertEquals(context.lines.length, 2);
+    assertEquals(context.lines[0], "bar");
+    assertEquals(context.lines[1], "qux");
+  },
+});
+
+test({
+  mode: "all",
+  name:
+    "getSuffix should return fragment of the line when the cursor at middle of the line",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
+    await denops.cmd(`normal! gg0jll`);
+
+    const context = await testtarget.getSuffix(denops);
+    assertEquals(context.lines.length, 2);
+    assertEquals(context.lines[0], "r");
+    assertEquals(context.lines[1], "qux");
+  },
+});
+
+test({
+  mode: "all",
+  name:
+    "getSuffix should return empty when the cursor at the end of the buffer",
+  fn: async (denops) => {
+    await fn.setbufline(denops, 1, 1, ["foo", "bar", "qux"]);
+    await denops.cmd(`normal! G$`);
+
+    const context = await testtarget.getSuffix(denops);
+    assertEquals(context.lines.length, 1);
+    assertEquals(context.lines[0], "x");
   },
 });
