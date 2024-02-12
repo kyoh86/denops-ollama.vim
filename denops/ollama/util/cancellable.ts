@@ -1,8 +1,8 @@
-import { map } from "https://deno.land/x/denops_std@v5.3.0/mapping/mod.ts";
-import * as lambda from "https://deno.land/x/denops_std@v5.3.0/lambda/mod.ts";
-import { generateUniqueString } from "https://deno.land/x/denops_std@v5.3.0/util.ts";
-import * as autocmd from "https://deno.land/x/denops_std@v5.3.0/autocmd/mod.ts";
-import { Denops } from "https://deno.land/x/denops_std@v5.3.0/mod.ts";
+import { map } from "https://deno.land/x/denops_std@v6.0.1/mapping/mod.ts";
+import * as lambda from "https://deno.land/x/denops_std@v6.0.1/lambda/mod.ts";
+import { ulid } from "https://deno.land/std@0.215.0/ulid/mod.ts";
+import * as autocmd from "https://deno.land/x/denops_std@v6.0.1/autocmd/mod.ts";
+import { Denops } from "https://deno.land/x/denops_std@v6.0.1/mod.ts";
 
 export async function mapCancel(denops: Denops) {
   // See ../../../autoload/ollama/internal.vim
@@ -17,7 +17,7 @@ export async function canceller(denops: Denops, timeout?: number) {
   if (timeout) {
     setTimeout(() => abort.abort(), timeout);
   }
-  const group = generateUniqueString();
+  const group = ulid();
   await autocmd.group(denops, group, (helper) => {
     helper.define(
       "User",

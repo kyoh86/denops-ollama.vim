@@ -2,7 +2,7 @@ import {
   ensure,
   is,
   type PredicateType,
-} from "https://deno.land/x/unknownutil@v3.14.1/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.15.0/mod.ts";
 import { doPost } from "./base.ts";
 import { isErrorResponse, type ReqInit, type Result } from "./types.ts";
 
