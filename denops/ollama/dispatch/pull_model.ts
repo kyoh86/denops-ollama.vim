@@ -9,7 +9,7 @@ import { isReqArgs } from "./types.ts";
 import {
   is,
   PredicateType,
-} from "https://deno.land/x/unknownutil@v3.15.0/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.16.1/mod.ts";
 
 export const isPullModelArgs = is.AllOf([
   is.ObjectOf({
