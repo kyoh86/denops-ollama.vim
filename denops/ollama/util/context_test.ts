@@ -2,7 +2,7 @@ import {
   assert,
   assertEquals,
   assertFalse,
-} from "https://deno.land/std@0.215.0/assert/mod.ts";
+} from "https://deno.land/std@0.216.0/assert/mod.ts";
 import { test } from "https://deno.land/x/denops_test@v1.6.2/mod.ts";
 import * as fn from "https://deno.land/x/denops_std@v6.0.1/function/mod.ts";
 import * as option from "https://deno.land/x/denops_std@v6.0.1/option/mod.ts";

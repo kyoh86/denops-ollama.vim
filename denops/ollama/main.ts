@@ -3,7 +3,7 @@ import {
   ensure,
   is,
   Predicate,
-} from "https://deno.land/x/unknownutil@v3.16.1/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.16.3/mod.ts";
 
 import { init } from "./dispatch/init.ts";
 import { isStartChatArgs, startChat } from "./dispatch/start_chat.ts";
