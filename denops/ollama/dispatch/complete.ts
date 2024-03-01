@@ -1,8 +1,8 @@
-import { Denops } from "https://deno.land/x/denops_std@v6.0.1/mod.ts";
+import { Denops } from "https://deno.land/x/denops_std@v6.2.0/mod.ts";
 import {
   is,
   PredicateType,
-} from "https://deno.land/x/unknownutil@v3.15.0/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.16.3/mod.ts";
 import { generateCompletion, type GenerateCompletionParams } from "../api.ts";
 import { isReqOpts } from "./types.ts";
 import { getCurrent } from "../util/context.ts";

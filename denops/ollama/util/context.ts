@@ -1,14 +1,14 @@
 // Functions to get context
 
-import { type Denops } from "https://deno.land/x/denops_std@v6.0.1/mod.ts";
-import * as fn from "https://deno.land/x/denops_std@v6.0.1/function/mod.ts";
-import * as option from "https://deno.land/x/denops_std@v6.0.1/option/mod.ts";
-import * as batch from "https://deno.land/x/denops_std@v6.0.1/batch/mod.ts";
+import { type Denops } from "https://deno.land/x/denops_std@v6.2.0/mod.ts";
+import * as fn from "https://deno.land/x/denops_std@v6.2.0/function/mod.ts";
+import * as option from "https://deno.land/x/denops_std@v6.2.0/option/mod.ts";
+import * as batch from "https://deno.land/x/denops_std@v6.2.0/batch/mod.ts";
 import {
   ensure,
   is,
   PredicateType,
-} from "https://deno.land/x/unknownutil@v3.15.0/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.16.3/mod.ts";
 
 export const isBufferInfo = is.OneOf([
   is.String,

@@ -1,19 +1,19 @@
-import { Denops } from "https://deno.land/x/denops_std@v6.0.1/mod.ts";
-import * as bytes from "https://deno.land/std@0.215.0/fmt/bytes.ts";
+import { Denops } from "https://deno.land/x/denops_std@v6.2.0/mod.ts";
+import * as bytes from "https://deno.land/std@0.218.2/fmt/bytes.ts";
 import {
   isPullModelParams,
   pullModel as pullModelAPI,
   type PullModelParams,
 } from "../api.ts";
-import { getLogger } from "https://deno.land/std@0.215.0/log/mod.ts";
-import * as helper from "https://deno.land/x/denops_std@v6.0.1/helper/mod.ts";
+import { getLogger } from "https://deno.land/std@0.218.2/log/mod.ts";
+import * as helper from "https://deno.land/x/denops_std@v6.2.0/helper/mod.ts";
 import { canceller } from "../util/cancellable.ts";
-import { abortableAsyncIterable } from "https://deno.land/std@0.215.0/async/mod.ts";
+import { abortableAsyncIterable } from "https://deno.land/std@0.218.2/async/mod.ts";
 import { isReqOpts } from "./types.ts";
 import {
   is,
   PredicateType,
-} from "https://deno.land/x/unknownutil@v3.15.0/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.16.3/mod.ts";
 
 export { isPullModelParams, type PullModelParams };
 
