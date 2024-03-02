@@ -1,43 +1,36 @@
-import { abortableAsyncIterable } from "https://deno.land/std@0.215.0/async/mod.ts";
-import { Denops } from "https://deno.land/x/denops_std@v6.0.1/mod.ts";
+import { abortableAsyncIterable } from "https://deno.land/std@0.218.2/async/mod.ts";
+import { Denops } from "https://deno.land/x/denops_std@v6.2.0/mod.ts";
 import {
   is,
   maybe,
   PredicateType,
-} from "https://deno.land/x/unknownutil@v3.15.0/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.16.3/mod.ts";
 
-import { ChatBase, isOpener, type Opener } from "../ui/chat.ts";
-import {
-  generateCompletion,
-  type GenerateCompletionParams,
-  isGenerateCompletionParams,
-} from "../api.ts";
-import { isReqOpts } from "./types.ts";
-export {
-  type GenerateCompletionParams,
-  isGenerateCompletionParams,
-  isOpener,
-  type Opener,
-};
+import { isOpener } from "../ui/open.ts";
+import { ChatBase } from "../ui/chat.ts";
+import { generateCompletion } from "../api.ts";
+import { isReqArgs } from "./types.ts";
 
-export const isStartChatOpts = is.AllOf([
+export const isStartChatArgs = is.AllOf([
   is.ObjectOf({
+    model: is.String,
     opener: is.OptionalOf(isOpener),
-    timeout: is.OptionalOf(is.Number),
-    initialPrompt: is.OptionalOf(is.String),
+    message: is.OptionalOf(is.String),
+    // A list of base64-encoded images (for multimodal models such as llava)
+    images: is.OptionalOf(is.ArrayOf(is.String)),
+    // Additional model parameters listed in the documentation for the Modelfile such as temperature
+    options: is.OptionalOf(is.Record),
+    // System message to (overrides what is defined in the Modelfile)
+    system: is.OptionalOf(is.String),
   }),
-  isReqOpts,
+  isReqArgs,
 ]);
 
-export type StartChatOpts = PredicateType<typeof isStartChatOpts>;
+export type StartChatArgs = PredicateType<typeof isStartChatArgs>;
 
 class Chat extends ChatBase<number[]> {
-  constructor(
-    model: string,
-    private opts?: StartChatOpts,
-    private params?: GenerateCompletionParams,
-  ) {
-    super(model, opts?.timeout, undefined, opts?.initialPrompt);
+  constructor(private args: StartChatArgs) {
+    super(args.model, args.timeout, undefined, args.message);
   }
 
   parseContext(context: unknown): number[] | undefined {
@@ -54,8 +47,13 @@ class Chat extends ChatBase<number[]> {
     const result = await generateCompletion(
       this.model,
       prompt,
-      { ...this.params, context },
-      { ...this.opts, signal },
+      {
+        images: this.args.images,
+        options: this.args.options,
+        system: this.args.system,
+        context,
+      },
+      { baseUrl: this.args.baseUrl, signal },
     );
     if (!result.body) {
       return;
@@ -76,12 +74,7 @@ class Chat extends ChatBase<number[]> {
   }
 }
 
-export default async function startChat(
-  denops: Denops,
-  model: string,
-  opts?: StartChatOpts,
-  params?: GenerateCompletionParams,
-) {
-  const chat = new Chat(model, opts, params);
-  await chat.start(denops, opts?.opener);
+export async function startChat(denops: Denops, args: StartChatArgs) {
+  const chat = new Chat(args);
+  await chat.start(denops, args?.opener);
 }

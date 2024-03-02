@@ -10,6 +10,7 @@ License: MIT License
 Contents ~
 
 Install						|ollama-install|
+Customize					|ollama-custom|
 Function					|ollama-function|
 Commands					|ollama-commands|
 Keymaps						|ollama-keymaps|
@@ -21,180 +22,243 @@ Other references				|ollama-references|
                                                               *ollama-install*
 Install ~
 
-You need to install |denops.vim| as a dependency.
+You need to install |denops.vim| and ollama.ai as dependencies.
 
 * vim-denops/denops.vim https://github.com/vim-denops/denops.vim
 * ollama https://ollama.ai
 
-If you want to use it, run ollama background with a model you like in local.
+If you want to use it, run ollama background with a model you like in local. >
+	$ ollama pull codellama
+	$ ollama serve
+<
 
-```console
-$ ollama pull codellama
-$ ollama serve
-```
+Ollama provides systemd unit for Linux, so if you are using it in Linux, you
+can start it with `systemctl`. >
+	$ systemctl start ollama
+<
 
-And call `ollama#start_chat` with the model name.
+Then, you can call |ollama#start_chat()| with the model name. >
+	call ollama#start_chat({'model': 'codellama'})
+<
 
+==============================================================================
+                                                               *ollama-custom*
+Customize ~
+
+This plugin only provides some vim functions and commands like
+|ollama#start_chat()| that have simple and flexible interface.
+But also they are not convenience to use naively for each time.
+So we may some customize them with following methods.
+
+- Create commands or keymaps to call functions instantly, for example: >
+	command! Codellama call ollama#start_chat({'model': 'codellama'})
+<
+
+- Pre-set arguments for each functions using |ollama#custom#set_func_arg()|
+  and |ollama#custom#patch_args()|.
+
+For example, we can pre-set "model" argument of the |ollama#start_chat()|: >
+	call ollama#custom#set_func_arg("start_chat", "model", "codellama")
+<
+Then, calling it without the argument: >
+	call ollama#start_chat({})
+<
+is equivalent to calling it like this: >
+	call ollama#start_chat({"model": "codellama"})
+<
+
+Using |ollama#custom#patch_args()|, we can pre-set some arguments at once: >
+	call ollama#custom#patch_args({
+		\ 'start_chat': {
+			\ 'model': 'codellama',
+			\ 'opener': 'new',
+		\ },
+		\ 'open_log': {
+			\ 'opener': 'tabnew',
+		\ }
+	\ })
+<
+
+And |ollama#custom#patch_args()| can accept `'_'` as a function name: >
+	call ollama#custom#patch_args({
+		\ '_': { 'baseUrl': 'http://localhost:33256/' }
+	\ })
+<
+It applies arguments across all functions.
 
 ==============================================================================
                                                              *ollama-function*
 Function ~
 
-                                                         *ollama#open_log()*
-ollama#open_log([{options}])
+                                                           *ollama#open_log()*
+ollama#open_log({args})
 	Open Ollama log file.
 
-	You can specify {options} with fields in below.
-		opener	How the new buffer be placed in which window:
+	{args} is a dictionary having fields in below.
+	- opener	(Optional) How the new window be placed:
 			tabnew		(DEFAULT) open a new tab
 			split, new	open a new split
 			vsplit, vnew	open a new vertical split
 			edit		open in the current window
 
 
-	Example: >
+	Example 1: Open log >
+	:call ollama#open_log({})
+<
+
+	Example 2: Open log in new window (split horizontal)>
 	:call ollama#open_log({'opener': 'new'})
 <
 
                                                          *ollama#start_chat()*
-ollama#start_chat({model} [, {options} [, {params}]])
-	Start chat with Ollama using the {model}.
-	See |ollama-api-definition|.
+ollama#start_chat({args})
+	Start chat with Ollama
 
-	You can specify {options} with fields in below.
-		opener		How the new buffer be placed in which window:
-				tabnew		(DEFAULT) open a new tab
-				split, new	open a new split
-				vsplit, vnew	open a new vertical split
-				edit		open in the current window
-		timeout		Time limit.
-		baseUrl		The base of the URL to request.
-				(DEFAULT): "http://localhost:11434"
-		initialPrompt	Prompt to be passed to Ollama. When this is
-				specified, Ollama takes it immediately and
-				begins its reply.
-
-	And you can specify {params} as optional parameters for the API.
-		See |ollama-api-definition|.
+	{args} is a dictionary having fields in below.
+	- model		Ollama model name. |ollama-api-definition|
+	- opener	(Optional) How the new window be placed:
+			tabnew		(DEFAULT) open a new tab
+			split, new	open a new split
+			vsplit, vnew	open a new vertical split
+			edit		open in the current window
+	- timeout	(Optional) Time limit.
+	- baseUrl	(Optional) The base of the URL to request.
+			(Default: "http://localhost:11434")
+	- message	(Optional) Prompt to be passed to Ollama.
+			When this is specified, Ollama takes it
+			immediately and begins its reply.
+	- images	(Optional) A list of base64-encoded images
+			(for multimodal models such as llava)
+	- options	(Optional) Additional model parameters listed in the
+			documentation for the Modelfile such as temperature
+	- system	(Optional) System message to (overrides what is
+			defined in the Modelfile)
 
 	Example 1: Start a chat with the local Ollama server with
 	             "codellama" model. >
-	call ollama#start_chat('codellama')
+	call ollama#start_chat({'model': 'codellama'})
 <
 	Example 2: Start a new chat with the remote Ollama server. >
-	call ollama#start_chat('codellama',
-		\ {'baseUrl': 'http://your-remote-server'})
+	call ollama#start_chat({
+		\ 'model': 'codellama',
+		\ 'baseUrl': 'http://your-remote-server'})
 <
 	Example 3: Start a chat with a initial prompt. >
-	call ollama#start_chat('codellama', 
-		\ { 'initialPrompt': 'What is your favorite color?' })
+	call ollama#start_chat({
+		\ 'model': 'codellama',
+		\ 'message': 'What is your favorite color?'})
 <
 
-                                            *ollama#start_chat_with_context()*
-ollama#start_chat_with_context({model}, {context} [, {options} [, {params}]])
-	Start chat with Ollama with the context using the {model}.
-	See |ollama-api-definition|.
+                                                  *ollama#start_chat_in_ctx()*
+ollama#start_chat_in_ctx({args})
+	Start chat with Ollama with the context.
 
-	{context} specifies what kind of context should be passed to Ollama
-	in advance.
-	It supports the following entries:
-		headMessage	A first message to be sent.
-		selection	If the selection be sent.
-		currentBuffer	If the current buffer be sent.
-		buffers		A list of the bufinfo.
-				It accepts buffer numbers (see |bufnr()|) or
-			      	the objects from |getbufinro()|.
-		lastMessage	A last message to be sent.
-
-	You can specify {options} with fields in below.
-		opener		How the new buffer be placed in which window:
-				tabnew		(DEFAULT) open a new tab
-				split, new	open a new split
-				vsplit, vnew	open a new vertical split
-				edit		open in the current window
-		timeout		Time limit.
-		baseUrl		The base of the URL to request.
-				(DEFAULT): "http://localhost:11434"
-		initialPrompt	Prompt to be passed to Ollama. When this is
-				specified, Ollama takes it immediately and
-				begins its reply.
-
-	And you can specify {params} as optional parameters for the API.
-		See |ollama-api-definition|.
+	{args} is a dictionary having fields in below.
+	- model		Ollama model name. |ollama-api-definition|
+	- context	Specifies what kind of context should be passed to
+			Ollama in advance. It supports the following entries:
+			- headMessage	A first message to be sent.
+			- selection	If the selection be sent.
+			- currentBuffer	If the current buffer be sent.
+			- buffers	A list of the bufinfo. It accepts
+					buffer numbers (see |bufnr()|) or
+					the objects from |getbufinro()|.
+			- lastMessage	A last message to be sent.
+	- opener	(Optional) How the new window be placed:
+			tabnew		(Default) open a new tab
+			split, new	open a new split
+			vsplit, vnew	open a new vertical split
+			edit		open in the current window
+	- timeout	(Optional) Time limit.
+	- baseUrl	(Optional) The base of the URL to request.
+			(Default: "http://localhost:11434")
+	- message	(Optional) Prompt to be passed to Ollama. When this is
+			specified, Ollama takes it immediately and
+			begins its reply.
+	- options	(Optional) Additional model parameters listed in the
+			documentation for the Modelfile such as temperature
 
 	Example 1: Start a new chat based on the selection text. >
-	call ollama#start_chat('codellama',
-		\ {'selection': v:true})
+	call ollama#start_chat({
+		\ 'model': 'codellama',
+		\ 'context': {'selection': v:true}})
 <
 	Example 2: Start a new chat on the current buffer. >
-	call ollama#start_chat('codellama',
-		\ {'currentBuffer': v:true})
+	call ollama#start_chat({
+		\ 'model': 'codellama',
+		\ 'context': {'currentBuffer': v:true}})
 <
 	Example 3: Start a new chat on the listed buffers. >
-	:call ollama#start_chat_with_context('codellama', 
-		\ {'buffers:' getbufinfo({'buflisted':v:true})})
+	:call ollama#start_chat_in_ctx({
+		\ 'model': 'codellama', 
+		\ 'context': {'buffers:' getbufinfo({'buflisted':v:true})}})
 <
                                                            *ollama#complete()*
-ollama#complete({model}, {callback} [, {options} [, {params}]])
-	Get completion for the current buffer around the cursor by the {model}.
-	See |ollama-api-definition|.
+ollama#complete({args})
+	Get completion for the current buffer around the cursor with codellama
+	model.
 
-	Response should be pass to {callback}.
-
-	You can specify {options} with fields in below.
-		timeout		Time limit.
-		baseUrl		The base of the URL to request.
-				(DEFAULT): "http://localhost:11434"
-
-	And you can specify {params} as optional parameters for the API.
-		See |ollama-api-definition|.
+	{args} is a dictionary having fields in below.
+	- model		Ollama model name supporting completion (like
+	  codellama). |ollama-api-definition|
+	- callback	A function should take response.
+	- timeout	(Optional) Time limit.
+	- baseUrl	(Optional) The base of the URL to request.
+			(Default: "http://localhost:11434")
+	- images	(Optional) A list of base64-encoded images
+			(for multimodal models such as llava)
+	- options	(Optional) Additional model parameters listed in the
+			documentation for the Modelfile such as temperature
+	- system	(Optional) System message to (overrides what is
+			defined in the Modelfile)
 
 	Example: Request completion and echo it. >
-	:call ollama#complete('codellama', {msg -> execute("echomsg " .. msg)})
+	:call ollama#complete({
+		\ 'model': 'codellama',
+		\ 'callback': {msg -> execute("echomsg " .. msg)}})
 <
 
                                                         *ollama#list_models()*
-ollama#list_models([{options}])
+ollama#list_models({args})
 	Show list models in local.
 
-	You can specify {options} with fields in below.
-		baseUrl	The base of the URL to request.
-			(DEFAULT): "http://localhost:11434"
+	{args} is a dictionary having fields in below.
+	- timeout	(Optional) Time limit.
+	- baseUrl	(Optional) The base of the URL to request.
+			(Default: "http://localhost:11434")
 
 	Example: >
-	:call ollama#list_models()
+	:call ollama#list_models({})
 <
 
                                                          *ollama#pull_model()*
-ollama#pull_model({name} [, {options} [, {params}]])
-	Pull a model by the {name} from the library.
-	See |ollama-api-definition|.
+ollama#pull_model({args})
+	Pull a model from the library.
 
-	You can specify {options} with fields in below.
-		insecure	If it is true, allow insecure connections to
-				the library.
-		timeout		Time limit.
-		baseUrl	The base of the URL to request.
-			(DEFAULT): "http://localhost:11434"
-
-	And you can specify {params} as optional parameters for the API.
-		See |ollama-api-definition|.
+	{args} is a dictionary having fields in below.
+	- name		Ollama model name. |ollama-api-definition|
+	- insecure	(Optional) If it is true, allow insecure connections
+			to the library.
+	- timeout	(Optional) Time limit.
+	- baseUrl	(Optional) The base of the URL to request.
+			(Default: "http://localhost:11434")
 
 	Example: >
-	:call ollama#pull_model('codellama')
+	:call ollama#pull_model({'model': 'codellama'})
 <
 
                                                        *ollama#delete_model()*
-ollama#delete_model({name} [, {options}])
-	Delete a model by the {name} in local.
-	See |ollama-api-definition|.
+ollama#delete_model({args})
+	Delete a model in local.
 
-	You can specify {options} with fields in below.
-		baseUrl	The base of the URL to request.
-			(DEFAULT): "http://localhost:11434"
+	{args} is a dictionary having fields in below.
+	- name		Ollama model name. |ollama-api-definition|
+	- timeout	(Optional) Time limit.
+	- baseUrl	(Optional) The base of the URL to request.
+			(Default: "http://localhost:11434")
 
 	Example: >
-	:call ollama#delete_model('codellama')
+	:call ollama#delete_model({'model': 'codellama'})
 <
 
 
@@ -212,7 +276,39 @@ Keymaps ~
                                                        *ollama-common-options*
 Common options ~
 
+You can set args for each functions before calling it.
+For example, you can call "start_chat" with a model "codellama", you can set
+the "model" arg with |ollama#custom#set_func_arg| >
+	call ollama#custom#set_func_arg('start_chat', 'model', 'codellama')
+	call ollama#start_chat({})
+	# it equals to calling with "model" arg like this:
+	# call ollama#start_chat(`{'model': 'codellama'})
+<
 
+                                                  *ollama#custom#set_func_arg*
+ollama#custom#set_func_arg({function_name}, {arg_name}, {value})
+
+	Set an argument value for a function.
+	But also you can set them for all function with using `'_'` for
+	{function_name}. >
+		call ollama#custom#set_func_arg('_', 'model', 'codellama')
+		# It means that the 'model' arg for all functions is
+		# 'codellama'
+<
+
+                                               *ollama#custom#patch_func_args*
+ollama#custom#patch_func_args({function_name}, {args})
+
+	Patch all argument values for a function.
+	But also you can set them for all function with using `'_'` for
+	{function_name}. >
+		call ollama#custom#set_func_arg('_', {
+			'model': 'codellama',
+			'baseUrl': 'http://example.com:11434',
+		})
+		# It specifies that the 'model' and 'baseUrl' arguments
+		# should use the specified values for all functions.
+<
 
 ==============================================================================
                                                            *ollama-references*
@@ -221,6 +317,10 @@ Other references ~
                                                        *ollama-api-definition*
 API definitions ~
 	See https://github.com/jmorganca/ollama/blob/main/docs/api.md
+
+                                                                  *ollama-faq*
+Ollama FAQ ~
+	See https://github.com/ollama/ollama/blob/main/docs/faq.md
 
 
 ==============================================================================

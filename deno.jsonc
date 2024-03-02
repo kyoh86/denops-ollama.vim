@@ -3,6 +3,7 @@
   "description": "A set of denops utils just for me",
   "tasks": {
     "test": "deno test --allow-env=DENOPS_TEST_DENOPS_PATH,DENOPS_TEST_VERBOSE,DENOPS_TEST_VIM_EXECUTABLE,DENOPS_TEST_NVIM_EXECUTABLE --allow-run=vim,nvim --allow-net=127.0.0.1:0 --allow-read",
+    "check": "deno check ./**/*.ts",
     "lint": "deno lint ./**/*.ts"
   }
 }

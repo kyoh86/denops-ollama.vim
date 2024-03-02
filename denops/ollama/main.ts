@@ -1,125 +1,97 @@
-import { Denops } from "https://deno.land/x/denops_std@v6.0.1/mod.ts";
-import { ensure, is } from "https://deno.land/x/unknownutil@v3.15.0/mod.ts";
-
-import init from "./dispatch/init.ts";
-import startChat, {
-  isGenerateCompletionParams,
-  isOpener,
-  isStartChatOpts,
-} from "./dispatch/start_chat.ts";
-import listModels, { isListModelsOpts } from "./dispatch/list_models.ts";
-import pullModel, {
-  isPullModelOpts,
-  isPullModelParams,
-} from "./dispatch/pull_model.ts";
-import deleteModel, {
-  isDeleteModelOpts,
-  isDeleteModelParams,
-} from "./dispatch/delete_model.ts";
+import { Denops } from "https://deno.land/x/denops_std@v6.2.0/mod.ts";
 import {
-  isChatContext,
-  isGenerateChatCompletionParams,
-  isStartChatWithContextOpts,
-  startChatWithContext,
-} from "./dispatch/start_chat_with_context.ts";
-import complete, { isCompleteOpts } from "./dispatch/complete.ts";
+  ensure,
+  is,
+  Predicate,
+} from "https://deno.land/x/unknownutil@v3.16.3/mod.ts";
+
+import { init } from "./dispatch/init.ts";
+import { isStartChatArgs, startChat } from "./dispatch/start_chat.ts";
+import { isListModelsArgs, listModels } from "./dispatch/list_models.ts";
+import { isPullModelArgs, pullModel } from "./dispatch/pull_model.ts";
+import { deleteModel, isDeleteModelArgs } from "./dispatch/delete_model.ts";
+import {
+  isStartChatInCtxArgs,
+  startChatInCtx,
+} from "./dispatch/start_chat_in_ctx.ts";
+import { complete, isCompleteArgs } from "./dispatch/complete.ts";
+import { CustomArgStore, isArgs } from "./custom/arg_store.ts";
+import { isOpenLogArgs, openLog } from "./dispatch/open_log.ts";
 
 export async function main(denops: Denops) {
   const { cacheFile } = await init(denops);
 
+  const argStore = new CustomArgStore();
+
+  function ensureArgs<T>(func: string, uArgs: unknown, pred: Predicate<T>): T {
+    return ensure(argStore.getArgs(func, ensure(uArgs, isArgs)), pred);
+  }
+
   denops.dispatcher = {
-    async openLog(uOpts: unknown) {
-      const opts = ensure(
-        uOpts,
-        is.OneOf([
-          is.Undefined,
-          is.ObjectOf({
-            opener: is.OptionalOf(isOpener),
-          }),
-        ]),
-      );
-      await denops.cmd(`${opts?.opener ?? "tabnew"} ${cacheFile}`);
+    async open_log(uArgs: unknown) {
+      const args = ensureArgs("open_log", uArgs, isOpenLogArgs);
+      await openLog(denops, cacheFile, args);
     },
 
-    async startChat(
-      uModel: unknown,
-      uOpts: unknown,
-      uParams: unknown,
-    ) {
-      await startChat(
-        denops,
-        ensure(uModel, is.String),
-        ensure(uOpts, is.OneOf([is.Undefined, isStartChatOpts])),
-        ensure(uParams, is.OneOf([is.Undefined, isGenerateCompletionParams])),
-      );
+    async start_chat(uArgs: unknown) {
+      const args = ensureArgs("start_chat", uArgs, isStartChatArgs);
+      await startChat(denops, args);
     },
 
-    async complete(
-      uModel: unknown,
-      uCallback: unknown,
-      uOpts: unknown,
-      uParams: unknown,
-    ) {
+    async start_chat_in_ctx(uArgs: unknown) {
+      const args = ensureArgs(
+        "start_chat_in_ctx",
+        uArgs,
+        isStartChatInCtxArgs,
+      );
+      await startChatInCtx(denops, args);
+    },
+
+    async complete(uArgs: unknown) {
+      const args = ensureArgs("complete", uArgs, isCompleteArgs);
       await complete(
         denops,
-        ensure(uModel, is.String),
-        async (msg: string) => {
-          await denops.call(
-            "denops#callback#call",
-            ensure(uCallback, is.String),
-            msg,
-          );
+        {
+          ...args,
+          callback: async (msg: string) => {
+            await denops.call("denops#callback#call", args.callback, msg);
+          },
         },
-        ensure(uOpts, is.OneOf([is.Undefined, isCompleteOpts])),
-        ensure(uParams, is.OneOf([is.Undefined, isGenerateCompletionParams])),
       );
     },
 
-    async startChatWithContext(
-      uModel: unknown,
-      uContext: unknown,
-      uOpts: unknown,
-      uParams: unknown,
-    ) {
-      await startChatWithContext(
-        denops,
-        ensure(uModel, is.String),
-        ensure(uContext, isChatContext),
-        ensure(uOpts, is.OneOf([is.Undefined, isStartChatWithContextOpts])),
-        ensure(
-          uParams,
-          is.OneOf([is.Undefined, isGenerateChatCompletionParams]),
-        ),
+    async list_models(uArgs: unknown) {
+      const args = ensureArgs("list_models", uArgs, isListModelsArgs);
+      await listModels(denops, args);
+    },
+
+    async pull_model(uArgs: unknown) {
+      const args = ensureArgs("pull_model", uArgs, isPullModelArgs);
+      await pullModel(denops, args);
+    },
+
+    async delete_model(uArgs: unknown) {
+      const args = ensureArgs("delete_model", uArgs, isDeleteModelArgs);
+      await deleteModel(denops, args);
+    },
+
+    customSetFuncArg(uFunc: unknown, uArg: unknown, value: unknown) {
+      argStore.setFuncArg(
+        ensure(uFunc, is.String),
+        ensure(uArg, is.String),
+        value,
       );
     },
 
-    async listModels(uOpts: unknown) {
-      await listModels(
-        denops,
-        ensure(uOpts, is.OneOf([is.Undefined, isListModelsOpts])),
+    customPatchFuncArgs(uFunc: unknown, uArgs: unknown) {
+      argStore.patchFuncArgs(
+        ensure(uFunc, is.String),
+        ensure(uArgs, is.RecordOf(isArgs)),
       );
     },
 
-    async pullModel(
-      uName: unknown,
-      uOpts: unknown,
-      uParams: unknown,
-    ) {
-      await pullModel(
-        denops,
-        ensure(uName, is.String),
-        ensure(uOpts, is.OneOf([is.Undefined, isPullModelOpts])),
-        ensure(uParams, is.OneOf([is.Undefined, isPullModelParams])),
-      );
-    },
-
-    async deleteModel(uName: unknown, uOpts: unknown, uParams: unknown) {
-      await deleteModel(
-        denops,
-        ensure(uName, is.String),
-        ensure(uOpts, is.OneOf([is.Undefined, isDeleteModelOpts])),
-        ensure(uParams, is.OneOf([is.Undefined, isDeleteModelParams])),
-      );
+    customPatchArgs(uArgs: unknown) {
+      argStore.patchArgs(ensure(uArgs, is.RecordOf(isArgs)));
     },
   };
 }

@@ -1,27 +1,31 @@
-import { type Denops } from "https://deno.land/x/denops_std@v6.0.1/mod.ts";
+import { type Denops } from "https://deno.land/x/denops_std@v6.2.0/mod.ts";
+import { getLogger } from "https://deno.land/std@0.218.2/log/mod.ts";
+import * as helper from "https://deno.land/x/denops_std@v6.2.0/helper/mod.ts";
 import {
-  deleteModel as deleteModelAPI,
-  DeleteModelParams,
-  isDeleteModelParams,
-} from "../api.ts";
-import { getLogger } from "https://deno.land/std@0.215.0/log/mod.ts";
-import * as helper from "https://deno.land/x/denops_std@v6.0.1/helper/mod.ts";
-import { isReqOpts, ReqOpts } from "./types.ts";
-export { type DeleteModelParams, isDeleteModelParams };
+  is,
+  PredicateType,
+} from "https://deno.land/x/unknownutil@v3.16.3/mod.ts";
 
-export const isDeleteModelOpts = isReqOpts;
-export type DeleteModelOpts = ReqOpts;
+import { deleteModel as deleteModelAPI } from "../api.ts";
+import { canceller } from "../util/cancellable.ts";
+import { isReqArgs } from "./types.ts";
 
-export default async function deleteModel(
-  denops: Denops,
-  name: string,
-  opts?: DeleteModelOpts,
-  params?: DeleteModelParams,
-) {
+export const isDeleteModelArgs = is.AllOf([
+  is.ObjectOf({
+    name: is.String,
+  }),
+  isReqArgs,
+]);
+export type DeleteModelArgs = PredicateType<typeof isDeleteModelArgs>;
+
+export async function deleteModel(denops: Denops, args: DeleteModelArgs) {
+  const { signal, cancel } = await canceller(denops, args?.timeout);
   try {
-    await deleteModelAPI(name, params, { ...opts });
+    await deleteModelAPI(name, {}, { baseUrl: args.baseUrl, signal });
     helper.echo(denops, `Deleted ${name}`);
   } catch (err) {
     getLogger("denops-ollama").error(err);
+  } finally {
+    await cancel();
   }
 }

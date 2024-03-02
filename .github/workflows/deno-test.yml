@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Setup repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Deno
         uses: denoland/setup-deno@v1
@@ -35,13 +35,16 @@ jobs:
       - name: Verify formatting
         run: deno fmt --check
 
+      - name: Check
+        run: deno task check
+
       - name: Run linter
         run: deno task lint
 
       - name: Get Denops
         run: |
-          git clone https://github.com/vim-denops/denops.vim
-          echo "DENOPS_TEST_DENOPS_PATH=${PWD}/denops.vim" >> "$GITHUB_ENV"
+          git clone https://github.com/vim-denops/denops.vim /tmp/denops.vim
+          echo "DENOPS_TEST_DENOPS_PATH=/tmp/denops.vim" >> "$GITHUB_ENV"
 
       - uses: rhysd/action-setup-vim@v1
         id: vim

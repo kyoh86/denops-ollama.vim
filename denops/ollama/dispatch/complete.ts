@@ -1,55 +1,68 @@
-import { Denops } from "https://deno.land/x/denops_std@v6.0.1/mod.ts";
+import { Denops } from "https://deno.land/x/denops_std@v6.2.0/mod.ts";
 import {
   is,
   PredicateType,
-} from "https://deno.land/x/unknownutil@v3.15.0/mod.ts";
-import { generateCompletion, type GenerateCompletionParams } from "../api.ts";
-import { isReqOpts } from "./types.ts";
-import { getCurrent } from "../util/context.ts";
+} from "https://deno.land/x/unknownutil@v3.16.3/mod.ts";
+import { generateCompletion } from "../api.ts";
+import { isReqArgs } from "./types.ts";
+import { getPrefix, getSuffix } from "../util/context.ts";
 import { canceller } from "../util/cancellable.ts";
 import { trimAroundCode } from "../util/trim.ts";
 
-export const isCompleteOpts = is.AllOf([
+export const isCompleteArgs = is.AllOf([
   is.ObjectOf({
-    timeout: is.OptionalOf(is.Number),
+    model: is.String,
+    callback: is.String,
+    // A list of base64-encoded images (for multimodal models such as llava)
+    images: is.OptionalOf(is.ArrayOf(is.String)),
+    // Additional model parameters listed in the documentation for the Modelfile such as temperature
+    options: is.OptionalOf(is.Record),
+    // System message to (overrides what is defined in the Modelfile)
+    system: is.OptionalOf(is.String),
   }),
-  isReqOpts,
+  isReqArgs,
 ]);
 
-export type CompleteOpts = PredicateType<typeof isCompleteOpts>;
+export type CompleteArgs = PredicateType<typeof isCompleteArgs>;
 
-export default async function complete<T>(
+export async function complete<T>(
   denops: Denops,
-  model: string,
-  callback:
-    | ((messasge: string) => T)
-    | ((messasge: string) => Promise<T>),
-  opts?: CompleteOpts,
-  params?: GenerateCompletionParams,
+  args: Omit<CompleteArgs, "callback"> & {
+    callback:
+      | ((messasge: string) => T)
+      | ((messasge: string) => Promise<T>);
+  },
 ): Promise<T> {
-  const current = await getCurrent(denops);
-  const { signal, cancel } = await canceller(denops, opts?.timeout);
+  const prefix = await getPrefix(denops);
+  const suffix = await getSuffix(denops);
+  const { signal, cancel } = await canceller(denops, args?.timeout);
   try {
     const result = await generateCompletion(
-      model,
+      args.model,
       [
-        "These are the contents before the cursor.",
-        ...current.lines.slice(-10, -1),
-        "You must output just generated contents that follows them in 10 lines at most.",
-        "You don't have to describe and repeating them.",
+        "<PRE>",
+        ...prefix.lines,
+        "<SUF>",
+        ...suffix.lines,
+        "<MID>",
       ].join("\n"),
-      { ...params, stream: false },
-      { ...opts, signal },
+      {
+        images: args.images,
+        options: args.options,
+        system: args.system,
+        stream: false,
+      },
+      { baseUrl: args.baseUrl, signal },
     );
     if ("error" in result.body) {
       throw new Error(result.body.error);
     }
-    const ret = callback(trimAroundCode(result.body.response));
+    const ret = args.callback(trimAroundCode(result.body.response));
     if (ret instanceof Promise) {
       return await ret;
     }
     return ret;
   } finally {
-    cancel();
+    await cancel();
   }
 }
