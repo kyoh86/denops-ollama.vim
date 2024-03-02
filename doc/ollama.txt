@@ -1,5 +1,5 @@
 *ollama.txt* A Vim plugin as to chat with Ollama.
-                                                  *ollama* *denops-ollama.txt*
+                              *ollama* *denops-ollama.vim* *denops-ollama.txt*
 
 Author: kyoh86 <me@kyoh86.dev>
 License: MIT License
@@ -36,6 +36,9 @@ Ollama provides systemd unit for Linux, so if you are using it in Linux, you
 can start it with `systemctl`. >
 	$ systemctl start ollama
 <
+
+See: |ollama-faq|
+
 
 Then, you can call |ollama#start_chat()| with the model name. >
 	call ollama#start_chat({'model': 'codellama'})
