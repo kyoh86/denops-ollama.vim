@@ -2,6 +2,7 @@ import { Denops } from "https://deno.land/x/denops_std@v6.2.0/mod.ts";
 import {
   ensure,
   is,
+  maybe,
   Predicate,
 } from "https://deno.land/x/unknownutil@v3.16.3/mod.ts";
 
@@ -49,15 +50,13 @@ export async function main(denops: Denops) {
 
     async complete(uArgs: unknown) {
       const args = ensureArgs("complete", uArgs, isCompleteArgs);
-      await complete(
-        denops,
-        {
-          ...args,
-          callback: async (msg: string) => {
-            await denops.call("denops#callback#call", args.callback, msg);
-          },
-        },
-      );
+      const callbackName = maybe(args.callback, is.String);
+      const callbackFunc = maybe(args.callback, is.AsyncFunction);
+      const callback = callbackFunc ?? (async (msg: string) => {
+        await denops.call("denops#callback#call", callbackName, msg);
+      });
+
+      await complete(denops, { ...args, callback });
     },
 
     async list_models(uArgs: unknown) {
@@ -86,7 +85,7 @@ export async function main(denops: Denops) {
     customPatchFuncArgs(uFunc: unknown, uArgs: unknown) {
       argStore.patchFuncArgs(
         ensure(uFunc, is.String),
-        ensure(uArgs, is.RecordOf(isArgs)),
+        ensure(uArgs, isArgs),
       );
     },
 

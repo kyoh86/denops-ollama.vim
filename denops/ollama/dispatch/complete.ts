@@ -9,10 +9,10 @@ import { getPrefix, getSuffix } from "../util/context.ts";
 import { canceller } from "../util/cancellable.ts";
 import { trimAroundCode } from "../util/trim.ts";
 
-export const isCompleteArgs = is.AllOf([
+export const isCompleteArgs = is.IntersectionOf([
   is.ObjectOf({
     model: is.String,
-    callback: is.String,
+    callback: is.Unknown,
     // A list of base64-encoded images (for multimodal models such as llava)
     images: is.OptionalOf(is.ArrayOf(is.String)),
     // Additional model parameters listed in the documentation for the Modelfile such as temperature
