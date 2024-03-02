@@ -1,13 +1,13 @@
-import { getLogger } from "https://deno.land/std@0.217.0/log/mod.ts";
-import * as datetime from "https://deno.land/std@0.217.0/datetime/mod.ts";
-import { Denops } from "https://deno.land/x/denops_std@v6.1.0/mod.ts";
-import { ulid } from "https://deno.land/std@0.217.0/ulid/mod.ts";
-import * as autocmd from "https://deno.land/x/denops_std@v6.1.0/autocmd/mod.ts";
-import * as fn from "https://deno.land/x/denops_std@v6.1.0/function/mod.ts";
-import * as batch from "https://deno.land/x/denops_std@v6.1.0/batch/mod.ts";
-import * as option from "https://deno.land/x/denops_std@v6.1.0/option/mod.ts";
-import * as helper from "https://deno.land/x/denops_std@v6.1.0/helper/mod.ts";
-import * as lambda from "https://deno.land/x/denops_std@v6.1.0/lambda/mod.ts";
+import { getLogger } from "https://deno.land/std@0.218.2/log/mod.ts";
+import * as datetime from "https://deno.land/std@0.218.2/datetime/mod.ts";
+import { Denops } from "https://deno.land/x/denops_std@v6.2.0/mod.ts";
+import { ulid } from "https://deno.land/std@0.218.2/ulid/mod.ts";
+import * as autocmd from "https://deno.land/x/denops_std@v6.2.0/autocmd/mod.ts";
+import * as fn from "https://deno.land/x/denops_std@v6.2.0/function/mod.ts";
+import * as batch from "https://deno.land/x/denops_std@v6.2.0/batch/mod.ts";
+import * as option from "https://deno.land/x/denops_std@v6.2.0/option/mod.ts";
+import * as helper from "https://deno.land/x/denops_std@v6.2.0/helper/mod.ts";
+import * as lambda from "https://deno.land/x/denops_std@v6.2.0/lambda/mod.ts";
 import { ensure, is } from "https://deno.land/x/unknownutil@v3.16.3/mod.ts";
 import { Notify, Queue } from "https://deno.land/x/async@v2.1.0/mod.ts";
 

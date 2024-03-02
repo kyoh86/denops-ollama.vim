@@ -1,10 +1,10 @@
-import { Denops } from "https://deno.land/x/denops_std@v6.1.0/mod.ts";
-import * as bytes from "https://deno.land/std@0.217.0/fmt/bytes.ts";
+import { Denops } from "https://deno.land/x/denops_std@v6.2.0/mod.ts";
+import * as bytes from "https://deno.land/std@0.218.2/fmt/bytes.ts";
 import { pullModel as pullModelAPI } from "../api.ts";
-import { getLogger } from "https://deno.land/std@0.217.0/log/mod.ts";
-import * as helper from "https://deno.land/x/denops_std@v6.1.0/helper/mod.ts";
+import { getLogger } from "https://deno.land/std@0.218.2/log/mod.ts";
+import * as helper from "https://deno.land/x/denops_std@v6.2.0/helper/mod.ts";
 import { canceller } from "../util/cancellable.ts";
-import { abortableAsyncIterable } from "https://deno.land/std@0.217.0/async/mod.ts";
+import { abortableAsyncIterable } from "https://deno.land/std@0.218.2/async/mod.ts";
 import { isReqArgs } from "./types.ts";
 import {
   is,
