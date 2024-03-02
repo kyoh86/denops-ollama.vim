@@ -195,10 +195,12 @@ ollama#start_chat_in_ctx({args})
 <
                                                            *ollama#complete()*
 ollama#complete({args})
-	Get completion for the current buffer around the cursor.
+	Get completion for the current buffer around the cursor with codellama
+	model.
 
 	{args} is a dictionary having fields in below.
-	- model		Ollama model name. |ollama-api-definition|
+	- model		Ollama model name supporting completion (like
+	  codellama). |ollama-api-definition|
 	- callback	A function should take response.
 	- timeout	(Optional) Time limit.
 	- baseUrl	(Optional) The base of the URL to request.
