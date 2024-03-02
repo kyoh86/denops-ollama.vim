@@ -276,7 +276,39 @@ Keymaps ~
                                                        *ollama-common-options*
 Common options ~
 
+You can set args for each functions before calling it.
+For example, you can call "start_chat" with a model "codellama", you can set
+the "model" arg with |ollama#custom#set_func_arg| >
+	call ollama#custom#set_func_arg('start_chat', 'model', 'codellama')
+	call ollama#start_chat({})
+	# it equals to calling with "model" arg like this:
+	# call ollama#start_chat(`{'model': 'codellama'})
+<
 
+                                                  *ollama#custom#set_func_arg*
+ollama#custom#set_func_arg({function_name}, {arg_name}, {value})
+
+	Set an argument value for a function.
+	But also you can set them for all function with using `'_'` for
+	{function_name}. >
+		call ollama#custom#set_func_arg('_', 'model', 'codellama')
+		# It means that the 'model' arg for all functions is
+		# 'codellama'
+<
+
+                                               *ollama#custom#patch_func_args*
+ollama#custom#patch_func_args({function_name}, {args})
+
+	Patch all argument values for a function.
+	But also you can set them for all function with using `'_'` for
+	{function_name}. >
+		call ollama#custom#set_func_arg('_', {
+			'model': 'codellama',
+			'baseUrl': 'http://example.com:11434',
+		})
+		# It specifies that the 'model' and 'baseUrl' arguments
+		# should use the specified values for all functions.
+<
 
 ==============================================================================
                                                            *ollama-references*
