@@ -1,9 +1,9 @@
-import { assertEquals } from "https://deno.land/std@0.218.2/assert/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.219.1/assert/mod.ts";
 import {
   assertSpyCallArgs,
   assertSpyCalls,
   stub,
-} from "https://deno.land/std@0.218.2/testing/mock.ts";
+} from "https://deno.land/std@0.219.1/testing/mock.ts";
 import { copyModel } from "./copy_model.ts";
 
 Deno.test("copyModel", async (t) => {

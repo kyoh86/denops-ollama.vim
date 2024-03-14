@@ -1,9 +1,9 @@
-import { Denops } from "https://deno.land/x/denops_std@v6.2.0/mod.ts";
+import { Denops } from "https://deno.land/x/denops_std@v6.4.0/mod.ts";
 import {
   ensure,
   is,
   Predicate,
-} from "https://deno.land/x/unknownutil@v3.16.3/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.17.0/mod.ts";
 
 import { init } from "./dispatch/init.ts";
 import { isStartChatArgs, startChat } from "./dispatch/start_chat.ts";
