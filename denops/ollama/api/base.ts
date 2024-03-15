@@ -1,7 +1,7 @@
 import {
   ensure,
   Predicate,
-} from "https://deno.land/x/unknownutil@v3.16.3/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.17.0/mod.ts";
 import {
   JSONLinesParseStream,
   type JSONValue,
