@@ -1,5 +1,5 @@
 import { test } from "https://deno.land/x/denops_test@v1.6.2/mod.ts";
-import { bufnr } from "https://deno.land/x/denops_std@v6.2.0/function/mod.ts";
+import { bufnr } from "https://deno.land/x/denops_std@v6.4.0/function/mod.ts";
 import * as target from "./spinner.ts";
 import sp from "npm:cli-spinners@2.9.2";
 
