@@ -1,5 +1,5 @@
 import { type Denops } from "https://deno.land/x/denops_std@v6.4.0/mod.ts";
-import { getLogger } from "https://deno.land/std@0.220.1/log/mod.ts";
+import { getLogger } from "https://deno.land/std@0.221.0/log/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v6.4.0/helper/mod.ts";
 import {
   is,
