@@ -8,7 +8,7 @@ import * as batch from "https://deno.land/x/denops_std@v6.4.0/batch/mod.ts";
 import * as option from "https://deno.land/x/denops_std@v6.4.0/option/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v6.4.0/helper/mod.ts";
 import * as lambda from "https://deno.land/x/denops_std@v6.4.0/lambda/mod.ts";
-import { ensure, is } from "https://deno.land/x/unknownutil@v3.17.0/mod.ts";
+import { ensure, is } from "https://deno.land/x/unknownutil@v3.17.2/mod.ts";
 import { Notify, Queue } from "https://deno.land/x/async@v2.1.0/mod.ts";
 
 import {

@@ -4,7 +4,7 @@ import {
   is,
   maybe,
   Predicate,
-} from "https://deno.land/x/unknownutil@v3.17.0/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.17.2/mod.ts";
 
 import { init } from "./dispatch/init.ts";
 import { isStartChatArgs, startChat } from "./dispatch/start_chat.ts";

@@ -4,7 +4,7 @@ import * as helper from "https://deno.land/x/denops_std@v6.4.0/helper/mod.ts";
 import {
   is,
   PredicateType,
-} from "https://deno.land/x/unknownutil@v3.17.0/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.17.2/mod.ts";
 
 import { deleteModel as deleteModelAPI } from "../api.ts";
 import { canceller } from "../util/cancellable.ts";
