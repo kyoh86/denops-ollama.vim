@@ -66,7 +66,7 @@ jobs:
         run: deno task test
 
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           commit-message: "chore(deps): Update deno dependencies"
           title: Update Deno dependencies
