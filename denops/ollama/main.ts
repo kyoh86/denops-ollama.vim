@@ -16,13 +16,16 @@ import {
   startChatInCtx,
 } from "./dispatch/start_chat_in_ctx.ts";
 import { complete, isCompleteArgs } from "./dispatch/complete.ts";
-import { CustomArgStore, isArgs } from "./custom/arg_store.ts";
+import {
+  ArgStore,
+  isArgs,
+} from "https://denopkg.com/kyoh86/denops-arg-store@v0.0.1/mod.ts";
 import { isOpenLogArgs, openLog } from "./dispatch/open_log.ts";
 
 export async function main(denops: Denops) {
   const { cacheFile } = await init(denops);
 
-  const argStore = new CustomArgStore();
+  const argStore = new ArgStore();
 
   function ensureArgs<T>(func: string, uArgs: unknown, pred: Predicate<T>): T {
     return ensure(argStore.getArgs(func, ensure(uArgs, isArgs)), pred);
