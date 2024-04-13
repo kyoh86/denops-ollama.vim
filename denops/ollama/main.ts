@@ -4,7 +4,7 @@ import {
   is,
   maybe,
   Predicate,
-} from "https://deno.land/x/unknownutil@v3.17.2/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.17.3/mod.ts";
 
 import { init } from "./dispatch/init.ts";
 import { isStartChatArgs, startChat } from "./dispatch/start_chat.ts";
@@ -19,7 +19,7 @@ import { complete, isCompleteArgs } from "./dispatch/complete.ts";
 import {
   ArgStore,
   isArgs,
-} from "https://denopkg.com/kyoh86/denops-arg-store@v0.0.1/mod.ts";
+} from "https://denopkg.com/kyoh86/denops-arg-store@v0.0.3/mod.ts";
 import { isOpenLogArgs, openLog } from "./dispatch/open_log.ts";
 
 export async function main(denops: Denops) {

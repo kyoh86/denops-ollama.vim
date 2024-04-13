@@ -1,7 +1,7 @@
 import {
   is,
   type PredicateType,
-} from "https://deno.land/x/unknownutil@v3.17.2/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.17.3/mod.ts";
 
 // The format to return a response in. Currently the only accepted value is json
 export const isFormat = is.OptionalOf(is.LiteralOf("json"));
