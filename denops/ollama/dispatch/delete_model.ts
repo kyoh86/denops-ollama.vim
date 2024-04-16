@@ -1,10 +1,10 @@
 import { type Denops } from "https://deno.land/x/denops_std@v6.4.0/mod.ts";
-import { getLogger } from "https://deno.land/std@0.222.1/log/mod.ts";
+import { getLogger } from "https://deno.land/std@0.223.0/log/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v6.4.0/helper/mod.ts";
 import {
   is,
   PredicateType,
-} from "https://deno.land/x/unknownutil@v3.17.3/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.18.0/mod.ts";
 
 import { deleteModel as deleteModelAPI } from "../api.ts";
 import { canceller } from "../util/cancellable.ts";
