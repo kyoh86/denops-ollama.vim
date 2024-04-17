@@ -1,4 +1,4 @@
-import { assert } from "https://deno.land/std@0.222.1/assert/mod.ts";
+import { assert } from "https://deno.land/std@0.223.0/assert/mod.ts";
 import { complete } from "./complete.ts";
 
 import { test } from "https://deno.land/x/denops_test@v1.6.2/mod.ts";

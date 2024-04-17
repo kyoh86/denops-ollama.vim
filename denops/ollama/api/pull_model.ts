@@ -1,7 +1,7 @@
 import {
   is,
   type PredicateType,
-} from "https://deno.land/x/unknownutil@v3.17.3/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.18.0/mod.ts";
 import { isErrorResponse, type ReqInit } from "./types.ts";
 import { doPost } from "./base.ts";
 import { parseJSONStream } from "./base.ts";

@@ -8,7 +8,7 @@ import {
   ensure,
   is,
   PredicateType,
-} from "https://deno.land/x/unknownutil@v3.17.3/mod.ts";
+} from "https://deno.land/x/unknownutil@v3.18.0/mod.ts";
 
 export const isBufferInfo = is.OneOf([
   is.String,
