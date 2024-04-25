@@ -1,6 +1,6 @@
 import { map } from "https://deno.land/x/denops_std@v6.4.0/mapping/mod.ts";
 import * as lambda from "https://deno.land/x/denops_std@v6.4.0/lambda/mod.ts";
-import { ulid } from "https://deno.land/std@0.223.0/ulid/mod.ts";
+import { ulid } from "https://deno.land/std@0.224.0/ulid/mod.ts";
 import * as autocmd from "https://deno.land/x/denops_std@v6.4.0/autocmd/mod.ts";
 import { Denops } from "https://deno.land/x/denops_std@v6.4.0/mod.ts";
 
