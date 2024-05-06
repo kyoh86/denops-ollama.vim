@@ -164,8 +164,9 @@ ollama#start_chat_in_ctx({args})
 			- selection	If the selection be sent.
 			- currentBuffer	If the current buffer be sent.
 			- buffers	A list of the bufinfo. It accepts
-					buffer numbers (see |bufnr()|) or
-					the objects from |getbufinfo()|.
+					buffer number or name (see |bufnr()|)
+					or objects from |getbufinfo()| that
+					has "bufnr" and "name" fields.
 			- lastMessage	A last message to be sent.
 	- opener	(Optional) How the new window be placed:
 			tabnew		(Default) open a new tab
@@ -192,9 +193,24 @@ ollama#start_chat_in_ctx({args})
 		\ 'context': {'currentBuffer': v:true}})
 <
 	Example 3: Start a new chat on the listed buffers. >
-	:call ollama#start_chat_in_ctx({
+	call ollama#start_chat_in_ctx({
 		\ 'model': 'codellama', 
-		\ 'context': {'buffers:' getbufinfo({'buflisted':v:true})}})
+		\ 'context': {
+		\   'buffers': getbufinfo({'buflisted': v:true})->map({
+		\     _, val -> #{bufnr: val.bufnr, name: val.name}
+		\   })
+		\ }})
+<
+	Example 4: Start a new chat on the listed "normal" buffers. >
+	call ollama#start_chat_in_ctx({
+		\ 'model': 'codellama', 
+		\ 'context': {
+		\   'buffers': getbufinfo({'buflisted': v:true})->filter({
+		\     _, val -> getbufvar(val.bufnr, '&buftype', '') == '' && val.name != ''
+		\   })->map({
+		\     _, val -> #{bufnr: val.bufnr, name: val.name}
+		\   })
+		\ }})
 <
                                                            *ollama#complete()*
 ollama#complete({args})
