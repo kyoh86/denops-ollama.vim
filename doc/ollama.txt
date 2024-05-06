@@ -165,7 +165,7 @@ ollama#start_chat_in_ctx({args})
 			- currentBuffer	If the current buffer be sent.
 			- buffers	A list of the bufinfo. It accepts
 					buffer numbers (see |bufnr()|) or
-					the objects from |getbufinro()|.
+					the objects from |getbufinfo()|.
 			- lastMessage	A last message to be sent.
 	- opener	(Optional) How the new window be placed:
 			tabnew		(Default) open a new tab
