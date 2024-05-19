@@ -21,14 +21,14 @@ jobs:
         with:
           deno-version: v1.x
 
-      - name: Update dependencies with udd
-        id: run-deno-udd
+      - name: Update dependencies with molt
+        id: run-deno-molt
         env:
           NO_COLOR: true
         run: |
           {
-            echo 'UDD_RESULT<<EOF'
-            deno run --allow-all https://deno.land/x/udd/main.ts $(find . -type f | grep -E ".*\.([mc]?(ts|js)|(ts|js)x?)$" -)
+            echo 'MOLT_RESULT<<EOF'
+            deno run --allow-all jsr:@molt/cli --write $(find . -type f -name '*.mts' -o -name '*.cts' -o -name '*.mjs' -o -name '*.cjs' -o -name '*.ts' -o -name '*.js' -o -name '*.tsx' -o -name '*.jsx')
             echo EOF
           } >> $GITHUB_OUTPUT
 
@@ -48,10 +48,16 @@ jobs:
 
       - uses: rhysd/action-setup-vim@v1
         id: vim
+        with:
+          version: v9.1.0400
 
       - name: Export Vim Executable
         run: |
           echo "DENOPS_TEST_VIM_EXECUTABLE=${{ steps.vim.outputs.executable }}" >> "$GITHUB_ENV"
+
+      - name: Export Vim Version
+        run: |
+          ${{ steps.vim.outputs.executable }} --version
 
       - uses: rhysd/action-setup-vim@v1
         id: nvim
@@ -61,6 +67,10 @@ jobs:
       - name: Export Neovim Executable
         run: |
           echo "DENOPS_TEST_NVIM_EXECUTABLE=${{ steps.nvim.outputs.executable }}" >> "$GITHUB_ENV"
+
+      - name: Export Neovim Version
+        run: |
+          ${{ steps.nvim.outputs.executable }} --version
 
       - name: Run tests
         run: deno task test
@@ -75,10 +85,10 @@ jobs:
             <details><summary>Details</summary><div>
 
             ```
-            ${{ steps.run-deno-udd.outputs.UDD_RESULT }}
+            ${{ steps.run-deno-molt.outputs.MOLT_RESULT }}
             ```
 
             </div></details>
-          branch: udd-update
+          branch: molt-update
           author: GitHub <noreply@github.com>
           delete-branch: true
