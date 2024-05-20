@@ -1,6 +1,6 @@
-import { test } from "https://deno.land/x/denops_test@v1.6.2/mod.ts";
+import { test } from "https://deno.land/x/denops_test@v1.8.0/mod.ts";
 import * as target from "./trim.ts";
-import { assertEquals } from "https://deno.land/std@0.223.0/assert/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 
 test({
   mode: "all",

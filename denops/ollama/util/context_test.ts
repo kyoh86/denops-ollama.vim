@@ -2,10 +2,10 @@ import {
   assert,
   assertEquals,
   assertFalse,
-} from "https://deno.land/std@0.223.0/assert/mod.ts";
-import { test } from "https://deno.land/x/denops_test@v1.6.2/mod.ts";
-import * as fn from "https://deno.land/x/denops_std@v6.4.0/function/mod.ts";
-import * as option from "https://deno.land/x/denops_std@v6.4.0/option/mod.ts";
+} from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { test } from "https://deno.land/x/denops_test@v1.8.0/mod.ts";
+import * as fn from "https://deno.land/x/denops_std@v6.5.0/function/mod.ts";
+import * as option from "https://deno.land/x/denops_std@v6.5.0/option/mod.ts";
 import * as testtarget from "./context.ts";
 
 test({
