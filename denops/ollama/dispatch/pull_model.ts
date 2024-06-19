@@ -4,7 +4,7 @@ import { pullModel as pullModelAPI } from "../api.ts";
 import { getLogger } from "https://deno.land/std@0.224.0/log/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v6.5.0/helper/mod.ts";
 import { canceller } from "../util/cancellable.ts";
-import { abortableAsyncIterable } from "https://deno.land/std@0.224.0/async/mod.ts";
+import { abortable } from "https://deno.land/std@0.224.0/async/mod.ts";
 import { isReqArgs } from "./types.ts";
 import {
   is,
@@ -33,7 +33,7 @@ export async function pullModel(denops: Denops, args: PullModelArgs) {
       return;
     }
     for await (
-      const item of abortableAsyncIterable(result.body.values(), signal)
+      const item of abortable(result.body.values(), signal)
     ) {
       if ("error" in item) throw new Error(item.error);
       const words: string[] = [];
