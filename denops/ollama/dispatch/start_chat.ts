@@ -1,4 +1,4 @@
-import { abortableAsyncIterable } from "https://deno.land/std@0.224.0/async/mod.ts";
+import { abortable } from "https://deno.land/std@0.224.0/async/mod.ts";
 import { Denops } from "https://deno.land/x/denops_std@v6.5.0/mod.ts";
 import {
   is,
@@ -59,7 +59,7 @@ class Chat extends ChatBase<number[]> {
       return;
     }
     for await (
-      const item of abortableAsyncIterable(result.body.values(), signal)
+      const item of abortable(result.body.values(), signal)
     ) {
       if ("error" in item) throw new Error(item.error);
 
