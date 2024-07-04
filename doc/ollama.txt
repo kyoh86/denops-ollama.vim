@@ -14,7 +14,7 @@ Customize					|ollama-custom|
 Function					|ollama-function|
 Commands					|ollama-commands|
 Keymaps						|ollama-keymaps|
-Denops commands	 				|ollama-denops-commands|
+API						|ollama-api|
 Other references				|ollama-references|
 
 
@@ -328,6 +328,14 @@ ollama#custom#patch_func_args({function_name}, {args})
 		# It specifies that the 'model' and 'baseUrl' arguments
 		# should use the specified values for all functions.
 <
+
+==============================================================================
+                                                                  *ollama-api*
+API ~
+
+There're some denops API functions to interact with Ollama.
+
+TODO:
 
 ==============================================================================
                                                            *ollama-references*
