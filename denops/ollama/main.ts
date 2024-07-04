@@ -1,6 +1,6 @@
 import { Denops } from "jsr:@denops/core@6.1.0";
 import { ensure, is, maybe } from "jsr:@core/unknownutil@3.18.1";
-import { bindDispatcher } from "jsr:@kyoh86/denops-bind-params@0.0.1-alpha.2";
+import { bindDispatcher } from "jsr:@kyoh86/denops-bind-params@0.0.3";
 
 import { init } from "./dispatch/init.ts";
 import { isStartChatArgs, startChat } from "./dispatch/start_chat.ts";

@@ -1,7 +1,7 @@
 import { test } from "https://deno.land/x/denops_test@v1.8.0/mod.ts";
 import { bufnr } from "https://deno.land/x/denops_std@v6.5.0/function/mod.ts";
 import * as target from "./spinner.ts";
-import { default as sp, type SpinnerName } from "npm:cli-spinners@3.0.0";
+import { default as sp, type SpinnerName } from "npm:cli-spinners@3.1.0";
 
 test({
   mode: "all",
