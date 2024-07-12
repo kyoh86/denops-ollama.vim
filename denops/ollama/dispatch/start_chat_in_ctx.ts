@@ -1,5 +1,5 @@
 import { abortableAsyncIterable } from "https://deno.land/std@0.224.0/async/mod.ts";
-import { type Denops } from "https://deno.land/x/denops_std@v6.5.0/mod.ts";
+import { type Denops } from "https://deno.land/x/denops_std@v6.5.1/mod.ts";
 import {
   is,
   maybe,
