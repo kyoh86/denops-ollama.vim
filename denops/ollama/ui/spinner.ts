@@ -1,9 +1,9 @@
 import spinners from "npm:cli-spinners@3.1.0";
-import { type SpinnerName as Kind } from "npm:cli-spinners@3.0.0";
-import { type Denops } from "https://deno.land/x/denops_std@v6.5.1/mod.ts";
-import * as batch from "https://deno.land/x/denops_std@v6.5.1/batch/mod.ts";
-import * as fn from "https://deno.land/x/denops_std@v6.5.1/function/mod.ts";
-import { ensure, is } from "https://deno.land/x/unknownutil@v3.18.1/mod.ts";
+import type { SpinnerName as Kind } from "npm:cli-spinners@3.0.0";
+import type { Denops } from "jsr:@denops/std@7.0.0";
+import * as batch from "jsr:@denops/std@7.0.0/batch";
+import * as fn from "jsr:@denops/std@7.0.0/function";
+import { ensure, is } from "jsr:@core/unknownutil@3.18.1";
 
 const varPrefix = "ollama_ui_spinner";
 const signGroup = "ollama_ui_spinner_group";

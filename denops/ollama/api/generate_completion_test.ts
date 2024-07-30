@@ -1,12 +1,12 @@
-import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assertEquals } from "jsr:@std/assert@1.0.1";
 import {
   assertSpyCallArgs,
   assertSpyCalls,
   stub,
-} from "https://deno.land/std@0.224.0/testing/mock.ts";
+} from "jsr:@std/testing@0.225.3/mock";
 import {
   generateCompletion,
-  GenerateCompletionResponse,
+  type GenerateCompletionResponse,
 } from "./generate_completion.ts";
 
 Deno.test("generateCompletion", async (t) => {

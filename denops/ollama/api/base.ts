@@ -1,12 +1,9 @@
-import {
-  ensure,
-  Predicate,
-} from "https://deno.land/x/unknownutil@v3.18.1/mod.ts";
+import { ensure, type Predicate } from "jsr:@core/unknownutil@3.18.1";
 import {
   JSONLinesParseStream,
   type JSONValue,
 } from "https://deno.land/x/jsonlines@v1.2.2/mod.ts";
-import { ReqInit } from "./types.ts";
+import type { ReqInit } from "./types.ts";
 
 const defaultBaseUrl = "http://localhost:11434";
 

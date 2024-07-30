@@ -1,15 +1,15 @@
-import { getLogger } from "https://deno.land/std@0.224.0/log/mod.ts";
-import * as datetime from "https://deno.land/std@0.224.0/datetime/mod.ts";
-import { Denops } from "https://deno.land/x/denops_std@v6.5.1/mod.ts";
-import { ulid } from "https://deno.land/std@0.224.0/ulid/mod.ts";
-import * as autocmd from "https://deno.land/x/denops_std@v6.5.1/autocmd/mod.ts";
-import * as fn from "https://deno.land/x/denops_std@v6.5.1/function/mod.ts";
-import * as batch from "https://deno.land/x/denops_std@v6.5.1/batch/mod.ts";
-import * as option from "https://deno.land/x/denops_std@v6.5.1/option/mod.ts";
-import * as helper from "https://deno.land/x/denops_std@v6.5.1/helper/mod.ts";
-import * as lambda from "https://deno.land/x/denops_std@v6.5.1/lambda/mod.ts";
-import { ensure, is } from "https://deno.land/x/unknownutil@v3.18.1/mod.ts";
-import { Notify, Queue } from "https://deno.land/x/async@v2.1.0/mod.ts";
+import { getLogger } from "jsr:@std/log@0.224.5";
+import * as datetime from "jsr:@std/datetime@0.224.3";
+import type { Denops } from "jsr:@denops/std@7.0.0";
+import { ulid } from "jsr:@std/ulid@1.0.0";
+import * as autocmd from "jsr:@denops/std@7.0.0/autocmd";
+import * as fn from "jsr:@denops/std@7.0.0/function";
+import * as batch from "jsr:@denops/std@7.0.0/batch";
+import * as option from "jsr:@denops/std@7.0.0/option";
+import * as helper from "jsr:@denops/std@7.0.0/helper";
+import * as lambda from "jsr:@denops/std@7.0.0/lambda";
+import { ensure, is } from "jsr:@core/unknownutil@3.18.1";
+import { Notify, Queue } from "jsr:@lambdalisue/async@2.1.1";
 
 import {
   type HighlightPrefix,
@@ -17,7 +17,7 @@ import {
 } from "./highlight_prefix.ts";
 import { canceller } from "../util/cancellable.ts";
 import * as spinner from "./spinner.ts";
-import { Opener } from "./open.ts";
+import type { Opener } from "./open.ts";
 
 export abstract class ChatBase<TContext> {
   abstract parseContext(context: unknown): TContext | undefined;

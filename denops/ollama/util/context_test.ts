@@ -1,11 +1,7 @@
-import {
-  assert,
-  assertEquals,
-  assertFalse,
-} from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { test } from "https://deno.land/x/denops_test@v1.8.0/mod.ts";
-import * as fn from "https://deno.land/x/denops_std@v6.5.1/function/mod.ts";
-import * as option from "https://deno.land/x/denops_std@v6.5.1/option/mod.ts";
+import { assert, assertEquals, assertFalse } from "jsr:@std/assert@1.0.1";
+import { test } from "jsr:@denops/test@3.0.1";
+import * as fn from "jsr:@denops/std@7.0.0/function";
+import * as option from "jsr:@denops/std@7.0.0/option";
 import * as testtarget from "./context.ts";
 
 test({

@@ -1,11 +1,11 @@
-import * as datetime from "https://deno.land/std@0.224.0/datetime/mod.ts";
-import * as bytes from "https://deno.land/std@0.224.0/fmt/bytes.ts";
-import { Denops } from "https://deno.land/x/denops_std@v6.5.1/mod.ts";
-import * as helper from "https://deno.land/x/denops_std@v6.5.1/helper/mod.ts";
+import * as datetime from "jsr:@std/datetime@0.224.3";
+import * as bytes from "jsr:@std/fmt@0.225.6/bytes";
+import type { Denops } from "jsr:@denops/std@7.0.0";
+import * as helper from "jsr:@denops/std@7.0.0/helper";
 import { Table } from "https://deno.land/x/cliffy@v1.0.0-rc.4/table/mod.ts";
 
 import { listLocalModels } from "../api.ts";
-import { isReqArgs, ReqArgs } from "./types.ts";
+import { isReqArgs, type ReqArgs } from "./types.ts";
 import { canceller } from "../util/cancellable.ts";
 
 export const isListModelsArgs = isReqArgs;

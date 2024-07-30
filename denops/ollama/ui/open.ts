@@ -1,7 +1,4 @@
-import {
-  is,
-  PredicateType,
-} from "https://deno.land/x/unknownutil@v3.18.1/mod.ts";
+import { is, type PredicateType } from "jsr:@core/unknownutil@3.18.1";
 
 export const isOpener = is.OneOf([
   is.LiteralOf("split"),

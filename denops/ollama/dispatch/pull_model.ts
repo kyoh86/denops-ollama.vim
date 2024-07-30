@@ -1,15 +1,12 @@
-import { Denops } from "https://deno.land/x/denops_std@v6.5.1/mod.ts";
-import * as bytes from "https://deno.land/std@0.224.0/fmt/bytes.ts";
+import type { Denops } from "jsr:@denops/std@7.0.0";
+import * as bytes from "jsr:@std/fmt@0.225.6/bytes";
 import { pullModel as pullModelAPI } from "../api.ts";
-import { getLogger } from "https://deno.land/std@0.224.0/log/mod.ts";
-import * as helper from "https://deno.land/x/denops_std@v6.5.1/helper/mod.ts";
+import { getLogger } from "jsr:@std/log@0.224.5";
+import * as helper from "jsr:@denops/std@7.0.0/helper";
 import { canceller } from "../util/cancellable.ts";
-import { abortableAsyncIterable } from "https://deno.land/std@0.224.0/async/mod.ts";
+import { abortableAsyncIterable } from "jsr:@std/async@0.224.2";
 import { isReqArgs } from "./types.ts";
-import {
-  is,
-  PredicateType,
-} from "https://deno.land/x/unknownutil@v3.18.1/mod.ts";
+import { is, type PredicateType } from "jsr:@core/unknownutil@3.18.1";
 
 export const isPullModelArgs = is.AllOf([
   is.ObjectOf({

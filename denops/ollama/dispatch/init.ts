@@ -1,11 +1,8 @@
-import { Denops } from "https://deno.land/x/denops_std@v6.5.1/mod.ts";
-import {
-  ConsoleHandler,
-  setup as setupLog,
-} from "https://deno.land/std@0.224.0/log/mod.ts";
+import type { Denops } from "jsr:@denops/std@7.0.0";
+import { ConsoleHandler, setup as setupLog } from "jsr:@std/log@0.224.5";
 import xdg from "https://deno.land/x/xdg@v10.6.0/src/mod.deno.ts";
-import { ensureFile } from "https://deno.land/std@0.224.0/fs/ensure_file.ts";
-import { join } from "https://deno.land/std@0.224.0/path/join.ts";
+import { ensureFile } from "jsr:@std/fs@1.0.0";
+import { join } from "jsr:@std/path@1.0.2/join";
 
 import { setup as setupHighlight } from "../ui/highlight_prefix.ts";
 import { mapCancel } from "../util/cancellable.ts";

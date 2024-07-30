@@ -1,8 +1,4 @@
-import {
-  ensure,
-  is,
-  type PredicateType,
-} from "https://deno.land/x/unknownutil@v3.18.1/mod.ts";
+import { ensure, is, type PredicateType } from "jsr:@core/unknownutil@3.18.1";
 import { isErrorResponse, type ReqInit, type Result } from "./types.ts";
 import { doGet } from "./base.ts";
 

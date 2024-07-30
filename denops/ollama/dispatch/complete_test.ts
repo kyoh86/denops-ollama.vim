@@ -1,7 +1,7 @@
-import { assert } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assert } from "jsr:@std/assert@1.0.1";
 import { complete } from "./complete.ts";
 
-import { test } from "https://deno.land/x/denops_test@v1.8.0/mod.ts";
+import { test } from "jsr:@denops/test@3.0.1";
 export type Extends<E, A> = A extends E ? true : false;
 export type NotExtends<E, A> = A extends E ? false : true;
 export type Exact<A, B> = Extends<A, B> extends true

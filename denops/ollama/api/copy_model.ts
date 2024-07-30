@@ -1,9 +1,6 @@
 import type { ReqInit, Result } from "./types.ts";
 import { doPost } from "./base.ts";
-import {
-  is,
-  PredicateType,
-} from "https://deno.land/x/unknownutil@v3.18.1/mod.ts";
+import { is, type PredicateType } from "jsr:@core/unknownutil@3.18.1";
 
 // Definitions for the endpoint to "Copy a model"
 // Method: POST
