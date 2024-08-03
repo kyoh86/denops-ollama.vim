@@ -1,15 +1,15 @@
-import { getLogger } from "jsr:@std/log@0.224.5";
-import * as datetime from "jsr:@std/datetime@0.224.3";
-import type { Denops } from "jsr:@denops/std@7.0.0";
-import { ulid } from "jsr:@std/ulid@1.0.0";
-import * as autocmd from "jsr:@denops/std@7.0.0/autocmd";
-import * as fn from "jsr:@denops/std@7.0.0/function";
-import * as batch from "jsr:@denops/std@7.0.0/batch";
-import * as option from "jsr:@denops/std@7.0.0/option";
-import * as helper from "jsr:@denops/std@7.0.0/helper";
-import * as lambda from "jsr:@denops/std@7.0.0/lambda";
-import { ensure, is } from "jsr:@core/unknownutil@3.18.1";
-import { Notify, Queue } from "jsr:@lambdalisue/async@2.1.1";
+import { getLogger } from "jsr:@std/log@~0.224.5";
+import * as datetime from "jsr:@std/datetime@~0.224.3";
+import type { Denops } from "jsr:@denops/std@~7.0.1";
+import { ulid } from "jsr:@std/ulid@~1.0.0";
+import * as autocmd from "jsr:@denops/std@~7.0.1/autocmd";
+import * as fn from "jsr:@denops/std@~7.0.1/function";
+import * as batch from "jsr:@denops/std@~7.0.1/batch";
+import * as option from "jsr:@denops/std@~7.0.1/option";
+import * as helper from "jsr:@denops/std@~7.0.1/helper";
+import * as lambda from "jsr:@denops/std@~7.0.1/lambda";
+import { ensure, is } from "jsr:@core/unknownutil@~3.18.1";
+import { Notify, Queue } from "jsr:@lambdalisue/async@~2.1.1";
 
 import {
   type HighlightPrefix,

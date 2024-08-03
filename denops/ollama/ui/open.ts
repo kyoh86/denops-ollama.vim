@@ -1,4 +1,4 @@
-import { is, type PredicateType } from "jsr:@core/unknownutil@3.18.1";
+import { is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
 
 export const isOpener = is.OneOf([
   is.LiteralOf("split"),

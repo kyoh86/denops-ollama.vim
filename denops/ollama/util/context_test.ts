@@ -1,7 +1,7 @@
-import { assert, assertEquals, assertFalse } from "jsr:@std/assert@1.0.1";
-import { test } from "jsr:@denops/test@3.0.1";
-import * as fn from "jsr:@denops/std@7.0.0/function";
-import * as option from "jsr:@denops/std@7.0.0/option";
+import { assert, assertEquals, assertFalse } from "jsr:@std/assert@~1.0.1";
+import { test } from "jsr:@denops/test@~3.0.2";
+import * as fn from "jsr:@denops/std@~7.0.1/function";
+import * as option from "jsr:@denops/std@~7.0.1/option";
 import * as testtarget from "./context.ts";
 
 test({

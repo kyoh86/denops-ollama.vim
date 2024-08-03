@@ -1,5 +1,5 @@
-import type { Denops } from "jsr:@denops/std@7.0.0";
-import { is, type PredicateType } from "jsr:@core/unknownutil@3.18.1";
+import type { Denops } from "jsr:@denops/std@~7.0.1";
+import { is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
 import { generateCompletion } from "../api.ts";
 import { isReqArgs } from "./types.ts";
 import { getPrefix, getSuffix } from "../util/context.ts";

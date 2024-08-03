@@ -1,4 +1,4 @@
-import { ensure, is, type PredicateType } from "jsr:@core/unknownutil@3.18.1";
+import { ensure, is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
 import { doPost } from "./base.ts";
 import { isErrorResponse, type ReqInit, type Result } from "./types.ts";
 

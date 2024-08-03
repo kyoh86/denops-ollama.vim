@@ -1,7 +1,7 @@
-import * as datetime from "jsr:@std/datetime@0.224.3";
-import * as bytes from "jsr:@std/fmt@0.225.6/bytes";
-import type { Denops } from "jsr:@denops/std@7.0.0";
-import * as helper from "jsr:@denops/std@7.0.0/helper";
+import * as datetime from "jsr:@std/datetime@~0.224.3";
+import * as bytes from "jsr:@std/fmt@~0.225.6/bytes";
+import type { Denops } from "jsr:@denops/std@~7.0.1";
+import * as helper from "jsr:@denops/std@~7.0.1/helper";
 import { Table } from "https://deno.land/x/cliffy@v1.0.0-rc.4/table/mod.ts";
 
 import { listLocalModels } from "../api.ts";

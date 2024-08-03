@@ -1,6 +1,6 @@
-import { abortableAsyncIterable } from "jsr:@std/async@0.224.2";
-import type { Denops } from "jsr:@denops/std@7.0.0";
-import { is, maybe, type PredicateType } from "jsr:@core/unknownutil@3.18.1";
+import { abortableAsyncIterable } from "jsr:@std/async@~1.0.1";
+import type { Denops } from "jsr:@denops/std@~7.0.1";
+import { is, maybe, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
 
 import {
   generateChatCompletion,

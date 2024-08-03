@@ -1,9 +1,9 @@
-import { assertEquals } from "jsr:@std/assert@1.0.1";
+import { assertEquals } from "jsr:@std/assert@~1.0.1";
 import {
   assertSpyCallArgs,
   assertSpyCalls,
   stub,
-} from "jsr:@std/testing@0.225.3/mock";
+} from "jsr:@std/testing@~0.225.3/mock";
 import { copyModel } from "./copy_model.ts";
 
 Deno.test("copyModel", async (t) => {

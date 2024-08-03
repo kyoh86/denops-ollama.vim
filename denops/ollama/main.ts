@@ -1,5 +1,5 @@
-import type { Denops } from "jsr:@denops/std@7.0.0";
-import { ensure, is, maybe, type Predicate } from "jsr:@core/unknownutil@3.18.1";
+import type { Denops } from "jsr:@denops/std@~7.0.1";
+import { ensure, is, maybe, type Predicate } from "jsr:@core/unknownutil@~3.18.1";
 
 import { init } from "./dispatch/init.ts";
 import { isStartChatArgs, startChat } from "./dispatch/start_chat.ts";

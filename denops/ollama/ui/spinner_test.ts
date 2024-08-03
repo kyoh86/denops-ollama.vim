@@ -1,7 +1,7 @@
-import { test } from "jsr:@denops/test@3.0.1";
-import { bufnr } from "jsr:@denops/std@7.0.0/function";
+import { test } from "jsr:@denops/test@~3.0.2";
+import { bufnr } from "jsr:@denops/std@~7.0.1/function";
 import * as target from "./spinner.ts";
-import { default as sp, type SpinnerName } from "npm:cli-spinners@3.1.0";
+import { default as sp, type SpinnerName } from "npm:cli-spinners@~3.1.0";
 
 test({
   mode: "all",

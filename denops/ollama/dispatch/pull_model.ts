@@ -1,12 +1,12 @@
-import type { Denops } from "jsr:@denops/std@7.0.0";
-import * as bytes from "jsr:@std/fmt@0.225.6/bytes";
+import type { Denops } from "jsr:@denops/std@~7.0.1";
+import * as bytes from "jsr:@std/fmt@~0.225.6/bytes";
 import { pullModel as pullModelAPI } from "../api.ts";
-import { getLogger } from "jsr:@std/log@0.224.5";
-import * as helper from "jsr:@denops/std@7.0.0/helper";
+import { getLogger } from "jsr:@std/log@~0.224.5";
+import * as helper from "jsr:@denops/std@~7.0.1/helper";
 import { canceller } from "../util/cancellable.ts";
-import { abortableAsyncIterable } from "jsr:@std/async@0.224.2";
+import { abortableAsyncIterable } from "jsr:@std/async@~1.0.1";
 import { isReqArgs } from "./types.ts";
-import { is, type PredicateType } from "jsr:@core/unknownutil@3.18.1";
+import { is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
 
 export const isPullModelArgs = is.AllOf([
   is.ObjectOf({
