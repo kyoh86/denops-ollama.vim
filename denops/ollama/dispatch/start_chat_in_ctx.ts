@@ -1,4 +1,4 @@
-import { abortableAsyncIterable } from "jsr:@std/async@~0.215.0";
+import { abortable } from "jsr:@std/async@~1.0.1";
 import type { Denops } from "jsr:@denops/std@~7.0.1";
 import { is, maybe, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
 
@@ -108,7 +108,7 @@ class Chat extends ChatBase<GenerateChatCompletionMessage[]> {
       return;
     }
     for await (
-      const item of abortableAsyncIterable(result.body.values(), signal)
+      const item of abortable(result.body.values(), signal)
     ) {
       if ("error" in item) throw new Error(item.error);
       if (!item.message) continue;

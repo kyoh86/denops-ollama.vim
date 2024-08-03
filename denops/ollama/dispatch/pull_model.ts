@@ -4,7 +4,7 @@ import { pullModel as pullModelAPI } from "../api.ts";
 import { getLogger } from "jsr:@std/log@~0.224.5";
 import * as helper from "jsr:@denops/std@~7.0.1/helper";
 import { canceller } from "../util/cancellable.ts";
-import { abortableAsyncIterable } from "jsr:@std/async@~0.215.0";
+import { abortable } from "jsr:@std/async@~1.0.1";
 import { isReqArgs } from "./types.ts";
 import { is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
 
@@ -30,7 +30,7 @@ export async function pullModel(denops: Denops, args: PullModelArgs) {
       return;
     }
     for await (
-      const item of abortableAsyncIterable(result.body.values(), signal)
+      const item of abortable(result.body.values(), signal)
     ) {
       if ("error" in item) throw new Error(item.error);
       const words: string[] = [];
