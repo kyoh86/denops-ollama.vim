@@ -1,7 +1,7 @@
-import { is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
+import { as, is, type PredicateType } from "jsr:@core/unknownutil@~4.0.0";
 
 // The format to return a response in. Currently the only accepted value is json
-export const isFormat = is.OptionalOf(is.LiteralOf("json"));
+export const isFormat = as.Optional(is.LiteralOf("json"));
 
 export interface ReqInit {
   baseUrl?: string | URL;

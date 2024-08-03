@@ -1,4 +1,4 @@
-import { ensure, is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
+import { ensure, is, type PredicateType } from "jsr:@core/unknownutil@~4.0.0";
 import { isErrorResponse, type ReqInit, type Result } from "./types.ts";
 import { doGet } from "./base.ts";
 
@@ -7,7 +7,7 @@ import { doGet } from "./base.ts";
 // Endpoint: /api/tags
 // Usage: https://github.com/jmorganca/ollama/blob/main/docs/api.md#list-local-models
 
-export const isListLocalModelsResponse = is.OneOf([
+export const isListLocalModelsResponse = is.UnionOf([
   isErrorResponse,
   is.ObjectOf({
     models: is.ArrayOf(is.ObjectOf({

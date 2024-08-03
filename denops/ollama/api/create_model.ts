@@ -1,4 +1,4 @@
-import { is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
+import { as, is, type PredicateType } from "jsr:@core/unknownutil@~4.0.0";
 import { isErrorResponse, type ReqInit } from "./types.ts";
 import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
@@ -10,15 +10,15 @@ import { doPost } from "./base.ts";
 
 export const isCreateModelParams = is.ObjectOf({
   // Contents of the Modelfile
-  modelfile: is.OptionalOf(is.String),
+  modelfile: as.Optional(is.String),
   // If false the response will be returned as a single response object, rather than a stream of objects
-  stream: is.OptionalOf(is.Boolean),
+  stream: as.Optional(is.Boolean),
   // Path to the Modelfile
-  path: is.OptionalOf(is.String),
+  path: as.Optional(is.String),
 });
 export type CreateModelParams = PredicateType<typeof isCreateModelParams>;
 
-export const isCreateModelResponse = is.OneOf([
+export const isCreateModelResponse = is.UnionOf([
   isErrorResponse,
   is.ObjectOf({
     status: is.String,

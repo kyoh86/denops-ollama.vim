@@ -1,6 +1,6 @@
-import { is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
+import { is, type PredicateType } from "jsr:@core/unknownutil@~4.0.0";
 
-export const isOpener = is.OneOf([
+export const isOpener = is.UnionOf([
   is.LiteralOf("split"),
   is.LiteralOf("vsplit"),
   is.LiteralOf("tabnew"),

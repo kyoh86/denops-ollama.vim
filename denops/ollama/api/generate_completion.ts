@@ -1,4 +1,9 @@
-import { ensure, is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
+import {
+  as,
+  ensure,
+  is,
+  type PredicateType,
+} from "jsr:@core/unknownutil@~4.0.0";
 import { isErrorResponse, isFormat, type ReqInit } from "./types.ts";
 import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
@@ -10,25 +15,25 @@ import { doPost } from "./base.ts";
 
 export const isGenerateCompletionParams = is.ObjectOf({
   // A list of base64-encoded images (for multimodal models such as llava)
-  images: is.OptionalOf(is.ArrayOf(is.String)),
+  images: as.Optional(is.ArrayOf(is.String)),
   // The format to return a response in. Currently the only accepted value is json
   format: isFormat,
   // Additional model parameters listed in the documentation for the Modelfile such as temperature
-  options: is.OptionalOf(is.Record),
+  options: as.Optional(is.Record),
   // System message to (overrides what is defined in the Modelfile)
-  system: is.OptionalOf(is.String),
+  system: as.Optional(is.String),
   // The full prompt or prompt template (overrides what is defined in the Modelfile)
-  template: is.OptionalOf(is.String),
+  template: as.Optional(is.String),
   // The context parameter returned from a previous request to /generate, this can be used to keep a short conversational memory
-  context: is.OptionalOf(is.ArrayOf(is.Number)),
+  context: as.Optional(is.ArrayOf(is.Number)),
   // If true no formatting will be applied to the prompt. You may choose to use the raw parameter if you are specifying a full template prompt in your request to the API.
-  raw: is.OptionalOf(is.Boolean),
+  raw: as.Optional(is.Boolean),
 });
 export type GenerateCompletionParams = PredicateType<
   typeof isGenerateCompletionParams
 >;
 
-export const isGenerateCompletionResponse = is.OneOf([
+export const isGenerateCompletionResponse = is.UnionOf([
   isErrorResponse,
   is.ObjectOf({
     // The model name
@@ -40,19 +45,19 @@ export const isGenerateCompletionResponse = is.OneOf([
     // The response stream has ended
     done: is.Boolean,
     // Time spent generating the response
-    total_duration: is.OptionalOf(is.Number),
+    total_duration: as.Optional(is.Number),
     // Time spent in nanoseconds loading the model
-    load_duration: is.OptionalOf(is.Number),
+    load_duration: as.Optional(is.Number),
     // Number of tokens in the prompt
-    prompt_eval_count: is.OptionalOf(is.Number),
+    prompt_eval_count: as.Optional(is.Number),
     // Time spent in nanoseconds evaluating the prompt
-    prompt_eval_duration: is.OptionalOf(is.Number),
+    prompt_eval_duration: as.Optional(is.Number),
     // Number of tokens the response
-    eval_count: is.OptionalOf(is.Number),
+    eval_count: as.Optional(is.Number),
     // Time in nanoseconds spent generating the response
-    eval_duration: is.OptionalOf(is.Number),
+    eval_duration: as.Optional(is.Number),
     // An encoding of the conversation used in this response, this can be sent in the next request to keep a conversational memory
-    context: is.OptionalOf(is.ArrayOf(is.Number)),
+    context: as.Optional(is.ArrayOf(is.Number)),
   }),
 ]);
 export type GenerateCompletionResponse = PredicateType<

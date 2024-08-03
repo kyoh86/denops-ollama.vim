@@ -1,4 +1,4 @@
-import { is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
+import { as, is, type PredicateType } from "jsr:@core/unknownutil@~4.0.0";
 import { isErrorResponse, type ReqInit } from "./types.ts";
 import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
@@ -11,14 +11,14 @@ import { doPost } from "./base.ts";
 export const isPushModelParams = is.ObjectOf({
   // Allow insecure connections to the library.
   // Only use this if you are pushing from your own library during development.
-  insecure: is.OptionalOf(is.Boolean),
+  insecure: as.Optional(is.Boolean),
 
   // If false the response will be returned as a single response object, rather than a stream of objects
-  stream: is.OptionalOf(is.Boolean),
+  stream: as.Optional(is.Boolean),
 });
 export type PushModelParams = PredicateType<typeof isPushModelParams>;
 
-export const isPushModelResponse = is.OneOf([
+export const isPushModelResponse = is.UnionOf([
   isErrorResponse,
   is.ObjectOf({
     // The model name
@@ -30,19 +30,19 @@ export const isPushModelResponse = is.OneOf([
     // The response stream has ended
     done: is.Boolean,
     // Time spent generating the response
-    total_duration: is.OptionalOf(is.Number),
+    total_duration: as.Optional(is.Number),
     // Time spent in nanoseconds loading the model
-    load_duration: is.OptionalOf(is.Number),
+    load_duration: as.Optional(is.Number),
     // Number of tokens in the prompt
-    prompt_eval_count: is.OptionalOf(is.Number),
+    prompt_eval_count: as.Optional(is.Number),
     // Time spent in nanoseconds evaluating the prompt
-    prompt_eval_duration: is.OptionalOf(is.Number),
+    prompt_eval_duration: as.Optional(is.Number),
     // Number of tokens the response
-    eval_count: is.OptionalOf(is.Number),
+    eval_count: as.Optional(is.Number),
     // Time in nanoseconds spent generating the response
-    eval_duration: is.OptionalOf(is.Number),
+    eval_duration: as.Optional(is.Number),
     // An encoding of the conversation used in this response, this can be sent in the next request to keep a conversational memory
-    context: is.OptionalOf(is.ArrayOf(is.Number)),
+    context: as.Optional(is.ArrayOf(is.Number)),
   }),
 ]);
 export type PushModelResponse = PredicateType<typeof isPushModelResponse>;

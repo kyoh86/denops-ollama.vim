@@ -1,4 +1,4 @@
-import { ensure, is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
+import { ensure, is, type PredicateType } from "jsr:@core/unknownutil@~4.0.0";
 import { isErrorResponse, type ReqInit, type Result } from "./types.ts";
 import { doPost } from "./base.ts";
 
@@ -12,7 +12,7 @@ export type GenerateEmbeddingsParam = PredicateType<
   typeof isGenerateEmbeddingsParam
 >;
 
-export const isGenerateEmbeddingsResponse = is.OneOf([
+export const isGenerateEmbeddingsResponse = is.UnionOf([
   isErrorResponse,
   is.ObjectOf({
     embedding: is.ArrayOf(is.Number),

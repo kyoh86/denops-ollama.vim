@@ -1,10 +1,10 @@
 import type { Denops } from "jsr:@denops/std@~7.0.1";
 
-import { is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
+import { as, is, type PredicateType } from "jsr:@core/unknownutil@~4.0.0";
 import { isOpener } from "../ui/open.ts";
 
 export const isOpenLogArgs = is.ObjectOf({
-  opener: is.OptionalOf(isOpener),
+  opener: as.Optional(isOpener),
 });
 export type OpenLogArgs = PredicateType<typeof isOpenLogArgs>;
 

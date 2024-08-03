@@ -1,4 +1,4 @@
-import { is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
+import { as, is, type PredicateType } from "jsr:@core/unknownutil@~4.0.0";
 import { isErrorResponse, type ReqInit } from "./types.ts";
 import { doPost } from "./base.ts";
 import { parseJSONStream } from "./base.ts";
@@ -11,24 +11,24 @@ import { parseJSONStream } from "./base.ts";
 export const isPullModelParams = is.ObjectOf({
   // (optional) Allow insecure connections to the library.
   // Only use this if you are pulling from your own library during development.
-  insecure: is.OptionalOf(is.Boolean),
+  insecure: as.Optional(is.Boolean),
 });
 export type PullModelParams = PredicateType<typeof isPullModelParams>;
 
-export const isPullModelResponse = is.OneOf([
+export const isPullModelResponse = is.UnionOf([
   isErrorResponse,
   is.ObjectOf({
     // Status of the pull
     status: is.String,
 
     // Digest of the model
-    digest: is.OptionalOf(is.String),
+    digest: as.Optional(is.String),
 
     // Total size of the model
-    total: is.OptionalOf(is.Number),
+    total: as.Optional(is.Number),
 
     // Amount of the model that has been pulled
-    completed: is.OptionalOf(is.Number),
+    completed: as.Optional(is.Number),
   }),
 ]);
 export type PullModelResponse = PredicateType<typeof isPullModelResponse>;

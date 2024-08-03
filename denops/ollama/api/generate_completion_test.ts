@@ -3,7 +3,7 @@ import {
   assertSpyCallArgs,
   assertSpyCalls,
   stub,
-} from "jsr:@std/testing@~0.225.3/mock";
+} from "jsr:@std/testing@~1.0.0/mock";
 import {
   generateCompletion,
   type GenerateCompletionResponse,

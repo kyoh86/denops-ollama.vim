@@ -1,23 +1,28 @@
 import { abortable } from "jsr:@std/async@~1.0.1";
 import type { Denops } from "jsr:@denops/std@~7.0.1";
-import { is, maybe, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
+import {
+  as,
+  is,
+  maybe,
+  type PredicateType,
+} from "jsr:@core/unknownutil@~4.0.0";
 
 import { isOpener } from "../ui/open.ts";
 import { ChatBase } from "../ui/chat.ts";
 import { generateCompletion } from "../api.ts";
 import { isReqArgs } from "./types.ts";
 
-export const isStartChatArgs = is.AllOf([
+export const isStartChatArgs = is.IntersectionOf([
   is.ObjectOf({
     model: is.String,
-    opener: is.OptionalOf(isOpener),
-    message: is.OptionalOf(is.String),
+    opener: as.Optional(isOpener),
+    message: as.Optional(is.String),
     // A list of base64-encoded images (for multimodal models such as llava)
-    images: is.OptionalOf(is.ArrayOf(is.String)),
+    images: as.Optional(is.ArrayOf(is.String)),
     // Additional model parameters listed in the documentation for the Modelfile such as temperature
-    options: is.OptionalOf(is.Record),
+    options: as.Optional(is.Record),
     // System message to (overrides what is defined in the Modelfile)
-    system: is.OptionalOf(is.String),
+    system: as.Optional(is.String),
   }),
   isReqArgs,
 ]);

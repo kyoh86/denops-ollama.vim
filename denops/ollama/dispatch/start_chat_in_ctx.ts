@@ -1,6 +1,11 @@
 import { abortable } from "jsr:@std/async@~1.0.1";
 import type { Denops } from "jsr:@denops/std@~7.0.1";
-import { is, maybe, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
+import {
+  as,
+  is,
+  maybe,
+  type PredicateType,
+} from "jsr:@core/unknownutil@~4.0.0";
 
 import {
   generateChatCompletion,
@@ -18,10 +23,10 @@ import {
 } from "../util/context.ts";
 
 const isChatContext = is.ObjectOf({
-  selection: is.OptionalOf(is.Boolean),
-  currentBuffer: is.OptionalOf(is.Boolean),
-  buffers: is.OptionalOf(is.ArrayOf(isBufferInfo)),
-  // UNDONE: files: is.OptionalOf(is.ArrayOf(is.String)),
+  selection: as.Optional(is.Boolean),
+  currentBuffer: as.Optional(is.Boolean),
+  buffers: as.Optional(is.ArrayOf(isBufferInfo)),
+  // UNDONE: files: as.Optional(is.ArrayOf(is.String)),
 });
 type ChatContext = PredicateType<typeof isChatContext>;
 
@@ -60,14 +65,14 @@ async function contextToMessages(
   return messages;
 }
 
-export const isStartChatInCtxArgs = is.AllOf([
+export const isStartChatInCtxArgs = is.IntersectionOf([
   is.ObjectOf({
     model: is.String,
     context: isChatContext,
-    opener: is.OptionalOf(isOpener),
-    message: is.OptionalOf(is.String),
+    opener: as.Optional(isOpener),
+    message: as.Optional(is.String),
     // Additional model parameters listed in the documentation for the Modelfile such as temperature
-    options: is.OptionalOf(is.Record),
+    options: as.Optional(is.Record),
   }),
   isReqArgs,
 ]);

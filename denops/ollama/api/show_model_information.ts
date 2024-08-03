@@ -1,4 +1,4 @@
-import { ensure, is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
+import { ensure, is, type PredicateType } from "jsr:@core/unknownutil@~4.0.0";
 import { doPost } from "./base.ts";
 import { isErrorResponse, type ReqInit, type Result } from "./types.ts";
 
@@ -12,7 +12,7 @@ export type ShowModelInformationParam = PredicateType<
   typeof isShowModelInformationParam
 >;
 
-export const isShowModelInformationResponse = is.OneOf([
+export const isShowModelInformationResponse = is.UnionOf([
   isErrorResponse,
   is.ObjectOf({
     // The model file

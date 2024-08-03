@@ -1,6 +1,6 @@
 import type { ReqInit, Result } from "./types.ts";
 import { doDelete } from "./base.ts";
-import { is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
+import { is, type PredicateType } from "jsr:@core/unknownutil@~4.0.0";
 
 // Definitions for the endpoint to "Delete a model"
 // Method: DELETE

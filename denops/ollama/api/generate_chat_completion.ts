@@ -1,4 +1,4 @@
-import { is, type PredicateType } from "jsr:@core/unknownutil@~3.18.1";
+import { as, is, type PredicateType } from "jsr:@core/unknownutil@~4.0.0";
 import { isErrorResponse, isFormat, type ReqInit } from "./types.ts";
 import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";
@@ -14,7 +14,7 @@ export const isGenerateChatCompletionMessage = is.ObjectOf({
   // The content of the message
   content: is.String,
   // (optional) A list of images to include in the message (for multimodal models such as llava)
-  images: is.OptionalOf(is.ArrayOf(is.String)),
+  images: as.Optional(is.ArrayOf(is.String)),
 });
 export type GenerateChatCompletionMessage = PredicateType<
   typeof isGenerateChatCompletionMessage
@@ -25,20 +25,20 @@ export const isGenerateChatCompletionParams = is.ObjectOf({
   format: isFormat,
 
   // Additional model parameters listed in the documentation for the Modelfile such as temperature
-  options: is.OptionalOf(is.Record),
+  options: as.Optional(is.Record),
 
   // The full prompt or prompt template (overrides what is defined in the Modelfile)
-  template: is.OptionalOf(is.String),
+  template: as.Optional(is.String),
 
   // If false the response will be returned as a single response object, rather than a stream of objects
-  stream: is.OptionalOf(is.Boolean),
+  stream: as.Optional(is.Boolean),
 });
 export type GenerateChatCompletionParams = PredicateType<
   typeof isGenerateChatCompletionParams
 >;
 
 /** The response from the generate chat completion endpoint */
-export const isGenerateChatCompletionResponse = is.OneOf([
+export const isGenerateChatCompletionResponse = is.UnionOf([
   isErrorResponse,
   is.ObjectOf({
     // The model that was used
@@ -61,7 +61,7 @@ export const isGenerateChatCompletionResponse = is.OneOf([
     created_at: is.String,
 
     // The message that was generated
-    message: is.OptionalOf(isGenerateChatCompletionMessage),
+    message: as.Optional(isGenerateChatCompletionMessage),
 
     // Whether the request is done
     done: is.LiteralOf(true),
@@ -82,7 +82,7 @@ export const isGenerateChatCompletionResponse = is.OneOf([
     eval_duration: is.Number,
 
     // The number of times the model was evaluated
-    eval_count: is.OptionalOf(is.Number),
+    eval_count: as.Optional(is.Number),
   }),
 ]);
 export type GenerateChatCompletionResponse = PredicateType<
