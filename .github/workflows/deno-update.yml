@@ -32,8 +32,8 @@ jobs:
             echo EOF
           } >> $GITHUB_OUTPUT
 
-      - name: Verify formatting
-        run: deno fmt --check
+      - name: Format
+        run: deno fmt
 
       - name: Check
         run: deno task check
