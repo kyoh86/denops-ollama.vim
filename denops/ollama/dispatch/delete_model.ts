@@ -1,7 +1,7 @@
 import type { Denops } from "jsr:@denops/std@~7.0.1";
 import { getLogger } from "jsr:@std/log@~0.224.5";
 import * as helper from "jsr:@denops/std@~7.0.1/helper";
-import { is, type PredicateType } from "jsr:@core/unknownutil@~4.0.0";
+import { is, type PredicateType } from "jsr:@core/unknownutil@~4.1.0";
 
 import { deleteModel as deleteModelAPI } from "../api.ts";
 import { canceller } from "../util/cancellable.ts";

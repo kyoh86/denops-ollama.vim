@@ -3,7 +3,7 @@ import {
   ensure,
   is,
   type PredicateType,
-} from "jsr:@core/unknownutil@~4.0.0";
+} from "jsr:@core/unknownutil@~4.1.0";
 import { isErrorResponse, isFormat, type ReqInit } from "./types.ts";
 import { parseJSONStream } from "./base.ts";
 import { doPost } from "./base.ts";

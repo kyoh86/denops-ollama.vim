@@ -8,7 +8,7 @@ import * as batch from "jsr:@denops/std@~7.0.1/batch";
 import * as option from "jsr:@denops/std@~7.0.1/option";
 import * as helper from "jsr:@denops/std@~7.0.1/helper";
 import * as lambda from "jsr:@denops/std@~7.0.1/lambda";
-import { ensure, is } from "jsr:@core/unknownutil@~4.0.0";
+import { ensure, is } from "jsr:@core/unknownutil@~4.1.0";
 import { Notify, Queue } from "jsr:@core/asyncutil@~1.0.0";
 
 import {

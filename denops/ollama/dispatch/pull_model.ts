@@ -6,7 +6,7 @@ import * as helper from "jsr:@denops/std@~7.0.1/helper";
 import { canceller } from "../util/cancellable.ts";
 import { abortable } from "jsr:@std/async@~1.0.1";
 import { isReqArgs } from "./types.ts";
-import { as, is, type PredicateType } from "jsr:@core/unknownutil@~4.0.0";
+import { as, is, type PredicateType } from "jsr:@core/unknownutil@~4.1.0";
 
 export const isPullModelArgs = is.IntersectionOf([
   is.ObjectOf({
