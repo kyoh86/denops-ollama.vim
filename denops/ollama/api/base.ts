@@ -1,4 +1,4 @@
-import { ensure, type Predicate } from "jsr:@core/unknownutil@~4.0.0";
+import { ensure, type Predicate } from "jsr:@core/unknownutil@~4.1.0";
 import {
   JSONLinesParseStream,
   type JSONValue,

@@ -1,4 +1,4 @@
-import { as, is, type PredicateType } from "jsr:@core/unknownutil@~4.0.0";
+import { as, is, type PredicateType } from "jsr:@core/unknownutil@~4.1.0";
 
 export const isReqArgs = is.ObjectOf({
   timeout: as.Optional(is.Number),
