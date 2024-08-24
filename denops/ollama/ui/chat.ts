@@ -1,5 +1,5 @@
 import { getLogger } from "jsr:@std/log@~0.224.5";
-import * as datetime from "jsr:@std/datetime@~0.224.3";
+import * as datetime from "jsr:@std/datetime@~0.225.0";
 import type { Denops } from "jsr:@denops/std@~7.0.1";
 import { ulid } from "jsr:@std/ulid@~1.0.0";
 import * as autocmd from "jsr:@denops/std@~7.0.1/autocmd";
@@ -8,8 +8,8 @@ import * as batch from "jsr:@denops/std@~7.0.1/batch";
 import * as option from "jsr:@denops/std@~7.0.1/option";
 import * as helper from "jsr:@denops/std@~7.0.1/helper";
 import * as lambda from "jsr:@denops/std@~7.0.1/lambda";
-import { ensure, is } from "jsr:@core/unknownutil@~4.1.0";
-import { Notify, Queue } from "jsr:@core/asyncutil@~1.0.0";
+import { ensure, is } from "jsr:@core/unknownutil@~4.3.0";
+import { Notify, Queue } from "jsr:@core/asyncutil@~1.1.0";
 
 import {
   type HighlightPrefix,

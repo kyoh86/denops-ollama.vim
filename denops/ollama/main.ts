@@ -4,7 +4,7 @@ import {
   is,
   maybe,
   type Predicate,
-} from "jsr:@core/unknownutil@~4.1.0";
+} from "jsr:@core/unknownutil@~4.3.0";
 
 import { init } from "./dispatch/init.ts";
 import { isStartChatArgs, startChat } from "./dispatch/start_chat.ts";

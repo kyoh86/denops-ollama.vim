@@ -1,4 +1,4 @@
-import { as, is, type PredicateType } from "jsr:@core/unknownutil@~4.1.0";
+import { as, is, type PredicateType } from "jsr:@core/unknownutil@~4.3.0";
 
 // The format to return a response in. Currently the only accepted value is json
 export const isFormat = as.Optional(is.LiteralOf("json"));
