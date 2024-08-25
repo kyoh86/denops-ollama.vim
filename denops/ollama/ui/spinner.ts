@@ -3,7 +3,7 @@ import type { SpinnerName as Kind } from "npm:cli-spinners@~3.1.0";
 import type { Denops } from "jsr:@denops/std@~7.0.1";
 import * as batch from "jsr:@denops/std@~7.0.1/batch";
 import * as fn from "jsr:@denops/std@~7.0.1/function";
-import { ensure, is } from "jsr:@core/unknownutil@~4.1.0";
+import { ensure, is } from "jsr:@core/unknownutil@~4.3.0";
 
 const varPrefix = "ollama_ui_spinner";
 const signGroup = "ollama_ui_spinner_group";

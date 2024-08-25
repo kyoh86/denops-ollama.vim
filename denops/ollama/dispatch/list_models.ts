@@ -1,4 +1,4 @@
-import * as datetime from "jsr:@std/datetime@~0.224.3";
+import * as datetime from "jsr:@std/datetime@~0.225.0";
 import * as bytes from "jsr:@std/fmt@~1.0.0/bytes";
 import type { Denops } from "jsr:@denops/std@~7.0.1";
 import * as helper from "jsr:@denops/std@~7.0.1/helper";

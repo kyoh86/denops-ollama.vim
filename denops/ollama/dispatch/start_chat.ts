@@ -5,7 +5,7 @@ import {
   is,
   maybe,
   type PredicateType,
-} from "jsr:@core/unknownutil@~4.1.0";
+} from "jsr:@core/unknownutil@~4.3.0";
 
 import { isOpener } from "../ui/open.ts";
 import { ChatBase } from "../ui/chat.ts";

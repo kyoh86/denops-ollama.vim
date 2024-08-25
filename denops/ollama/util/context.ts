@@ -4,7 +4,7 @@ import type { Denops } from "jsr:@denops/std@~7.0.1";
 import * as fn from "jsr:@denops/std@~7.0.1/function";
 import * as option from "jsr:@denops/std@~7.0.1/option";
 import * as batch from "jsr:@denops/std@~7.0.1/batch";
-import { ensure, is, type PredicateType } from "jsr:@core/unknownutil@~4.1.0";
+import { ensure, is, type PredicateType } from "jsr:@core/unknownutil@~4.3.0";
 
 export const isBufferInfo = is.UnionOf([
   is.String,
