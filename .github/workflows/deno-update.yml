@@ -5,6 +5,9 @@ name: Deno Update
 on:
   schedule:
     - cron: "0 9 * * *"
+  push:
+    branches:
+      - main
   workflow_dispatch: {}
 
 jobs:
