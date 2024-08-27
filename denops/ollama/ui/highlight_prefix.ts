@@ -1,4 +1,4 @@
-import type { Denops } from "jsr:@denops/std@~7.0.1";
+import type { Denops } from "jsr:@denops/std@~7.1.0";
 
 export async function setup(denops: Denops) {
   await denops.cmd("highlight default link OllamaPrompt Question");
