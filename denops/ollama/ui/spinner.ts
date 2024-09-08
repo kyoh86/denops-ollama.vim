@@ -1,5 +1,5 @@
-import spinners from "npm:cli-spinners@~3.1.0";
-import type { SpinnerName as Kind } from "npm:cli-spinners@~3.1.0";
+import spinners from "npm:cli-spinners@~3.2.0";
+import type { SpinnerName as Kind } from "npm:cli-spinners@~3.2.0";
 import type { Denops } from "jsr:@denops/std@~7.1.0";
 import * as batch from "jsr:@denops/std@~7.1.0/batch";
 import * as fn from "jsr:@denops/std@~7.1.0/function";
