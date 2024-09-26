@@ -1,9 +1,9 @@
 // Functions to get context
 
-import type { Denops } from "jsr:@denops/std@~7.1.0";
-import * as fn from "jsr:@denops/std@~7.1.0/function";
-import * as option from "jsr:@denops/std@~7.1.0/option";
-import * as batch from "jsr:@denops/std@~7.1.0/batch";
+import type { Denops } from "jsr:@denops/std@~7.2.0";
+import * as fn from "jsr:@denops/std@~7.2.0/function";
+import * as option from "jsr:@denops/std@~7.2.0/option";
+import * as batch from "jsr:@denops/std@~7.2.0/batch";
 import { ensure, is, type PredicateType } from "jsr:@core/unknownutil@~4.3.0";
 
 export const isBufferInfo = is.UnionOf([
