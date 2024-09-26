@@ -1,4 +1,4 @@
-import type { Denops } from "jsr:@denops/std@~7.1.0";
+import type { Denops } from "jsr:@denops/std@~7.2.0";
 import { as, is, type PredicateType } from "jsr:@core/unknownutil@~4.3.0";
 import { generateCompletion } from "../api.ts";
 import { isReqArgs } from "./types.ts";
