@@ -1,8 +1,8 @@
 import spinners from "npm:cli-spinners@~3.2.0";
 import type { SpinnerName as Kind } from "npm:cli-spinners@~3.2.0";
-import type { Denops } from "jsr:@denops/std@~7.2.0";
-import * as batch from "jsr:@denops/std@~7.2.0/batch";
-import * as fn from "jsr:@denops/std@~7.2.0/function";
+import type { Denops } from "jsr:@denops/std@~7.3.0";
+import * as batch from "jsr:@denops/std@~7.3.0/batch";
+import * as fn from "jsr:@denops/std@~7.3.0/function";
 import { ensure, is } from "jsr:@core/unknownutil@~4.3.0";
 
 const varPrefix = "ollama_ui_spinner";

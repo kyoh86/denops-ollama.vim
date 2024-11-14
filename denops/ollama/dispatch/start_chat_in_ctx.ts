@@ -1,5 +1,5 @@
 import { abortable } from "jsr:@std/async@~1.0.1";
-import type { Denops } from "jsr:@denops/std@~7.2.0";
+import type { Denops } from "jsr:@denops/std@~7.3.0";
 import {
   as,
   is,

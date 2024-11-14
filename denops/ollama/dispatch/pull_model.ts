@@ -1,8 +1,8 @@
-import type { Denops } from "jsr:@denops/std@~7.2.0";
+import type { Denops } from "jsr:@denops/std@~7.3.0";
 import * as bytes from "jsr:@std/fmt@~1.0.0/bytes";
 import { pullModel as pullModelAPI } from "../api.ts";
 import { getLogger } from "jsr:@std/log@~0.224.5";
-import * as helper from "jsr:@denops/std@~7.2.0/helper";
+import * as helper from "jsr:@denops/std@~7.3.0/helper";
 import { canceller } from "../util/cancellable.ts";
 import { abortable } from "jsr:@std/async@~1.0.1";
 import { isReqArgs } from "./types.ts";
