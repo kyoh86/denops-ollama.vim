@@ -1,7 +1,7 @@
 import * as datetime from "jsr:@std/datetime@~0.225.0";
 import * as bytes from "jsr:@std/fmt@~1.0.0/bytes";
-import type { Denops } from "jsr:@denops/std@~7.3.0";
-import * as helper from "jsr:@denops/std@~7.3.0/helper";
+import type { Denops } from "jsr:@denops/std@~7.4.0";
+import * as helper from "jsr:@denops/std@~7.4.0/helper";
 import { Table } from "jsr:@cliffy/table@^1.0.0-rc.7";
 
 import { listLocalModels } from "../api.ts";
