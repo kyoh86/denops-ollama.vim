@@ -1,4 +1,4 @@
-import type { Denops } from "jsr:@denops/std@~7.3.0";
+import type { Denops } from "jsr:@denops/std@~7.4.0";
 import { ConsoleHandler, setup as setupLog } from "jsr:@std/log@~0.224.5";
 import xdg from "https://deno.land/x/xdg@v10.6.0/src/mod.deno.ts";
 import { ensureFile } from "jsr:@std/fs@~1.0.0";

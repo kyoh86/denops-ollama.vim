@@ -7,14 +7,14 @@ on:
     branches:
       - main
     paths:
-      - '**.ts'
-      - '.github/workflows/deno-test.yml'
-      - 'deno.jsonc'
+      - "**.ts"
+      - ".github/workflows/deno-test.yml"
+      - "deno.jsonc"
   pull_request:
     branches:
       - main
     paths:
-      - '**.ts'
+      - "**.ts"
 
 permissions:
   contents: read
