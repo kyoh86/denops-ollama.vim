@@ -1,8 +1,8 @@
-import { map } from "jsr:@denops/std@~7.4.0/mapping";
-import * as lambda from "jsr:@denops/std@~7.4.0/lambda";
+import { map } from "jsr:@denops/std@~7.5.0/mapping";
+import * as lambda from "jsr:@denops/std@~7.5.0/lambda";
 import { ulid } from "jsr:@std/ulid@~1.0.0";
-import * as autocmd from "jsr:@denops/std@~7.4.0/autocmd";
-import type { Denops } from "jsr:@denops/std@~7.4.0";
+import * as autocmd from "jsr:@denops/std@~7.5.0/autocmd";
+import type { Denops } from "jsr:@denops/std@~7.5.0";
 
 export async function mapCancel(denops: Denops) {
   // See ../../../autoload/ollama/internal.vim
